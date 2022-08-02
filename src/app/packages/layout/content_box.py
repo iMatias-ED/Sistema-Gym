@@ -2,9 +2,10 @@ from PySide6.QtWidgets import QFrame, QStackedLayout
 from __feature__ import snake_case, true_property
 
 class ContentBox(QFrame):
+    __content_layout = QStackedLayout()
+    
     def __init__(self):
         super(ContentBox, self).__init__()
-        self.__content_layout = QStackedLayout()
         self.set_layout(self.__content_layout)
         self.style_sheet = "background: gray"
 

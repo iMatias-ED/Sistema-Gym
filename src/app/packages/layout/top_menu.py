@@ -39,6 +39,6 @@ class TopMenu(QFrame):
         self.__bt_movements.clicked.connect(lambda: self.button_clicked(0) ) 
         self.__bt_customers.clicked.connect(lambda: self.button_clicked(1) ) 
         self.__bt_products.clicked.connect(lambda: self.button_clicked(2) ) 
-        self.__bt_assistance.clicked.connect(lambda: self.button_clicked(4) ) 
-        self.__bt_logo.clicked.connect(lambda: self.button_clicked(5) ) 
+        self.__bt_assistance.clicked.connect(lambda: self.button_clicked(3) ) 
+        self.__bt_logo.clicked.connect(lambda: self.button_clicked(4) ) 
 
