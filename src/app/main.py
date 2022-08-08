@@ -27,6 +27,8 @@ class Main(QMainWindow):
         self.__add_views_to_content_box()
 
     def setup_ui(self):
+        self.style_sheet = "background: gray"
+
         self.top_menu = TopMenu()
         self.content = ContentBox()
         self.top_menu.view_change.connect( self.show_content )
@@ -43,18 +45,21 @@ class Main(QMainWindow):
         self.content.show_index(index)
 
     def __create_views(self):
-        self.views['assist_control'] = AssistControl("red")
+        self.views['assist_control'] = AssistControl("darkpurple")
         self.views['cash_flow']      = CashFlow("green")
         self.views['control_panel']  = ControlPanel("black")
-        self.views['customers']      = Customers("yellow")
-        self.views['products']       = Products("orange")
+        self.views['customers']      = Customers("darkblue")
+        self.views['products']       = Products("darkgreen")
 
     def __add_views_to_content_box(self):
-        self.content.add_content(self.views['assist_control'])
-        self.content.add_content(self.views['cash_flow'])
-        self.content.add_content(self.views['control_panel'])
-        self.content.add_content(self.views['customers'])
-        self.content.add_content(self.views['products'])
+        self.content.add_content(self.views['cash_flow'], 0)
+        self.content.add_content(self.views['customers'], 1)
+        self.content.add_content(self.views['products'], 2)
+        self.content.add_content(self.views['assist_control'], 3)
+        self.content.add_content(self.views['control_panel'], 4)
+
+        # temporal
+        self.content.show_index(1)
 
 # Execute
 import sys

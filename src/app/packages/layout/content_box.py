@@ -9,9 +9,8 @@ class ContentBox(QFrame):
         self.set_layout(self.__content_layout)
         self.style_sheet = "background: gray"
 
-    def add_content(self, widget: QFrame) -> int:
-        return self.__content_layout.add_widget(widget)
+    def add_content(self, widget: QFrame, index: int) -> int:
+        return self.__content_layout.insert_widget(index, widget)
 
     def show_index(self, index:int ) -> None:
-        print("cambiando a ", index)
         self.__content_layout.current_index = index

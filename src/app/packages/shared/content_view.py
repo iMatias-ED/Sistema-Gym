@@ -5,3 +5,8 @@ class ContentView(QFrame):
     def __init__(self, bgcolor):
         super(ContentView, self).__init__()
         self.style_sheet = f"background: {bgcolor}"
+        self.setup_ui()
+
+    def setup_ui(self):
+        # code should go here
+        pass
