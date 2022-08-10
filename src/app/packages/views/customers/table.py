@@ -5,6 +5,10 @@ from __feature__ import snake_case, true_property
 from .service import *
 
 class Table(QTableWidget):
+    #Both emits the row index
+    edit = Signal(int)
+    delete = Signal(int)
+    
     service = CustomersService()
 
     test_data = [
@@ -12,24 +16,25 @@ class Table(QTableWidget):
         ("Belén Franco", "1.111.111-1", "belen@gmail.com", "0972771482")
     ]
 
+    def __init__(self):
+        super(Table, self).__init__()
+        self.example()
+
     def example(self):
         self.row_count = len(self.test_data)
         self.column_count = 6
   
         self.load_data()
-
         self.set_horizontal_header_labels(self.service.header_labels)
 
         self.horizontal_header().stretch_last_section = True
         self.horizontal_header().set_section_resize_mode(
             QHeaderView.Stretch)
         
-        self.hide(1)
-
     def load_data(self):
         def create_edit_button(row: int):
             button = QPushButton("E")
-            button.clicked.connect( lambda: self.delete_clicked(row) )
+            button.clicked.connect( lambda: self.edit_clicked(row) )
             return button
             
         def create_delete_button(row: int):
@@ -46,8 +51,14 @@ class Table(QTableWidget):
                 self.set_item(row, col, QTableWidgetItem(item))
 
     def edit_clicked(self, row:int):
-        print("editing", row)
+        self.edit.emit(row)
     
     def delete_clicked(self, row:int):
-        print("removing", row)
+        self.delete.emit(row)
 
+    @Slot(int, bool)
+    def on_filter(self, index, state):
+        if state: 
+            self.hide_column(index)
+            return
+        self.show_column(index)
