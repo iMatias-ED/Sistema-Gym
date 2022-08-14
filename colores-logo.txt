@@ -1,0 +1,4 @@
+Naranja oscuro: #f3570c
+Naranja claro: #e77629
+gris: #cecece
+blanco: #fcfcfc

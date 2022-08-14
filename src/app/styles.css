@@ -1,0 +1,21 @@
+QMainWindow, QFrame, QPushButton {
+    background-color: #242526;
+}
+
+QFrame, QPushButton {
+    border-radius: 10px;
+}
+
+#top-menu {
+    border: 1px solid #f3570c;
+}
+#content-box {
+    border-right: 1px solid #f3570c;
+    border-left: 1px solid #f3570c;
+}
+
+QPushButton {
+    font-size: 22px;
+    color: #fcfcfc;
+    border-right: 1px solid #f3570c;
+}

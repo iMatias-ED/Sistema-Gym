@@ -1,5 +1,5 @@
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QPushButton
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QPushButton, QSizePolicy
 from __feature__ import snake_case, true_property
 
 class TopMenu(QFrame):
@@ -7,15 +7,18 @@ class TopMenu(QFrame):
     
     def __init__(self):
         super(TopMenu, self).__init__()
+        self.object_name = "top-menu"
         self.setup_ui()
 
     def setup_ui(self):
+        size_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+
         # Create buttons 
-        self.__bt_logo = QPushButton("Logo / Panel de control")
-        self.__bt_movements = QPushButton("Movimientos")
-        self.__bt_customers = QPushButton("Clientes")
-        self.__bt_products = QPushButton("Productos")
-        self.__bt_assistance = QPushButton("Marcar asistencia")
+        self.__bt_logo = QPushButton("Logo / Panel de control", size_policy=size_policy)
+        self.__bt_movements = QPushButton("Movimientos", size_policy=size_policy)
+        self.__bt_customers = QPushButton("Clientes", size_policy=size_policy)
+        self.__bt_products = QPushButton("Productos", size_policy=size_policy)
+        self.__bt_assistance = QPushButton("Marcar asistencia", size_policy=size_policy)
 
         self.__bind_buttons()
 

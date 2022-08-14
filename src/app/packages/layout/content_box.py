@@ -7,7 +7,7 @@ class ContentBox(QFrame):
     def __init__(self):
         super(ContentBox, self).__init__()
         self.set_layout(self.__content_layout)
-        self.style_sheet = "background: gray"
+        self.object_name = "content-box"
 
     def add_content(self, widget: QFrame, index: int) -> int:
         return self.__content_layout.insert_widget(index, widget)

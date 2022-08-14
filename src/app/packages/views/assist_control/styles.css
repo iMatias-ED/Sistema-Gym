@@ -1,0 +1,19 @@
+QLabel {
+    font-size: 50px;
+}
+
+
+
+/* Report View */
+#name {
+    color: #f3570c;
+}
+#status {
+    color: greenyellow;
+}
+#last-pay {
+    color: #fcfcfc;
+}
+#registered-until {
+    color: #fcfcfc;
+}
