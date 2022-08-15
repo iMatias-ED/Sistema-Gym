@@ -2,13 +2,10 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from .service import CustomersService
-
 class Dialog(QDialog):
-    service = CustomersService()
-
-    def __init__(self):
+    def __init__(self, service):
         super(Dialog, self).__init__()
+        self.service = service
         self.size = QSize(300, 300)
 
     def example(self, mode:str):

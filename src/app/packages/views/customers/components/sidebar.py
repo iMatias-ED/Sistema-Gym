@@ -2,15 +2,13 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from .service import *
-
 class Sidebar(QFrame):
     filter_event = Signal(int, bool)
-    service = CustomersService()
     layout = QVBoxLayout()
     
-    def __init__(self):
+    def __init__(self, service):
         super(Sidebar, self).__init__()
+        self.service = service
         self.setup_ui()
 
     def setup_ui(self):

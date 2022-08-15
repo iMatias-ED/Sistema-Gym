@@ -3,18 +3,20 @@ from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
 from ...shared.content_view import ContentView
-from .table import Table
-from .sidebar import Sidebar
-from .dialog import Dialog
+from .components.table import Table
+from .components.sidebar import Sidebar
+from .components.dialog import Dialog
+from .service import CustomersService
 
 class Customers(ContentView):
     root_layout = QHBoxLayout()
     second_layout = QVBoxLayout()
+    service = CustomersService()
 
     def setup_ui(self):
-        self.sidebar = Sidebar()
-        self.table = Table()
-        self.dialog = Dialog()
+        self.sidebar = Sidebar(self.service)
+        self.table = Table(self.service)
+        self.dialog = Dialog(self.service)
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)

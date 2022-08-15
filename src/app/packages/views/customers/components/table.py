@@ -2,27 +2,24 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from .service import *
-
 class Table(QTableWidget):
     #Both emits the row index
     edit = Signal(int)
     delete = Signal(int)
     
-    service = CustomersService()
-
     test_data = [
         ("Matias Acosta", "7.478.938-4", "matdj31@gmail.com", "0994633973"),
         ("Belén Franco", "1.111.111-1", "belen@gmail.com", "0972771482")
     ]
 
-    def __init__(self):
+    def __init__(self, service):
         super(Table, self).__init__()
+        self.service = service
         self.example()
 
     def example(self):
         self.row_count = len(self.test_data)
-        self.column_count = 6
+        self.column_count = len(self.service.header_labels)
   
         self.load_data()
         self.set_horizontal_header_labels(self.service.header_labels)
