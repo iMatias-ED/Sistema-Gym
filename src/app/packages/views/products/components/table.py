@@ -13,10 +13,8 @@ class Table(QTableWidget):
     def __init__(self, service: ProductsService):
         super(Table, self).__init__()
         self.service = service
-        self.config_table()
+        self.service.data_changed.connect( self.refresh )
 
-    def refresh(self):
-        self.clear()
         self.config_table()
 
     def config_table(self):
@@ -51,11 +49,16 @@ class Table(QTableWidget):
                 column = column + 4
                 self.set_item(row, column, QTableWidgetItem( str(price[1]) ))
 
+    def refresh(self):
+        self.clear()
+        self.config_table()
+
     def edit_clicked(self, product_id:int):
         self.edit.emit(product_id)
     
     def delete_clicked(self, product_id:int):
         self.delete.emit(product_id)
+        self.service.delete(product_id)
 
     @Slot(int, bool)
     def on_filter(self, index, state):
@@ -63,3 +66,8 @@ class Table(QTableWidget):
             self.hide_column(index)
             return
         self.show_column(index)
+
+    @Slot()
+    def _on_data_changed(self):
+        print('data_changed')
+        self.refresh()

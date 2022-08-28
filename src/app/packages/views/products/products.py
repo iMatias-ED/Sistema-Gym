@@ -32,9 +32,7 @@ class Products(ContentView):
     def __events_manager(self):
         self.bt_create.clicked.connect( self.dialog.create )
         
-        # Views Events
         self.table.edit.connect( self.dialog.edit )
-        self.table.delete.connect( self.__on_delete )
         self.sidebar.filter_event.connect( self.table.on_filter )
 
     def setup_title_frame(self):
@@ -49,9 +47,9 @@ class Products(ContentView):
         frame.set_layout(layout)
         return frame        
 
-    @Slot(int)
-    def __on_delete(self, product_id:int ):
-        self.service.delete( product_id )
-        self.table.refresh()
+    # @Slot(int)
+    # def __on_delete(self, product_id:int ):
+    #     self.service.delete( product_id )
+
     
 

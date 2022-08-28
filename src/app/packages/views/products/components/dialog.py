@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Callable, Tuple, List
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
@@ -15,6 +15,8 @@ class Dialog(QDialog):
         self.minimum_height = 250 
 
         self.service = service
+        self.service.data_changed.connect(self.on_data_changed)
+
         self.setup_ui()
 
     def setup_ui(self):
@@ -29,7 +31,6 @@ class Dialog(QDialog):
 
         # Button
         self.submit = QPushButton("Submit")
-        self.submit.clicked.connect(self.on_create_submit)
         self.root_layout.add_widget(self.submit, self.last_row(), 1, self.last_row(), 2)
 
         self.set_layout(self.root_layout)
@@ -40,7 +41,7 @@ class Dialog(QDialog):
             # id, name, valid_for_days -> Period format
             input = self._create_input( period[1], "Precio en Gs.", self.last_row() )
 
-            # save the price id and the input
+            # save the period id and the input reference
             self.price_inputs_collection.append( (period[0], input) )
 
     def last_row(self):
@@ -48,9 +49,23 @@ class Dialog(QDialog):
 
     # 
     def create(self):
-        print("create mode")
+        self.reconnect_submit(self.on_create_submit)
+        self.clear()
         self.show()
 
+    def clear(self):
+        for inp in self.price_inputs_collection: inp[1].clear()
+        self.inp_code.clear()
+        self.inp_name.clear()
+
+    def reconnect_submit(self, connect_to: Callable, parameter=None):
+        try:     self.submit.clicked.disconnect()
+        except   RuntimeError: pass
+        finally: 
+            if parameter:
+                self.submit.clicked.connect( lambda: connect_to(parameter) )
+            else: self.submit.clicked.connect(connect_to)
+            
     # Signal Slots
     @Slot()
     def on_create_submit(self):
@@ -58,11 +73,34 @@ class Dialog(QDialog):
         for inp in self.price_inputs_collection:
             prices.append( (inp[0], inp[1].text) )
         self.service.create( self.inp_code.text, self.inp_name.text, prices )
+    
+    @Slot()
+    def on_edit_submit(self, product_id):
+        prices = []
+        for inp in self.price_inputs_collection:
+            prices.append( (inp[0], inp[1].text) )
+        self.service.update( product_id, self.inp_code.text, self.inp_name.text, prices )
 
     @Slot(int)
-    def edit(self, row:int):
-        print(f"Editing row {row}")
+    def edit(self, product_id:int):
+        
+
+        product = self.service.get_product_by_id(product_id)
+        self.inp_code.text = product.code
+        self.inp_name.text = product.name
+
+        prices = self.service.get_product_prices(product_id)
+        for index, price in enumerate(prices):
+            # price[1] -> value
+            # price_inputs_collection[index][1] -> input reference
+            self.price_inputs_collection[index][1].text = str(price[1])
+        
+        self.reconnect_submit(self.on_edit_submit, product.id)
         self.show()
+
+    @Slot()
+    def on_data_changed(self):
+        self.hide()
 
     # Widgets Creations
     def _create_title(self, text:str, row:int):
