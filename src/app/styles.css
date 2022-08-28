@@ -19,3 +19,7 @@ QPushButton {
     color: #fcfcfc;
     border-right: 1px solid #f3570c;
 }
+
+QTableWidget {
+    color: white;
+}

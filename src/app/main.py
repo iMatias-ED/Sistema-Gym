@@ -48,7 +48,7 @@ class Main(QMainWindow):
     def show_content(self, index: int):
         self.content.show_index(index)
 
-    def __create_views(self):
+    def __create_views(self): 
         self.views['assist_control'] = AssistControl()
         self.views['cash_flow']      = CashFlow()
         self.views['control_panel']  = ControlPanel()

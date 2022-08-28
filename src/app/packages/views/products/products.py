@@ -1,3 +1,4 @@
+from math import prod
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
@@ -14,6 +15,7 @@ class Products(ContentView):
     service = ProductsService()
 
     def setup_ui(self):
+        self.set_styles(__file__)
         self.sidebar = Sidebar(self.service)
         self.table = Table(self.service)
         self.dialog = Dialog(self.service)
@@ -48,7 +50,8 @@ class Products(ContentView):
         return frame        
 
     @Slot(int)
-    def __on_delete(self, row):
-        print(f"On delete. Row {row}")
+    def __on_delete(self, product_id:int ):
+        self.service.delete( product_id )
+        self.table.refresh()
     
 
