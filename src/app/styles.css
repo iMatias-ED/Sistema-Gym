@@ -1,3 +1,4 @@
+/* General styles */
 QMainWindow, QFrame, QPushButton {
     background-color: #242526;
 }
@@ -6,20 +7,21 @@ QFrame, QPushButton {
     border-radius: 10px;
 }
 
-#top-menu {
-    border: 1px solid #f3570c;
-}
+/* Content Box */
 #content-box {
     border-right: 1px solid #f3570c;
     border-left: 1px solid #f3570c;
 }
 
+/* Top Menu Buttons */
+#top-menu {
+    border: 1px solid #f3570c;
+}
+
 QPushButton {
-    font-size: 22px;
     color: #fcfcfc;
+    font-size: 30px;
+    font-family: Georgia;
     border-right: 1px solid #f3570c;
 }
 
-QTableWidget {
-    color: white;
-}

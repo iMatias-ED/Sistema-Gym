@@ -17,7 +17,7 @@ class Table(QTableWidget):
 
         self.config_table()
 
-    def config_table(self):
+    def config_table(self) -> None:
         self.column_count = len(self.service.header_labels)
         self.set_horizontal_header_labels(self.service.header_labels)
 
@@ -26,11 +26,11 @@ class Table(QTableWidget):
 
         self.load_data()
         
-    def load_data(self):
-        self.products = self.service.get_all_products()
+    def load_data(self) -> None:
+        self.products = self.service.get_all()
         self.row_count = len(self.products)
 
-        def create_button(text:str, product_id: int, on_clicked: Callable):
+        def create_button(text:str, product_id: int, on_clicked: Callable)  -> QPushButton:
             button = QPushButton(text)
             button.clicked.connect( lambda: on_clicked(product_id) )
             return button
@@ -43,31 +43,30 @@ class Table(QTableWidget):
             self.set_item(row, 3, QTableWidgetItem(product.name))
 
             # Prices
-            prices = self.service.get_product_prices( product.id )
+            prices = self.service.get_prices( product.id )
             for column, price in enumerate(prices):
                 #[0] -> period; [1] -> price
                 column = column + 4
                 self.set_item(row, column, QTableWidgetItem( str(price[1]) ))
 
-    def refresh(self):
+    def refresh(self)  -> None:
         self.clear()
         self.config_table()
 
-    def edit_clicked(self, product_id:int):
+    def edit_clicked(self, product_id:int) -> None:
         self.edit.emit(product_id)
     
-    def delete_clicked(self, product_id:int):
+    def delete_clicked(self, product_id:int) -> None:
         self.delete.emit(product_id)
         self.service.delete(product_id)
 
     @Slot(int, bool)
-    def on_filter(self, index, state):
+    def on_filter(self, index, state) -> None:
         if state: 
             self.hide_column(index)
             return
         self.show_column(index)
 
     @Slot()
-    def _on_data_changed(self):
-        print('data_changed')
+    def _on_data_changed(self) -> None:
         self.refresh()

@@ -14,12 +14,6 @@ class Product:
         self.description = product[3]
 
     def save_prices(self, prices: List[Tuple[str, int]]):
-        # print('cambiando precios')
         for price in prices:
             #[0] -> Period; [1] -> value
             self.prices[ price[0] ] = price[1]
-        # print( f'En el product {self.name}, los precios son: {self.__prices} ' )
-
-    def print_info(self):
-        # pass
-        print( f'En el product {self.name}, los precios son: {self.prices} ' )

@@ -3,8 +3,9 @@ import sqlite3
 from PySide6.QtCore import QObject, Signal
 from .classes.product import Product
 
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
+# Inherits from QObject to use Signals
 class ProductsService(QObject):
     data_changed = Signal()
     header_labels = ["Eliminar", "Editar", "Código", "Nombre"]
@@ -12,11 +13,12 @@ class ProductsService(QObject):
     def __init__(self):
         super(ProductsService, self).__init__()
 
+        # Add price periods to header
         for period in self.get_periods():
             self.header_labels.append( period[1] ) #[1] -> name
 
     # Create
-    def create(self, code:str, name:str, prices_info: List[Tuple[int, str]]):
+    def create(self, code:str, name:str, prices_info: List[Tuple[int, int]]) -> None:
         query = f''' 
             INSERT INTO products (code, name)
                 VALUES ('{code}', '{name}'); 
@@ -24,14 +26,13 @@ class ProductsService(QObject):
         self._changes_query(query)
 
         # Save product prices by period
-        product_id = self.get_id_by_code(code)
+        product_id = self._get_id_by_code(code)
         for data in prices_info:
             #[0]->period_id, [1]->price
-            #(price should be already type int. Temporary parsing)
-            self.create_prices( product_id, data[0], int(data[1]) )
+            self.create_prices( product_id, data[0], data[1] )
         self.data_changed.emit()
         
-    def create_prices(self, id_product:int, id_period:int, price:int):
+    def create_prices(self, id_product:int, id_period:int, price:int) -> None:
         query = f'''
             INSERT INTO prices (id_product, id_period, price)
             VALUES ({id_product}, {id_period}, {price});
@@ -39,15 +40,15 @@ class ProductsService(QObject):
         self._changes_query(query)
 
     # Read
-    def get_all_products(self) -> List[Product] : 
+    def get_all(self) -> List[Product] : 
         query = f''' SELECT * FROM products; '''
-        return self.format_data(self._read_query_fetchall(query))
+        return self._format_data(self._read_query_fetchall(query))
 
-    def get_product_by_id( self, id:int ):
+    def get_by_id( self, id:int ) -> Product:
         query = f''' SELECT * FROM products WHERE id={id}; '''
         return Product(self._read_query_fetchone(query))
 
-    def get_product_prices(self, product_id: int):
+    def get_prices(self, product_id: int) -> List[ Tuple[str, int] ]:
         query = f'''
             SELECT 
                 periods.name,
@@ -56,37 +57,35 @@ class ProductsService(QObject):
                 LEFT JOIN periods ON prices.id_period = periods.id
             WHERE prices.id_product = {product_id};
         '''
-
         return self._read_query_fetchall( query )
 
-    def get_id_by_code(self, code: str):
+    def _get_id_by_code(self, code: str) -> int:
         query = f''' SELECT id FROM products WHERE code='{code}'; '''
         return self._read_query_fetchone(query)
 
-    def get_periods(self):
+    def get_periods(self) -> List[ Tuple[int, str, int] ]:
         query = f''' SELECT * FROM periods; '''
         return self._read_query_fetchall(query)
 
     # Update
-    def update(self, id_product:int, code:str, name:str, prices_info: List[Tuple[int, str]]):
+    def update(self, id_product:int, code:str, name:str, prices_info: List[Tuple[int, int]]) -> None:
         query = f''' 
             UPDATE products SET
                 code = '{code}',
                 name = '{name}'
             WHERE id = {id_product}
         '''
-        # print(query)
         self._changes_query(query)
 
         # Update product prices by period
         for data in prices_info:
             # [0]->period_id, [1]->price
             # (price should be already type int. Temporary parsing)
-            self.update_prices( id_product, data[0], int(data[1]) )
+            self.__update_prices( id_product, data[0], int(data[1]) )
 
         self.data_changed.emit()
         
-    def update_prices(self, id_product:int, id_period:int, price:int):
+    def _update_prices(self, id_product:int, id_period:int, price:int) -> None:
         query = f'''
             UPDATE prices SET
                 price = {price}
@@ -94,17 +93,16 @@ class ProductsService(QObject):
                 id_period={id_period} AND
                 id_product={id_product};
         '''
-        # print(query)
         self._changes_query(query)
 
     # Delete
-    def delete(self, product_id: int):
+    def delete(self, product_id: int) -> None:
         query = f'''DELETE FROM products WHERE id={product_id};'''
         self._changes_query(query)
         self.data_changed.emit()
 
     # Formatting
-    def format_data(self, data ):
+    def _format_data(self, data) -> List[Product]:
         formatted = []
 
         for product in data:

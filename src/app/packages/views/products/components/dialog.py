@@ -9,17 +9,19 @@ class Dialog(QDialog):
     root_layout = QGridLayout()
     price_inputs_collection: List[ Tuple[int, int] ] = []
 
-    def __init__(self, service: ProductsService):
-        super(Dialog, self).__init__()
-        self.minimum_width = 350 
-        self.minimum_height = 250 
+    def __init__(self, parent, service:ProductsService):
+        super(Dialog, self).__init__(parent)
 
         self.service = service
-        self.service.data_changed.connect(self.on_data_changed)
+        self.service.data_changed.connect(self.on_data_changed) 
 
         self.setup_ui()
+        # self.set_window_flags(Qt.FramelessWindowHint)
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
+        self.minimum_width = 450 
+        self.minimum_height = 300
+
         # Products data
         self.title = self._create_title("Productos", self.last_row())
         self.inp_code = self._create_input("Código", "Código del producto", self.last_row())
@@ -30,61 +32,31 @@ class Dialog(QDialog):
         self.setup_price_inputs()
 
         # Button
-        self.submit = QPushButton("Submit")
+        self.submit = QPushButton("Guardar")
         self.root_layout.add_widget(self.submit, self.last_row(), 1, self.last_row(), 2)
 
         self.set_layout(self.root_layout)
 
-    def setup_price_inputs(self):
-        periods = self.service.get_periods()
-        for period in periods:
+    def setup_price_inputs(self) -> None:
+        for period in self.service.get_periods():
             # id, name, valid_for_days -> Period format
             input = self._create_input( period[1], "Precio en Gs.", self.last_row() )
 
             # save the period id and the input reference
             self.price_inputs_collection.append( (period[0], input) )
 
-    def last_row(self):
+    def last_row(self) -> int:
         return self.root_layout.row_count()
 
-    # 
-    def create(self):
-        self.reconnect_submit(self.on_create_submit)
+    # Open mode
+
+    def create(self) -> None:
+        self._reconnect_submit(self.on_create_submit)
         self.clear()
         self.show()
 
-    def clear(self):
-        for inp in self.price_inputs_collection: inp[1].clear()
-        self.inp_code.clear()
-        self.inp_name.clear()
-
-    def reconnect_submit(self, connect_to: Callable, parameter=None):
-        try:     self.submit.clicked.disconnect()
-        except   RuntimeError: pass
-        finally: 
-            if parameter:
-                self.submit.clicked.connect( lambda: connect_to(parameter) )
-            else: self.submit.clicked.connect(connect_to)
-            
-    # Signal Slots
-    @Slot()
-    def on_create_submit(self):
-        prices = []
-        for inp in self.price_inputs_collection:
-            prices.append( (inp[0], inp[1].text) )
-        self.service.create( self.inp_code.text, self.inp_name.text, prices )
-    
-    @Slot()
-    def on_edit_submit(self, product_id):
-        prices = []
-        for inp in self.price_inputs_collection:
-            prices.append( (inp[0], inp[1].text) )
-        self.service.update( product_id, self.inp_code.text, self.inp_name.text, prices )
-
     @Slot(int)
-    def edit(self, product_id:int):
-        
-
+    def edit(self, product_id:int) -> None:
         product = self.service.get_product_by_id(product_id)
         self.inp_code.text = product.code
         self.inp_name.text = product.name
@@ -95,20 +67,52 @@ class Dialog(QDialog):
             # price_inputs_collection[index][1] -> input reference
             self.price_inputs_collection[index][1].text = str(price[1])
         
-        self.reconnect_submit(self.on_edit_submit, product.id)
+        self._reconnect_submit(self.on_edit_submit, product.id)
         self.show()
+            
+    # Signal Slots
+    @Slot()
+    def on_create_submit(self) -> None:
+        prices: List[ Tuple[int, int] ] = []
+        
+        for inp in self.price_inputs_collection:
+            prices.append( (inp[0], int(inp[1].text)) )
+        self.service.create( self.inp_code.text, self.inp_name.text, prices )
+    
+    @Slot()
+    def on_edit_submit(self, product_id) -> None:
+        prices: List[ Tuple[int, int] ] = []
+
+        for inp in self.price_inputs_collection:
+            prices.append( (inp[0], int(inp[1].text)) )
+        self.service.update( product_id, self.inp_code.text, self.inp_name.text, prices )
 
     @Slot()
-    def on_data_changed(self):
+    def on_data_changed(self) -> None:
         self.hide()
 
+    # Utils
+
+    def clear(self) -> None:
+        for inp in self.price_inputs_collection: inp[1].clear()
+        self.inp_code.clear()
+        self.inp_name.clear()
+
+    def _reconnect_submit(self, connect_to: Callable, parameter=None) -> None:
+        try:     self.submit.clicked.disconnect()
+        except   RuntimeError: pass
+        finally: 
+            if parameter:
+                self.submit.clicked.connect( lambda: connect_to(parameter) )
+            else: self.submit.clicked.connect(connect_to)
+
     # Widgets Creations
-    def _create_title(self, text:str, row:int):
+    def _create_title(self, text:str, row:int) -> QLabel:
         title = QLabel(text, alignment=Qt.AlignCenter, object_name="dialog-title")
         self.root_layout.add_widget(title, row, 1, row, 2)
         return title
 
-    def _create_input(self, title:str, placeholder:str, row:int):
+    def _create_input(self, title:str, placeholder:str, row:int) -> QLineEdit:
         label = QLabel(title)
         line_edit = QLineEdit(placeholder_text=placeholder)
 
