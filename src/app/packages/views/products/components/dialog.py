@@ -12,8 +12,8 @@ class Dialog(QDialog):
     def __init__(self, parent, service:ProductsService):
         super(Dialog, self).__init__(parent)
 
-        self.service = service
-        self.service.data_changed.connect(self.on_data_changed) 
+        self.products_service = service
+        self.products_service.data_changed.connect(self.on_data_changed) 
 
         self.setup_ui()
         # self.set_window_flags(Qt.FramelessWindowHint)
@@ -38,7 +38,7 @@ class Dialog(QDialog):
         self.set_layout(self.root_layout)
 
     def setup_price_inputs(self) -> None:
-        for period in self.service.get_periods():
+        for period in self.products_service.get_periods():
             # id, name, valid_for_days -> Period format
             input = self._create_input( period[1], "Precio en Gs.", self.last_row() )
 
@@ -57,11 +57,11 @@ class Dialog(QDialog):
 
     @Slot(int)
     def edit(self, product_id:int) -> None:
-        product = self.service.get_product_by_id(product_id)
+        product = self.products_service.get_by_id(product_id)
         self.inp_code.text = product.code
         self.inp_name.text = product.name
 
-        prices = self.service.get_product_prices(product_id)
+        prices = self.products_service.get_prices(product_id)
         for index, price in enumerate(prices):
             # price[1] -> value
             # price_inputs_collection[index][1] -> input reference
@@ -77,7 +77,7 @@ class Dialog(QDialog):
         
         for inp in self.price_inputs_collection:
             prices.append( (inp[0], int(inp[1].text)) )
-        self.service.create( self.inp_code.text, self.inp_name.text, prices )
+        self.products_service.create( self.inp_code.text, self.inp_name.text, prices )
     
     @Slot()
     def on_edit_submit(self, product_id) -> None:
@@ -85,7 +85,7 @@ class Dialog(QDialog):
 
         for inp in self.price_inputs_collection:
             prices.append( (inp[0], int(inp[1].text)) )
-        self.service.update( product_id, self.inp_code.text, self.inp_name.text, prices )
+        self.products_service.update( product_id, self.inp_code.text, self.inp_name.text, prices )
 
     @Slot()
     def on_data_changed(self) -> None:

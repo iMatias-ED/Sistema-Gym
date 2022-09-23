@@ -9,11 +9,11 @@ class Sidebar(QFrame):
 
     def __init__(self, service):
         super(Sidebar, self).__init__(object_name="sidebar")
-        self.service = service
+        self.products_service = service
         self.setup_ui()
 
     def setup_ui(self) -> None:
-        for index, label in enumerate(self.service.header_labels):
+        for index, label in enumerate(self.products_service.header_labels):
             self.create_checkbox(label, index)
         self.checkbox_layout.add_stretch()
 

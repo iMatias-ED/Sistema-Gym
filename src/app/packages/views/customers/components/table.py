@@ -1,61 +1,72 @@
+from typing import Callable, Dict, List, Tuple
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
+from ..service import CustomersService
+
 class Table(QTableWidget):
-    #Both emits the row index
+    #Both emits the product_id
     edit = Signal(int)
     delete = Signal(int)
-    
-    test_data = [
-        ("Matias Acosta", "7.478.938-4", "matdj31@gmail.com", "0994633973"),
-        ("Belén Franco", "1.111.111-1", "belen@gmail.com", "0972771482")
-    ]
 
-    def __init__(self, service):
+    def __init__(self, service: CustomersService):
         super(Table, self).__init__()
-        self.service = service
-        self.example()
+        self.customers_service = service
+        self.customers_service.data_changed.connect( self.refresh )
 
-    def example(self):
-        self.row_count = len(self.test_data)
-        self.column_count = len(self.service.header_labels)
-  
-        self.load_data()
-        self.set_horizontal_header_labels(self.service.header_labels)
+        self.config_table()
+
+    def config_table(self) -> None:
+        self.column_count = len(self.customers_service.header_labels)
+        self.set_horizontal_header_labels(self.customers_service.header_labels)
 
         self.horizontal_header().stretch_last_section = True
-        self.horizontal_header().set_section_resize_mode(
-            QHeaderView.Stretch)
-        
-    def load_data(self):
-        def create_edit_button(row: int):
-            button = QPushButton("E")
-            button.clicked.connect( lambda: self.edit_clicked(row) )
-            return button
-            
-        def create_delete_button(row: int):
-            button = QPushButton("X")
-            button.clicked.connect( lambda: self.delete_clicked(row) )
-            return button
-        
-        for row, data in enumerate(self.test_data):
-            self.set_cell_widget(row, 0, create_delete_button(row))
-            self.set_cell_widget(row, 1, create_edit_button(row))
+        self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
 
-            for column, item in enumerate(data):
-                col = column+2
-                self.set_item(row, col, QTableWidgetItem(item))
+        self.load_data()
+        
+    def load_data(self) -> None:
+        self.customers = self.customers_service.get_all()
+        print('customers', self.customers)
+        self.row_count = len(self.customers)
 
-    def edit_clicked(self, row:int):
-        self.edit.emit(row)
+        def create_button(text:str, customer_id: int, on_clicked: Callable)  -> QPushButton:
+            button = QPushButton(text)
+            button.clicked.connect( lambda: on_clicked(customer_id) )
+            return button
+
+        for row, customer in enumerate(self.customers):
+            self.set_cell_widget(row, 0, create_button( "X", customer.id, self.delete_clicked ))
+            self.set_cell_widget(row, 1, create_button( "E", customer.id, self.edit_clicked))
+
+            self.set_item(row, 2, QTableWidgetItem(customer.full_name))
+            self.set_item(row, 3, QTableWidgetItem(customer.ci))
+            self.set_item(row, 4, QTableWidgetItem(customer.ruc))
+            self.set_item(row, 5, QTableWidgetItem(customer.invoice_to))
+            self.set_item(row, 6, QTableWidgetItem(customer.phone))
+            self.set_item(row, 7, QTableWidgetItem(customer.email))
+            self.set_item(row, 8, QTableWidgetItem(customer.genre))
+            self.set_item(row, 9, QTableWidgetItem(str(customer.access_until_date)))
+
+    def refresh(self)  -> None:
+        self.clear()
+        self.config_table()
+
+    def edit_clicked(self, customer_id:int) -> None:
+        self.edit.emit(customer_id)
     
-    def delete_clicked(self, row:int):
-        self.delete.emit(row)
+    def delete_clicked(self, customer_id:int) -> None:
+        self.delete.emit(customer_id)
+        self.customers_service.delete(customer_id)
 
     @Slot(int, bool)
-    def on_filter(self, index, state):
+    def on_filter(self, index, state) -> None:
         if state: 
             self.hide_column(index)
             return
         self.show_column(index)
+
+    @Slot()
+    def _on_data_changed(self) -> None:
+        self.refresh()
