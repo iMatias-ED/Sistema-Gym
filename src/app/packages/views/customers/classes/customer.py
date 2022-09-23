@@ -26,9 +26,5 @@ class Customer:
 
         self.access_until_date = customer["access_until_date"]
 
-    def _to_timestamp(self, date:str):
-        # Access until 11:59 p.m
-        print('date', type(date) == int)
-        return datetime.strptime(date, "%d/%m/%Y").timestamp() + 86400 - 1
         
 

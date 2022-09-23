@@ -28,7 +28,6 @@ class Table(QTableWidget):
         
     def load_data(self) -> None:
         self.customers = self.customers_service.get_all()
-        print('customers', self.customers)
         self.row_count = len(self.customers)
 
         def create_button(text:str, customer_id: int, on_clicked: Callable)  -> QPushButton:
@@ -41,7 +40,7 @@ class Table(QTableWidget):
             self.set_cell_widget(row, 1, create_button( "E", customer.id, self.edit_clicked))
 
             self.set_item(row, 2, QTableWidgetItem(customer.full_name))
-            self.set_item(row, 3, QTableWidgetItem(customer.ci))
+            self.set_item(row, 3, QTableWidgetItem(str(customer.ci)))
             self.set_item(row, 4, QTableWidgetItem(customer.ruc))
             self.set_item(row, 5, QTableWidgetItem(customer.invoice_to))
             self.set_item(row, 6, QTableWidgetItem(customer.phone))

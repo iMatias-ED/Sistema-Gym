@@ -1,4 +1,4 @@
-from typing import Callable, Tuple, List
+from typing import Callable, Dict, Tuple, List
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import QColor
@@ -56,10 +56,12 @@ class Dialog(QDialog):
         customer = self.customers_service.get_by_id(customer_id)
 
         for inp in self.inputs_collection:
-            value = getattr(customer, inp.object_name)
+            value = str(getattr(customer, inp.object_name))
 
             if type(inp) == QDateTimeEdit: inp.set_date( value )
-            else: inp.text = value
+            else:  inp.text = value
+
+        self.inp_genre.current_index = self.inp_genre.find_text( customer.genre )
 
         self._reconnect_submit(self.on_edit_submit, customer.id)
         self.show()
@@ -67,23 +69,11 @@ class Dialog(QDialog):
     # Signal Slots
     @Slot()
     def on_create_submit(self) -> None:
-        data = {}
-
-        for inp in self.inputs_collection:
-            data[inp.object_name] = inp.text;
-
-        # Bug when comboBox is added to a list. Loses its value
-        # So we can't add it to self.inputs_collection
-        data[self.inp_genre.object_name] = self.inp_genre.current_text;
-        self.customers_service.create( Customer(data) )
+        self.customers_service.create( Customer(self._collect_data()) )
     
     @Slot()
     def on_edit_submit(self, customer_id:int) -> None:
-        prices: List[ Tuple[int, int] ] = []
-
-        for inp in self.price_inputs_collection:
-            prices.append( (inp[0], int(inp[1].text)) )
-        self.customers_service.update( customer_id, self.inp_code.text, self.inp_name.text, prices )
+        self.customers_service.update( Customer(self._collect_data(customer_id)) )
 
     @Slot()
     def on_data_changed(self) -> None:
@@ -105,7 +95,7 @@ class Dialog(QDialog):
 
         return line_edit
 
-    def _create_combo_box(self, title:str, values: List[str], row:int, obj_name:str = "") -> QLineEdit:
+    def _create_combo_box(self, title:str, values: List[str], row:int, obj_name:str = "") -> QComboBox:
         label = QLabel(title)
         combo_box = QComboBox(object_name = obj_name)
         # self.inputs_collection.append(combo_box)
@@ -117,7 +107,6 @@ class Dialog(QDialog):
         
         self.root_layout.add_widget(label, row, 1)
         self.root_layout.add_widget(combo_box, row, 2)
-
 
         return combo_box
 
@@ -136,6 +125,18 @@ class Dialog(QDialog):
     # Utils
     def clear(self) -> None:
         for inp in self.inputs_collection: inp.clear()
+
+    def _collect_data(self, id: int=None) -> Dict:
+        data = {}
+        for inp in self.inputs_collection:
+            data[inp.object_name] = inp.text;
+
+        # Bug when comboBox is added to a list. Loses its value
+        # So we can't add it to self.inputs_collection
+        data[self.inp_genre.object_name] = self.inp_genre.current_text;
+
+        if id: data["id"] = id
+        return data
 
     def _reconnect_submit(self, connect_to: Callable, parameter=None) -> None:
         try:     self.submit.clicked.disconnect()

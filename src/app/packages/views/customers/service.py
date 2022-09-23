@@ -36,7 +36,7 @@ class CustomersService(QObject):
             email,
             genre,
             invoice_to,
-            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch')) as access_until_date
+            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
         FROM {self.TABLE} '''
             # DATETIME(access_until_date, 'unixepoch', 'localtime') as access_until_date
         return self._format_data(self._read_query_fetchall(query))
@@ -56,22 +56,26 @@ class CustomersService(QObject):
         return Customer(self._read_query_fetchone(query))
 
     # Update
-    def update(self, id_product:int, code:str, name:str, prices_info: List[Tuple[int, int]]) -> None:
+    def update(self, c:Customer ) -> None:
         query = f''' 
             UPDATE {self.TABLE} SET
-                code = '{code}',
-                name = '{name}'
-            WHERE id = {id_product}
+                ci                  =  {c.ci},
+                ruc                 = '{c.ruc}',
+                phone               = '{c.phone}',
+                email               = '{c.email}',
+                genre               = '{c.genre}',
+                full_name           = '{c.full_name}',
+                invoice_to          = '{c.invoice_to}',
+                access_until_date   =  {self._to_timestamp(c.access_until_date)}
+            WHERE id = {c.id};
         '''
-        # self._changes_query(query)
-        print(query)
+        self._changes_query(query)
         self.data_changed.emit()
 
     # Delete
-    def delete(self, product_id: int) -> None:
-        query = f'''DELETE FROM {self.TABLE} WHERE id={product_id};'''
-        # self._changes_query(query)
-        print(query)
+    def delete(self, id: int) -> None:
+        query = f'''DELETE FROM {self.TABLE} WHERE id={id};'''
+        self._changes_query(query)
         self.data_changed.emit()
 
     # Formatting
@@ -85,7 +89,6 @@ class CustomersService(QObject):
 
     def _to_timestamp(self, date:str):
         # Access until 11:59 p.m
-        print('date', type(date) == int)
         return datetime.strptime(date, "%d/%m/%Y").timestamp() + 86400 - 1
 
     # Execute Queries
