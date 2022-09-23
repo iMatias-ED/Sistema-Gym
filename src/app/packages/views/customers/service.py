@@ -51,8 +51,22 @@ class CustomersService(QObject):
             email,
             genre,
             invoice_to,
-            DATETIME(access_until_date, 'unixepoch', 'localtime') as access_until_date
+            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
         FROM {self.TABLE} WHERE id={id}; '''
+        return Customer(self._read_query_fetchone(query))
+
+    def get_by_ci_number( self, ci:int ) -> Customer:
+        query = f''' SELECT 
+            id,
+            ci,
+            ruc,
+            full_name,
+            phone,
+            email,
+            genre,
+            invoice_to,
+            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
+        FROM {self.TABLE} WHERE ci={ci}; '''
         return Customer(self._read_query_fetchone(query))
 
     # Update

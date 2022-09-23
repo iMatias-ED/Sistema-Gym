@@ -2,18 +2,31 @@ QLabel {
     font-size: 50px;
 }
 
-
+QLineEdit {
+    height: 45px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
 
 /* Report View */
 #name {
     color: #f3570c;
-}
-#status {
-    color: greenyellow;
 }
 #last-pay {
     color: #fcfcfc;
 }
 #registered-until {
     color: #fcfcfc;
+}
+
+#status-ok {
+    color: greenyellow;
+}
+#status-expired {
+    color: #f3570c;
+}
+
+#go_back {
+    background-color: #f3570c;;
+    font-size: 15px;
 }
