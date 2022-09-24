@@ -11,7 +11,7 @@ from packages.layout.content_box import ContentBox
 
 # Views
 from packages.views.assist_control.assist_control import AssistControl
-from packages.views.cash_flow.cash_flow import CashFlow
+from packages.views.movements.movements import Movements
 from packages.views.control_panel.control_panel import ControlPanel
 from packages.views.customers.customers import Customers
 from packages.views.products.products import Products
@@ -50,20 +50,20 @@ class Main(QMainWindow):
 
     def __create_views(self): 
         self.views['assist_control'] = AssistControl()
-        self.views['cash_flow']      = CashFlow()
+        self.views['movements']      = Movements()
         self.views['control_panel']  = ControlPanel()
         self.views['customers']      = Customers()
         self.views['products']       = Products()
 
     def __add_views_to_content_box(self):
-        self.content.add_content(self.views['cash_flow'], 0)
+        self.content.add_content(self.views['movements'], 0)
         self.content.add_content(self.views['customers'], 1)
         self.content.add_content(self.views['products'], 2)
         self.content.add_content(self.views['assist_control'], 3)
         self.content.add_content(self.views['control_panel'], 4)
 
         # temporal
-        self.content.show_index(3)
+        self.content.show_index(0)
 
 # Execute
 import sys
