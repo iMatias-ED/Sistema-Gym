@@ -1,19 +1,39 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
+
+from .price import Price
 
 class Product:
     id: int
     code: str
     name: str
     description: str
-    prices: Dict[ str, int ] = {}
+    prices: List[Price]
 
-    def __init__(self, product: Tuple[ int, str, str, str ]):
-        self.id = product[0]
-        self.code = product[1]
-        self.name = product[2]
-        self.description = product[3]
+    def __init__(self, product: Dict[ str, str ]):
+        self.code = product["code"]
+        self.name = product["name"]
 
-    def save_prices(self, prices: List[Tuple[str, int]]):
-        for price in prices:
-            #[0] -> Period; [1] -> value
-            self.prices[ price[0] ] = price[1]
+        if "description" in product:
+            self.description = product["description"]
+
+        if "id" in product:    
+            self.id = product["id"]
+
+        self.prices = []
+
+    def get_prices_as_dict():
+        pass
+
+    def save_price(self, data: Price):   
+        self.prices.append( data )
+
+    def __str__(self):
+        str_prices = ""
+        for price in self.prices:
+            str_prices += f"{price.name}: {price.price}\n"
+
+        return f'''
+            code: {self.code}\n
+            name: {self.name}\n
+            prices: {str_prices}
+        '''

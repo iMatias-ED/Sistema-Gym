@@ -97,6 +97,8 @@ class CustomersService(QObject):
         formatted = []
 
         for customer in data:
+            # print("customer", customer)
+            # print("customer", dict(customer))
             formatted.append( Customer( dict(customer) ) ) 
 
         return formatted

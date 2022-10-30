@@ -1,13 +1,16 @@
-from typing import Callable, Tuple, List
+from typing import Callable, Dict, Tuple, List
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
 from ..service import ProductsService
+from ..classes.product import Product
+from ..classes.price import Price
 
 class Dialog(QDialog):
     root_layout = QGridLayout()
-    price_inputs_collection: List[ Tuple[int, int] ] = []
+    inputs_collection: List[ QLineEdit ] = []
+    price_inputs_collection: List[ QLineEdit ] = []
 
     def __init__(self, parent, service:ProductsService):
         super(Dialog, self).__init__(parent)
@@ -24,8 +27,8 @@ class Dialog(QDialog):
 
         # Products data
         self.title = self._create_title("Productos", self.last_row())
-        self.inp_code = self._create_input("Código", "Código del producto", self.last_row())
-        self.inp_name = self._create_input("Nombre", "Nombre del producto", self.last_row())
+        self.inp_code = self._create_input("Código", "Código del producto", self.last_row(), "code")
+        self.inp_name = self._create_input("Nombre", "Nombre del producto", self.last_row(), "name")
         
         # Prices
         self._create_title("Precios por periodos", self.last_row())
@@ -39,11 +42,8 @@ class Dialog(QDialog):
 
     def setup_price_inputs(self) -> None:
         for period in self.products_service.get_periods():
-            # id, name, valid_for_days -> Period format
-            input = self._create_input( period[1], "Precio en Gs.", self.last_row() )
-
-            # save the period id and the input reference
-            self.price_inputs_collection.append( (period[0], input) )
+            line_edit = self._create_input( period.name, "Precio en Gs.", self.last_row(), period.name )
+            self.price_inputs_collection.append(line_edit)
 
     def last_row(self) -> int:
         return self.root_layout.row_count()
@@ -63,38 +63,43 @@ class Dialog(QDialog):
 
         prices = self.products_service.get_prices(product_id)
         for index, price in enumerate(prices):
-            # price[1] -> value
-            # price_inputs_collection[index][1] -> input reference
-            self.price_inputs_collection[index][1].text = str(price[1])
+            self.price_inputs_collection[index].text = str(price.price)
         
         self._reconnect_submit(self.on_edit_submit, product.id)
         self.show()
             
     # Signal Slots
     @Slot()
-    def on_create_submit(self) -> None:
-        prices: List[ Tuple[int, int] ] = []
-        
-        for inp in self.price_inputs_collection:
-            prices.append( (inp[0], int(inp[1].text)) )
-        self.products_service.create( self.inp_code.text, self.inp_name.text, prices )
+    def on_create_submit(self) -> None:        
+        self.products_service.create( self._collect_data() )
     
     @Slot()
     def on_edit_submit(self, product_id) -> None:
-        prices: List[ Tuple[int, int] ] = []
-
-        for inp in self.price_inputs_collection:
-            prices.append( (inp[0], int(inp[1].text)) )
-        self.products_service.update( product_id, self.inp_code.text, self.inp_name.text, prices )
+        self.products_service.update( self._collect_data(product_id) )
 
     @Slot()
     def on_data_changed(self) -> None:
         self.hide()
 
     # Utils
+    def _collect_data(self, id: int=None) -> Product:
+        data: dict[str, str] = {}
+        for inp in self.inputs_collection:
+            data[inp.object_name] = inp.text;
+        
+        if id: data["id"] = id
+        product = Product(data)
+
+        for inp in self.price_inputs_collection:
+            price_data = {
+                "name": inp.object_name,
+                "price": inp.text
+            }
+            product.save_price(Price(price_data))
+        return product
 
     def clear(self) -> None:
-        for inp in self.price_inputs_collection: inp[1].clear()
+        for inp in self.inputs_collection: inp.clear()
         self.inp_code.clear()
         self.inp_name.clear()
 
@@ -112,9 +117,11 @@ class Dialog(QDialog):
         self.root_layout.add_widget(title, row, 1, row, 2)
         return title
 
-    def _create_input(self, title:str, placeholder:str, row:int) -> QLineEdit:
+    def _create_input(self, title:str, placeholder:str, row:int, object_name: str = "") -> QLineEdit:
         label = QLabel(title)
-        line_edit = QLineEdit(placeholder_text=placeholder)
+        line_edit = QLineEdit( placeholder_text=placeholder, object_name=str(object_name))
+
+        self.inputs_collection.append(line_edit)
 
         self.root_layout.add_widget(label, row, 1)
         self.root_layout.add_widget(line_edit, row, 2)

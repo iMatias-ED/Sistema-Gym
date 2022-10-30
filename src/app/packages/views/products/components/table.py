@@ -44,10 +44,14 @@ class Table(QTableWidget):
 
             # Prices
             prices = self.products_service.get_prices( product.id )
-            for column, price in enumerate(prices):
-                #[0] -> period; [1] -> price
-                column = column + 4
-                self.set_item(row, column, QTableWidgetItem( str(price[1]) ))
+            for price in product.prices:
+                pass
+                # print(product.name, price.name, price.price)
+
+            # If the above code works correctly, delete the below code
+            for price in prices:
+                column = self.products_service.header_labels.index(price.name)
+                self.set_item(row, column, QTableWidgetItem( str(price.price) ))
 
     def refresh(self)  -> None:
         self.clear()
