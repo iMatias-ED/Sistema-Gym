@@ -21,8 +21,13 @@ class Product:
 
         self.prices = []
 
-    def get_prices_as_dict():
-        pass
+    def get_prices_as_dict(self):
+        return { p.name: p.price for p in self.prices }
+
+    def get_price_by_name(self, name: str) -> Price:
+        for price in self.prices:
+            if name == price.name:
+                return price
 
     def save_price(self, data: Price):   
         self.prices.append( data )

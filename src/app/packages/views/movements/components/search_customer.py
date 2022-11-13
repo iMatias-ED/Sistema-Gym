@@ -58,7 +58,7 @@ class SearchCustomerDialog(QDialog):
 
     @Slot(str)
     def update_table_data(self, text:str):
-        self.data = self.movements_service.search_user(text)
+        self.data = self.movements_service.search_users(text)
         self.table.row_count = len(self.data)
 
         for row, customer in enumerate(self.data):

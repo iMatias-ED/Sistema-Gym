@@ -1,15 +1,12 @@
-import sqlite3
+from typing import List
 from datetime import datetime
-from typing import List, Tuple
 
-from PySide6.QtCore import QObject, Signal
+from ...shared.service import Service
 from .classes.customer import Customer
 
-# Inherits from QObject to use Signals
-class CustomersService(QObject):
+class CustomersService(Service):
     TABLE = "customers"
 
-    data_changed = Signal()
     header_labels = ["Eliminar", "Editar", "Nombre", "CI", "RUC", "Razón Social", "Teléfono", "Email", "Género", "Fin de membresía"]
 
     # Create
@@ -39,7 +36,7 @@ class CustomersService(QObject):
             strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
         FROM {self.TABLE} '''
             # DATETIME(access_until_date, 'unixepoch', 'localtime') as access_until_date
-        return self._format_data(self._read_query_fetchall(query))
+        return self._format_customers(self._read_query_fetchall(query))
 
     def get_by_id( self, id:int ) -> Customer:
         query = f''' SELECT 
@@ -92,50 +89,22 @@ class CustomersService(QObject):
         self._changes_query(query)
         self.data_changed.emit()
 
+    # Search
+    def search(self, name: str):
+        query = f''' 
+            SELECT * FROM customers
+            WHERE full_name LIKE '%{name}%'
+        '''
+        return self._format_customers(self._read_query_fetchall(query))
+
     # Formatting
-    def _format_data(self, data: List) -> List[Customer]:
+    def _format_customers(self, data: List) -> List[Customer]:
         formatted = []
 
         for customer in data:
-            # print("customer", customer)
-            # print("customer", dict(customer))
             formatted.append( Customer( dict(customer) ) ) 
-
         return formatted
 
     def _to_timestamp(self, date:str):
         # Access until 11:59 p.m
         return datetime.strptime(date, "%d/%m/%Y").timestamp() + 86400 - 1
-
-    # Execute Queries
-    def _changes_query(self, query: str):
-        conn = sqlite3.connect("src/app/db/test.db")
-        
-        cursor = conn.cursor()
-        cursor.execute(query)
-
-        conn.commit()
-        conn.close()
-
-    def _read_query_fetchall(self, query: str):
-        conn = sqlite3.connect("src/app/db/test.db")
-        conn.row_factory = sqlite3.Row
-
-        cursor = conn.cursor()
-        cursor.execute(query)
-        result = cursor.fetchall()
-        
-        conn.close()
-        return result
-
-    def _read_query_fetchone(self, query: str):
-        conn = sqlite3.connect("src/app/db/test.db")
-        conn.row_factory = sqlite3.Row
-        
-        cursor = conn.cursor()
-        data = cursor.execute(query)
-        result = data.fetchone()
-
-        conn.close()
-        return dict(result)
-

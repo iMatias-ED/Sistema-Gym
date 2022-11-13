@@ -10,8 +10,8 @@ from .service import MovementsService
 # Componentes
 from .components.table import Table
 from .components.sidebar import Sidebar
-from .components.dialog import Dialog
 
+from .components.search_product import SearchProductDialog
 from .components.search_customer import SearchCustomerDialog
 
 class Movements(ContentView):
@@ -23,15 +23,14 @@ class Movements(ContentView):
         self.set_styles(__file__)
 
         self.table = Table(self.service)
-        self.dialog = Dialog(self, self.service)
         self.sidebar = Sidebar(self.service)
 
         # Search dialogs
+        self.search_product = SearchProductDialog(self, self.service)
         self.search_customer = SearchCustomerDialog(self, self.service)
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)
-        self.root_layout.add_child_widget(self.dialog)
 
         self.second_layout.add_widget( self.setup_title_frame(), 10 )
         self.second_layout.add_widget( self.table, 90 )
@@ -40,12 +39,12 @@ class Movements(ContentView):
         self.__events_manager()
 
     def __events_manager(self) -> None:
-        self.bt_search_product.clicked.connect( self.dialog.create )
-        
-        self.table.edit.connect( self.dialog.edit )
-        
+        self.bt_search_product.clicked.connect( self.search_product.search )
+                
         self.search_customer.customer_changed.connect( self.sidebar.on_customer_changed )
         self.sidebar.bt_search_customer.clicked.connect( self.search_customer.search )
+
+        self.search_product.product_selected.connect( self.table.on_product_select )
 
     def setup_title_frame(self) -> None:
         self.title = QLabel("Movimientos", alignment=Qt.AlignCenter, object_name="view-title")

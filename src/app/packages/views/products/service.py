@@ -1,24 +1,23 @@
-import sqlite3
+# Services
+from ...shared.service import Service
 
-from PySide6.QtCore import QObject, Signal
-
+# Classes
 from .classes.price import Price
-
 from .classes.period import Period
 from .classes.product import Product
 
-from typing import List, Tuple
+from typing import List
 
-# Inherits from QObject only to use Signals
-class ProductsService(QObject):
-    data_changed = Signal()
+class ProductsService(Service):
     header_labels = ["Eliminar", "Editar", "Código", "Nombre"]
 
     def __init__(self):
         super(ProductsService, self).__init__()
-        # Add price periods to header
+
+        # Add price periods to header labels
         for period in self.get_periods():
-            self.header_labels.append( period.name )
+            if period.name not in self.header_labels:
+                self.header_labels.append( period.name )
 
     # Create
     def create(self, data: Product) -> None:
@@ -76,7 +75,6 @@ class ProductsService(QObject):
         query = f'''SELECT id FROM periods WHERE name="{name}"'''
         return self._read_query_fetchone(query)["id"]
 
-
     # Update
     def update(self, data: Product) -> None:
         query = f''' 
@@ -109,6 +107,14 @@ class ProductsService(QObject):
         self._changes_query(query)
         self.data_changed.emit()
 
+    # Search
+    def search(self, name: str):
+        query = f''' 
+            SELECT * FROM products
+            WHERE name LIKE '%{name}%'
+        '''
+        return self._format_products(self._read_query_fetchall(query))
+
     # Formatting
     # TODO: Use list comprehensions 
     def _format_products(self, data) -> List[Product]:
@@ -129,43 +135,10 @@ class ProductsService(QObject):
             formatted.append( Period( dict(period) ) ) 
         return formatted
 
-    def _format_prices(self, data) -> List[Period]:
+    def _format_prices(self, data) -> List[Price]:
         formatted = []
 
         for price in data:
             formatted.append( Price( dict(price) ) ) 
         return formatted
-
-    # Execute Queries
-    def _changes_query(self, query: str):
-        conn = sqlite3.connect("src/app/db/test.db")
-        
-        cursor = conn.cursor()
-        cursor.execute(query)
-
-        conn.commit()
-        conn.close()
-
-    def _read_query_fetchall(self, query: str):
-        conn = sqlite3.connect("src/app/db/test.db")
-        conn.row_factory = sqlite3.Row
-        
-        cursor = conn.cursor()
-        data = cursor.execute(query)
-        result = data.fetchall()
-
-        conn.close()
-        return result 
-
-    def _read_query_fetchone(self, query: str):
-        conn = sqlite3.connect("src/app/db/test.db")
-        conn.row_factory = sqlite3.Row
-        
-        cursor = conn.cursor()
-        data = cursor.execute(query)
-        result = data.fetchone()
-
-        conn.close()
-
-        return dict(result)
 
