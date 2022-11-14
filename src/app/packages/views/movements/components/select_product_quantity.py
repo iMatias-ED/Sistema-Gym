@@ -2,14 +2,15 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QDialog, QLineEdit, QLabel, QComboBox, QPushButton, QVBoxLayout, QHBoxLayout
 from __feature__ import snake_case, true_property
 
-from ..classes.selection import Selection
+# Classes
+from ..classes.product_selection import ProductSelection
 from ...products.classes.price import Price
 from ...products.classes.product import Product
 
 class SelectProductQuantityDialog(QDialog):
     price: Price
     product: Product
-    selected = Signal(Selection)
+    selected = Signal(ProductSelection)
 
     def __init__(self, parent):
         super(SelectProductQuantityDialog, self).__init__(parent)
@@ -63,7 +64,8 @@ class SelectProductQuantityDialog(QDialog):
             self.amount.text = f"Gs. {self.total}"
 
     def on_submit(self):
-        selected = Selection(self.product, self.price, self.quantity.text, self.total)
+        selected = ProductSelection(
+            self.product, self.price, int(self.quantity.text), self.total)
 
         self.selected.emit(selected)
         self.close()

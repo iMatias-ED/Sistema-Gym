@@ -1,17 +1,20 @@
 from typing import List
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
-
 from __feature__ import snake_case, true_property
 
-from .select_product_quantity import SelectProductQuantityDialog
+# Services
 from ..service import MovementsService
+
+# Classes
+from ..classes.product_selection import ProductSelection
 from ...products.classes.product import Product
 
-from ..classes.selection import Selection
+# Components
+from .select_product_quantity import SelectProductQuantityDialog
 
 class SearchProductDialog (QDialog):
-    product_selected = Signal(Selection)
+    product_selected = Signal(ProductSelection)
 
     root_layout = QGridLayout()
     inputs_collection: List[ QLineEdit ] = []
@@ -62,8 +65,8 @@ class SearchProductDialog (QDialog):
         for row, product in enumerate(self.data):
             self.table.set_item(row, 0, QTableWidgetItem(product.name))
 
-    @Slot(Selection)
-    def on_selection_finished(self, data: Selection):
+    @Slot(ProductSelection)
+    def on_selection_finished(self, data: ProductSelection):
         self.product_selected.emit(data)
         self.close()
 

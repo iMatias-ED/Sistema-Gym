@@ -2,8 +2,11 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
+# Services
 from ..service import MovementsService
-from ..classes.customer import Customer
+
+# Classes
+from ...customers.classes.customer import Customer
 
 class Sidebar(QFrame):
     root_layout = QVBoxLayout()

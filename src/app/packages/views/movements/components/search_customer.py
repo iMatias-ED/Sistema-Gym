@@ -2,11 +2,13 @@ from typing import Callable, Dict, Tuple, List
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import QColor
-
 from __feature__ import snake_case, true_property
 
+# Services 
 from ..service import MovementsService
-from ..classes.customer import Customer
+
+# Classes
+from ...customers.classes.customer import Customer
 
 class SearchCustomerDialog(QDialog):
     customer_changed = Signal(Customer)

@@ -3,14 +3,20 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
+# Services
 from ..service import MovementsService
-from ..classes.selection import Selection
+
+# Classes
+from ..classes.product_selection import ProductSelection
+from ..classes.selected_product_info import SelectedProductInfo
 from ...products.classes.product import Product
 
 class Table(QTableWidget):
     #Both emits the product_id
     edit = Signal(int)
     delete = Signal(int)
+    
+    collection: dict[str: SelectedProductInfo] = {}
 
     def __init__(self, service: MovementsService):
         super(Table, self).__init__()
@@ -39,16 +45,32 @@ class Table(QTableWidget):
         return button
 
     @Slot(Product)
-    def on_product_select(self, data: Selection):
-        self.row_count += 1
+    def on_product_select(self, data: ProductSelection):
+        key = f'{data.product.code}::{data.price.name}'
+        
+        if key not in self.collection:
+            self.row_count += 1
+            row = self.row_count - 1
+
+            self.collection[key] = SelectedProductInfo(data, row)
+            self.insert_data(data, row)
+        else:
+            info = self.collection[key]
+            info.data.add(data.quantity)
+            self.insert_data(info.data, info.row)
+        print(self.collection[key])
+
+
+
+    def insert_data(self, data: ProductSelection, row: int = None):
         total = f"Gs. {data.total}"
         price = f"Gs. {data.price.price}"
-        
-        row = self.row_count - 1
-        self.set_cell_widget( row, 0, self.create_action_button( "X", row, self.delete_clicked ))
+
+        self.set_cell_widget( 
+            row, 0, self.create_action_button( "X", row, self.delete_clicked ))
         
         self.set_item( row , 1, QTableWidgetItem(data.product.name) )
-        self.set_item( row , 2, QTableWidgetItem(data.quantity) )
+        self.set_item( row , 2, QTableWidgetItem(str(data.quantity)) )
         self.set_item( row , 3, QTableWidgetItem(data.price.name) )
         self.set_item( row , 4, QTableWidgetItem(price) )
         self.set_item( row , 5, QTableWidgetItem(total) )
