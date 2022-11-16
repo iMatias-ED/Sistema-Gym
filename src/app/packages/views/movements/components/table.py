@@ -26,6 +26,7 @@ class Table(QTableWidget):
         self.config_table()
 
     def config_table(self) -> None:
+        self.vertical_header().visible = False
         self.column_count = len(self.movements_service.header_labels)
         self.set_horizontal_header_labels(self.movements_service.header_labels)
 
@@ -36,12 +37,13 @@ class Table(QTableWidget):
         self.clear()
         self.config_table()
 
-    def delete_clicked(self, row_index:int) -> None:
-        self.remove_row(row_index)
-
-    def create_action_button(self, text:str, product_id: int, on_clicked: Callable)  -> QPushButton:
+    def delete_clicked(self, key:str) -> None:   
+        self.hide_row(self.collection[key].row)
+        del self.collection[key]
+        
+    def create_action_button(self, text:str, param: str, on_clicked: Callable)  -> QPushButton:
         button = QPushButton(text)
-        button.clicked.connect( lambda: on_clicked(product_id) )
+        button.clicked.connect( lambda: on_clicked(param) )
         return button
 
     @Slot(Product)
@@ -53,21 +55,18 @@ class Table(QTableWidget):
             row = self.row_count - 1
 
             self.collection[key] = SelectedProductInfo(data, row)
-            self.insert_data(data, row)
+            self.insert_data(data, key, row)
         else:
             info = self.collection[key]
             info.data.add(data.quantity)
-            self.insert_data(info.data, info.row)
-        print(self.collection[key])
+            self.insert_data(info.data, key, info.row)
 
-
-
-    def insert_data(self, data: ProductSelection, row: int = None):
+    def insert_data(self, data: ProductSelection, key:str, row:int):
         total = f"Gs. {data.total}"
         price = f"Gs. {data.price.price}"
 
         self.set_cell_widget( 
-            row, 0, self.create_action_button( "X", row, self.delete_clicked ))
+            row, 0, self.create_action_button( "X", key, self.delete_clicked ))
         
         self.set_item( row , 1, QTableWidgetItem(data.product.name) )
         self.set_item( row , 2, QTableWidgetItem(str(data.quantity)) )

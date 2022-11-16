@@ -87,10 +87,13 @@ class SearchProductDialog (QDialog):
 
     def _create_table(self, row:int, obj_name:str = "") -> QTableWidget:
         header_labels: List[str] = ["Nombre del producto"]
+
         table = QTableWidget( 
             object_name=obj_name,
             column_count=len(header_labels), 
             horizontal_header_labels=header_labels )
+
+        table.vertical_header().visible = False
         table.horizontal_header().stretch_last_section = True
         table.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
 

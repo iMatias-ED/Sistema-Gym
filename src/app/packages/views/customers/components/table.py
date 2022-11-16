@@ -18,6 +18,7 @@ class Table(QTableWidget):
         self.config_table()
 
     def config_table(self) -> None:
+        self.vertical_header().visible = False
         self.column_count = len(self.customers_service.header_labels)
         self.set_horizontal_header_labels(self.customers_service.header_labels)
 
