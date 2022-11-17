@@ -17,7 +17,8 @@ class CustomersService(Service):
                     '{c.ci}', '{c.ruc}', '{c.full_name}', '{c.phone}',
                     '{c.email}', '{c.genre}', '{c.invoice_to}',
                     {self._to_timestamp(c.access_until_date)}
-                ); 
+                )
+                RETURNING id;
         '''
         self._changes_query(query)
         self.data_changed.emit()
@@ -78,7 +79,9 @@ class CustomersService(Service):
                 full_name           = '{c.full_name}',
                 invoice_to          = '{c.invoice_to}',
                 access_until_date   =  {self._to_timestamp(c.access_until_date)}
-            WHERE id = {c.id};
+            WHERE id = {c.id}
+            RETURNING id
+            ;
         '''
         self._changes_query(query)
         self.data_changed.emit()

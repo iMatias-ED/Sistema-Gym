@@ -9,8 +9,11 @@ from ..service import MovementsService
 from ...customers.classes.customer import Customer
 
 class Sidebar(QFrame):
+    summary_requested = Signal(Customer)
     root_layout = QVBoxLayout()
     info_layout = QVBoxLayout()
+
+    current_customer: Customer = None
 
     def __init__(self, service: MovementsService):
         super(Sidebar, self).__init__(object_name="sidebar")
@@ -20,7 +23,7 @@ class Sidebar(QFrame):
     def setup_ui(self) -> None:
         self.bt_search_customer = QPushButton("Nombre usuario", object_name="search-button")
         self.ci = QLabel("Número de Cédula")
-        self.bt_continue = QPushButton("Finalizar", object_name="bt-continue")
+        self.bt_continue = QPushButton("Finalizar", object_name="bt-continue", clicked=self.on_continue_clicked)
 
         self.info_layout.add_widget( self.bt_search_customer )
         self.info_layout.add_widget( self.ci )
@@ -33,8 +36,13 @@ class Sidebar(QFrame):
         
         self.set_layout(self.root_layout)
 
+    @Slot()
+    def on_continue_clicked(self):
+        self.summary_requested.emit(self.current_customer)
+
     @Slot(Customer)
     def on_customer_changed(self, c:Customer):
         self.ci.text = str(c.ci)
+        self.current_customer = c
         self.bt_search_customer.text = c.full_name
 

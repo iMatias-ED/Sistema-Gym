@@ -11,6 +11,7 @@ from .service import MovementsService
 from .components.table import Table
 from .components.sidebar import Sidebar
 
+from.components.summary_dialog import SummaryDialog
 from .components.search_product import SearchProductDialog
 from .components.search_customer import SearchCustomerDialog
 
@@ -25,7 +26,8 @@ class Movements(ContentView):
         self.table = Table(self.service)
         self.sidebar = Sidebar(self.service)
 
-        # Search dialogs
+        # dialogs
+        self.summary_dialog = SummaryDialog(self, self.service)
         self.search_product = SearchProductDialog(self, self.service)
         self.search_customer = SearchCustomerDialog(self, self.service)
 
@@ -41,10 +43,14 @@ class Movements(ContentView):
     def __events_manager(self) -> None:
         self.bt_search_product.clicked.connect( self.search_product.search )
                 
-        self.search_customer.customer_changed.connect( self.sidebar.on_customer_changed )
+        self.sidebar.summary_requested.connect( self.table.on_summary_requested )
+        self.sidebar.summary_requested.connect( self.summary_dialog.on_summary_requested )
         self.sidebar.bt_search_customer.clicked.connect( self.search_customer.search )
 
+        self.table.data_collected.connect( self.summary_dialog.show_summary )
+
         self.search_product.product_selected.connect( self.table.on_product_select )
+        self.search_customer.customer_changed.connect( self.sidebar.on_customer_changed )
 
     def setup_title_frame(self) -> None:
         self.title = QLabel("Movimientos", alignment=Qt.AlignCenter, object_name="view-title")

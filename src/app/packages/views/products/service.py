@@ -56,6 +56,7 @@ class ProductsService(Service):
             SELECT
                 periods.id,
                 periods.name,
+                periods.valid_for_days,
                 prices.price
             FROM prices
                 LEFT JOIN periods ON prices.id_period = periods.id
