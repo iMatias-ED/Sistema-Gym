@@ -25,6 +25,9 @@ class MovementsService(Service):
     def search_products(self, name: str) -> List[Product]:
         return self.products_service.search(name)
 
+    def get_product_by_code(self, code: str) -> Product:
+        return self.products_service.get_by_code(code)
+
     def save_sales(self, products_data: list[SelectedProductInfo], customer: Customer):
         total_days = 0
         
@@ -37,14 +40,11 @@ class MovementsService(Service):
                 VALUES ({customer.id}, {product.id})
                 RETURNING id;
             '''
-            print(query)
 
             sales_id = self._changes_query(query)
             self._insert_product_sales(sales_id, selection.data)
 
         self._update_customer_access_time(total_days, customer)
-        print("\n----------------")
-        print("new date", customer.access_until_date)
 
     def _insert_product_sales(self, id_sales: int, data: ProductSelection):
         query = f'''
@@ -64,7 +64,6 @@ class MovementsService(Service):
                 {data.total}
             );
         '''
-        print(query)
         self._changes_query(query)
 
     def _update_customer_access_time(self, days: int, customer: Customer):        
@@ -76,6 +75,5 @@ class MovementsService(Service):
                 access_until_date = {new_expire_date}
             WHERE id = {customer.id};
         '''
-        print(query)
         self._changes_query(query)
     

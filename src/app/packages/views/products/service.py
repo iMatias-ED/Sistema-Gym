@@ -1,3 +1,5 @@
+from typing import Union
+
 # Services
 from ...shared.service import Service
 
@@ -64,6 +66,10 @@ class ProductsService(Service):
         '''
         return self._format_prices(self._read_query_fetchall( query ))
 
+    def get_by_code(self, code:str):
+        query = f''' SELECT * FROM products WHERE code='{code}'; '''
+        return self._format_products(self._read_query_fetchone(query))
+
     def _get_id_by_code(self, code: str) -> int:
         query = f''' SELECT id FROM products WHERE code='{code}'; '''
         return self._read_query_fetchone(query)["id"]
@@ -118,9 +124,17 @@ class ProductsService(Service):
 
     # Formatting
     # TODO: Use list comprehensions 
-    def _format_products(self, data) -> List[Product]:
+    def _format_products(self, data: Union[dict, list[dict]]) -> Union[Product, List[Product]]:
         formatted = []
+        
+        #  Format only one product
+        if isinstance( data, dict ):
+            new_product = Product( dict(data) )
+            for price in self.get_prices(new_product.id):
+                new_product.save_price(price) 
+            return new_product
 
+        # Format many products
         for product in data:
             new_product = Product( dict(product) )
             for price in self.get_prices(new_product.id):

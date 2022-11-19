@@ -9,9 +9,9 @@ class Price:
     def __init__(self, price: Dict[ str, str ] ):
         self.name = price["name"]
         self.price = price["price"]
-        self.valid_for_days = price["valid_for_days"]
 
-        if "id" in price:    self.id = price["id"]
+        if "id"             in price:    self.id = price["id"]
+        if "valid_for_days" in price:    self.valid_for_days = price["valid_for_days"]
 
     def __str__(self):
         return f"{self.name}: {self.price}"

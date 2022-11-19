@@ -10,8 +10,9 @@ from .service import MovementsService
 # Componentes
 from .components.table import Table
 from .components.sidebar import Sidebar
+from .components.add_product_by_code import AddProductByCode
 
-from.components.summary_dialog import SummaryDialog
+from .components.summary_dialog import SummaryDialog
 from .components.search_product import SearchProductDialog
 from .components.search_customer import SearchCustomerDialog
 
@@ -25,6 +26,7 @@ class Movements(ContentView):
 
         self.table = Table(self.service)
         self.sidebar = Sidebar(self.service)
+        self.code_input = AddProductByCode(self.service)
 
         # dialogs
         self.summary_dialog = SummaryDialog(self, self.service)
@@ -35,7 +37,8 @@ class Movements(ContentView):
         self.root_layout.add_widget(self.sidebar, 20)
 
         self.second_layout.add_widget( self.setup_title_frame(), 10 )
-        self.second_layout.add_widget( self.table, 90 )
+        self.second_layout.add_widget( self.table, 70 )
+        self.second_layout.add_widget( self.code_input, 20 )
 
         self.set_layout(self.root_layout)
         self.__events_manager()
@@ -48,6 +51,8 @@ class Movements(ContentView):
         self.sidebar.bt_search_customer.clicked.connect( self.search_customer.search )
 
         self.table.data_collected.connect( self.summary_dialog.show_summary )
+
+        self.code_input.product_selected.connect( self.table.on_product_select )
 
         self.search_product.product_selected.connect( self.table.on_product_select )
         self.search_customer.customer_changed.connect( self.sidebar.on_customer_changed )

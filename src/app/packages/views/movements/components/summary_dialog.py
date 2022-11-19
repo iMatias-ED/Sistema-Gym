@@ -49,6 +49,7 @@ class SummaryDialog(QDialog):
 
     @Slot()
     def on_submit(self):
+        self.hide()
         self.movements_service.save_sales(self.data, self.customer)
 
     # Widgets Creations
