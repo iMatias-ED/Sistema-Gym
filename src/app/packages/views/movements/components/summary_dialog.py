@@ -7,26 +7,34 @@ from __feature__ import snake_case, true_property
 # Services 
 from ..service import MovementsService
 
+# Components
+from ....shared.error_message import ErrorMessageDialog
+
 # Classes
 from ...customers.classes.customer import Customer
 from ..classes.selected_product_info import SelectedProductInfo
+from ....shared.classes.error_message import ErrorMessage
 
 class SummaryDialog(QDialog):
-    data: list[SelectedProductInfo]
+    products: list[SelectedProductInfo]
     customer: Customer = None;
 
     root_layout = QGridLayout()
+
+    # Error Messages
+    no_customer_msg = ErrorMessage("No seleccionaste un cliente", "Por favor, seleccione un cliente para continuar.")
+    no_products_msg = ErrorMessage("No hay productos seleccionados", "Por favor, seleccione al menos un producto para continuar.")
+    empty_values_msg = ErrorMessage("No hay datos seleccionados", "Para registrar un movimiento, debe seleccionar un cliente y al menos un producto.")
 
     def __init__(self, parent, service:MovementsService):
         super(SummaryDialog, self).__init__(parent)
 
         self.movements_service = service
-
         self.setup_ui()
-        # self.set_window_flags(Qt.FramelessWindowHint)
 
     def setup_ui(self) -> None:
         self.minimum_width = 450 
+        self.error_msg = ErrorMessageDialog(self)
 
         self.title    = self._create_title("Resumen", self.last_row())
         self.title    = self._create_title("Gs 100.000", self.last_row(), "monto-total")
@@ -38,19 +46,34 @@ class SummaryDialog(QDialog):
 
         self.set_layout(self.root_layout)
 
-    @Slot(Customer)
-    def on_summary_requested(self, customer: Customer):
-        self.customer = customer
-
     @Slot(list)
-    def show_summary(self, data: list[SelectedProductInfo]):
-        self.data = data
+    def set_products_collection(self, data: list[SelectedProductInfo]):
+        self.products = data
+
+    @Slot(Customer)
+    def set_selected_customer(self, customer: Customer):
+        self.customer = customer
+        self.on_data_received()
+
+    def on_data_received(self):
+        if self.customer is None and len(self.products) == 0:
+            self.error_msg.show(self.empty_values_msg)
+            return
+        
+        if self.customer is None:
+            self.error_msg.show(self.no_customer_msg)
+            return
+            
+        if len(self.products) == 0:
+            self.error_msg.show(self.no_products_msg)
+            return
+
         self.show()
 
     @Slot()
     def on_submit(self):
         self.hide()
-        self.movements_service.save_sales(self.data, self.customer)
+        self.movements_service.save_sales(self.products, self.customer)
 
     # Widgets Creations
     def _create_title(self, text:str, row:int, obj_name:str = "") -> QLabel:

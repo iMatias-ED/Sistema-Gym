@@ -47,10 +47,10 @@ class Movements(ContentView):
         self.bt_search_product.clicked.connect( self.search_product.search )
                 
         self.sidebar.summary_requested.connect( self.table.on_summary_requested )
-        self.sidebar.summary_requested.connect( self.summary_dialog.on_summary_requested )
+        self.sidebar.summary_requested.connect( self.summary_dialog.set_selected_customer )
         self.sidebar.bt_search_customer.clicked.connect( self.search_customer.search )
 
-        self.table.data_collected.connect( self.summary_dialog.show_summary )
+        self.table.data_collected.connect( self.summary_dialog.set_products_collection )
 
         self.code_input.product_selected.connect( self.table.on_product_select )
 

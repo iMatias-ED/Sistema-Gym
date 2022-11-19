@@ -10,6 +10,7 @@ class Price:
         self.name = price["name"]
         self.price = price["price"]
 
+        # Only when read from db
         if "id"             in price:    self.id = price["id"]
         if "valid_for_days" in price:    self.valid_for_days = price["valid_for_days"]
 
