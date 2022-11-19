@@ -17,7 +17,7 @@ class MovementsService(Service):
     products_service = ProductsService()
     customers_service = CustomersService()
 
-    header_labels = ["Eliminar", "Producto", "Cantidad", "Periodo", "Precio", "Total"]
+    header_labels = ["Eliminar", "Editar", "Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"]
 
     def search_users(self, name: str) -> List[Customer]:
         return self.customers_service.search(name)

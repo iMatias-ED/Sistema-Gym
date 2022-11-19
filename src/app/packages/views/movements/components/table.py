@@ -6,6 +6,9 @@ from __feature__ import snake_case, true_property
 # Services
 from ..service import MovementsService
 
+# Components
+from ..components.select_product_quantity import SelectProductQuantityDialog
+
 # Classes
 from ..classes.product_selection import ProductSelection
 from ..classes.selected_product_info import SelectedProductInfo
@@ -13,13 +16,17 @@ from ...products.classes.product import Product
 
 class Table(QTableWidget):
     data_collected = Signal(list)
-
     collection: dict[str: SelectedProductInfo] = {}
+
+    current_key: str
 
     def __init__(self, service: MovementsService):
         super(Table, self).__init__()
         self.movements_service = service
         self.movements_service.data_changed.connect( self.refresh )
+
+        self.edit_dialog = SelectProductQuantityDialog(self)
+        self.edit_dialog.selected.connect( self.on_product_edited )
 
         self.config_table()
 
@@ -35,11 +42,20 @@ class Table(QTableWidget):
         self.clear_contents()
         self.collection.clear()
 
-    def delete_clicked(self, key:str) -> None:   
+    def remove_product(self, key:str) -> None:   
         self.hide_row(self.collection[key].row)
         del self.collection[key]
 
-    @Slot(Product)
+    def edit_clicked(self, product: Product, key:str, quantity: int, period: str):
+        self.current_key = key
+        self.edit_dialog.show(product, quantity, period)
+
+    @Slot(ProductSelection)
+    def on_product_edited(self, data: ProductSelection):
+        self.remove_product(self.current_key)
+        self.on_product_select(data)
+
+    @Slot(ProductSelection)
     def on_product_select(self, data: ProductSelection) -> None:
         key = f'{data.product.code}::{data.price.name}'
         
@@ -59,9 +75,9 @@ class Table(QTableWidget):
         self.data_collected.emit( list(self.collection.values()) )
 
     # Utils
-    def create_action_button(self, text:str, param: str, on_clicked: Callable)  -> QPushButton:
+    def create_action_button(self, text:str, on_clicked: Callable, *args)  -> QPushButton:
         button = QPushButton(text)
-        button.clicked.connect( lambda: on_clicked(param) )
+        button.clicked.connect( lambda: on_clicked(*args) )
         return button
 
     def insert_data(self, data: ProductSelection, key:str, row:int) -> None:
@@ -69,10 +85,12 @@ class Table(QTableWidget):
         price = f"Gs. {data.price.price}"
 
         self.set_cell_widget( 
-            row, 0, self.create_action_button( "X", key, self.delete_clicked ))
+            row, 0, self.create_action_button( "X", self.remove_product, key, ))
+        self.set_cell_widget( 
+            row, 1, self.create_action_button( "E", self.edit_clicked, data.product, key, data.quantity, data.price.name ))
         
-        self.set_item( row , 1, QTableWidgetItem(data.product.name) )
-        self.set_item( row , 2, QTableWidgetItem(str(data.quantity)) )
-        self.set_item( row , 3, QTableWidgetItem(data.price.name) )
-        self.set_item( row , 4, QTableWidgetItem(price) )
-        self.set_item( row , 5, QTableWidgetItem(total) )
+        self.set_item( row , 2, QTableWidgetItem(data.product.name) )
+        self.set_item( row , 3, QTableWidgetItem(str(data.quantity)) )
+        self.set_item( row , 4, QTableWidgetItem(data.price.name) )
+        self.set_item( row , 5, QTableWidgetItem(price) )
+        self.set_item( row , 6, QTableWidgetItem(total) )        

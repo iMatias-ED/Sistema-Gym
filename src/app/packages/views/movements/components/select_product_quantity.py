@@ -1,3 +1,5 @@
+from typing import Union
+
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QDialog, QLineEdit, QLabel, QComboBox, QPushButton, QVBoxLayout, QHBoxLayout
 from __feature__ import snake_case, true_property
@@ -45,12 +47,14 @@ class SelectProductQuantityDialog(QDialog):
         
         self.set_layout(layout)
 
-    def show(self, product: Product):
+    def show(self, product: Product, quantity: Union[int, None] = None, period: Union[str, None] = None):
         self.clear()
         self.product = product
         self.title.text = product.name
+        if quantity: self.quantity.text = str(quantity)
 
         self.periods.add_items([ p.name for p in product.prices ])
+        if period: self.periods.set_current_index(self.periods.find_text(period))
         
         super().show()
 
