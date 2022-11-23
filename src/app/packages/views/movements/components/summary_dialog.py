@@ -8,7 +8,7 @@ from __feature__ import snake_case, true_property
 from ..service import MovementsService
 
 # Components
-from ....shared.error_message import ErrorMessageDialog
+from ....shared.components.error_message import ErrorMessageDialog
 
 # Classes
 from ...customers.classes.customer import Customer

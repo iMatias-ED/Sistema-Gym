@@ -13,7 +13,7 @@ class Service(QObject):
         cursor = conn.cursor()
         cursor.execute(query)
         row_id = cursor.fetchone()
-        print("row_id", row_id)
+        # print("row_id", row_id)
 
         conn.commit()
         conn.close()

@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Union
 from datetime import datetime
 
 from ...shared.service import Service
 from .classes.customer import Customer
+from .classes.access_time_by_product import AccessTimeByProduct
 
 class CustomersService(Service):
     TABLE = "customers"
@@ -36,7 +37,6 @@ class CustomersService(Service):
             invoice_to,
             strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
         FROM {self.TABLE} '''
-            # DATETIME(access_until_date, 'unixepoch', 'localtime') as access_until_date
         return self._format_customers(self._read_query_fetchall(query))
 
     def get_by_id( self, id:int ) -> Customer:
@@ -51,7 +51,7 @@ class CustomersService(Service):
             invoice_to,
             strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
         FROM {self.TABLE} WHERE id={id}; '''
-        return Customer(self._read_query_fetchone(query))
+        return self._format_customers(self._read_query_fetchone(query))
 
     def get_by_ci_number( self, ci:int ) -> Customer:
         query = f''' SELECT 
@@ -65,7 +65,18 @@ class CustomersService(Service):
             invoice_to,
             strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
         FROM {self.TABLE} WHERE ci={ci}; '''
-        return Customer(self._read_query_fetchone(query))
+        return self._format_customers(self._read_query_fetchone(query))
+
+    def _get_access_time( self, id: int ):
+        query = f'''
+            SELECT 
+                id_product,
+                access_until_date as unix_time,
+                strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as time
+            FROM customers_products_access_time
+            WHERE id_customer = {id};
+        '''
+        return self._read_query_fetchall(query)
 
     # Update
     def update(self, c:Customer ) -> None:
@@ -101,11 +112,21 @@ class CustomersService(Service):
         return self._format_customers(self._read_query_fetchall(query))
 
     # Formatting
-    def _format_customers(self, data: List) -> List[Customer]:
+    def _format_customers(self, data: Union[dict, list[dict]]) -> List[Customer]:
         formatted = []
 
+        if isinstance(data, dict):
+            new_customer = Customer( dict(data) )
+            for time in self._get_access_time(new_customer.id):
+                new_customer.add_access_time( AccessTimeByProduct(dict( time )) )
+            return new_customer
+
         for customer in data:
-            formatted.append( Customer( dict(customer) ) ) 
+            new_customer = Customer( dict(customer) )
+            for time in self._get_access_time(new_customer.id):
+                new_customer.add_access_time( AccessTimeByProduct(dict( time )) )
+
+            formatted.append( new_customer ) 
         return formatted
 
     def _to_timestamp(self, date:str):

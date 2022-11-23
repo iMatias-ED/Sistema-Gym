@@ -51,7 +51,7 @@ class ProductsService(Service):
 
     def get_by_id( self, id:int ) -> Product:
         query = f''' SELECT * FROM products WHERE id={id}; '''
-        return Product(self._read_query_fetchone(query))
+        return self._format_products(self._read_query_fetchone(query))
 
     def get_prices(self, product_id: int) -> List[ Price ]:
         query = f'''

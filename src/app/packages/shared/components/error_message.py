@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QWidget
 from __feature__ import snake_case, true_property
 
-from .classes.error_message import ErrorMessage
+from ..classes.error_message import ErrorMessage
 
 class ErrorMessageDialog(QDialog):
     def __init__(self, parent: QWidget):

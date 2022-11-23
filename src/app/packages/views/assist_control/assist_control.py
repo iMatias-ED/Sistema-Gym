@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from .report_view import *
+from .components.report_view import *
 from ...shared.content_view import *
 
 class AssistControl(ContentView):

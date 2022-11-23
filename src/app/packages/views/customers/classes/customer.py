@@ -1,6 +1,6 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Union
 
-from datetime import datetime
+from ..classes.access_time_by_product import AccessTimeByProduct
 
 class Customer:
     id: int
@@ -11,7 +11,8 @@ class Customer:
     genre: int
     full_name: str
     invoice_to: str
-    access_until_date: int
+    access_until_date:  str
+    access_time: List[AccessTimeByProduct]
 
     def __init__(self, customer: Dict[ str, str ]):
         self.ci         = customer["ci"] 
@@ -24,7 +25,14 @@ class Customer:
 
         if "id" in customer:    self.id = customer["id"]
 
+        self.access_time = []
         self.access_until_date = customer["access_until_date"]
 
-        
+    def add_access_time(self, access_time: AccessTimeByProduct) -> None:
+        self.access_time.append(access_time)
 
+    def access_time_by_product_id(self, product_id: int) -> Union[AccessTimeByProduct, None]:
+        try: 
+            return [ time for time in self.access_time if time.id_product == product_id ][0]
+        except IndexError:
+            return None

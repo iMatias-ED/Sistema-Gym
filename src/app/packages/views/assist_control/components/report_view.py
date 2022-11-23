@@ -4,12 +4,13 @@ from __feature__ import snake_case, true_property
 
 from datetime import datetime, date
 
-from ..customers.service import CustomersService
-from ..customers.classes.customer import Customer
+from ..service import AssistControlService
+from ...customers.service import CustomersService
 
 class ReportView(QFrame):
     go_back = Signal()
     customers_service = CustomersService()
+    report_service = AssistControlService()
     root_layout = QGridLayout()
 
     def __init__(self):
@@ -33,6 +34,7 @@ class ReportView(QFrame):
         self.set_layout(self.root_layout)
 
     def load_data(self, ci: int):
+        self.report_service.get_info(ci)
         c = self.customers_service.get_by_ci_number(ci)
 
         self.name.text = c.full_name
