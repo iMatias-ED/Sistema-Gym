@@ -4,6 +4,10 @@ from __feature__ import snake_case, true_property
 
 from datetime import datetime, date
 
+from .access_time_summary import AccessTimeSummaryDialog
+from .purchase_summary_dialog import PurchaseSummaryDialog
+from ..classes.customer_summary import CustomerSummary
+
 from ..service import AssistControlService
 from ...customers.service import CustomersService
 
@@ -13,17 +17,23 @@ class ReportView(QFrame):
     report_service = AssistControlService()
     root_layout = QGridLayout()
 
+    data: CustomerSummary
+
     def __init__(self):
         super(ReportView, self).__init__()
         self.setup_ui()
 
     def setup_ui(self):
         self.name = QLabel("Matias Acosta", object_name="name" )
-        self.status = QLabel("Habilitado", object_name="status-expired")
-        self.last_pay = QLabel("i'm a button", object_name="last-pay")
-        self.registered_until = QLabel("31/11/2022", object_name="registered-until")
+        self.status = QPushButton("Status", object_name="status-expired",
+            clicked=self.show_access_time_summary)
+        self.last_pay = QPushButton("Purchases Summary", object_name="bt-purchases-summary", clicked=self.show_purchases_summary)
+        self.registered_until = QLabel("xx/xx/xxxx", object_name="registered-until")
 
         self.bt_go_back = QPushButton("Volver", object_name="go_back", clicked=self.emit_go_back)
+
+        self.purchase_summary = PurchaseSummaryDialog(self)
+        self.access_time_summary = AccessTimeSummaryDialog(self)
 
         self.root_layout.add_widget(self.bt_go_back, 1, 1, alignment=Qt.AlignCenter)
         self.root_layout.add_widget(self.name, 2, 1, alignment=Qt.AlignCenter)
@@ -33,28 +43,33 @@ class ReportView(QFrame):
 
         self.set_layout(self.root_layout)
 
+    def show_purchases_summary(self):
+        self.purchase_summary.show(self.data)
+
+    def show_access_time_summary(self):
+        self.access_time_summary.show(self.data.customer)
+
     def load_data(self, ci: int):
-        self.report_service.get_info(ci)
-        c = self.customers_service.get_by_ci_number(ci)
+        self.data = self.report_service.get_info(ci)
 
-        self.name.text = c.full_name
-        self.registered_until.text = c.access_until_date
+        self.name.text = self.data.customer.full_name
+        self.registered_until.text = self.data.customer.access_until_date
 
-        if self.check_access(c.access_until_date):
-            self.status.text = "Habilitado"
-            self.change_status_style("status-ok")
-        else:
-            self.status.text = "Inhabilitado"
-            self.change_status_style("status-expired")
+        for access_time in self.data.customer.access_time:
+            product = self.report_service.get_product_by_id(access_time.id_product)
+            print(f"{product.name}, hasta: {access_time.unix_time}, {self.check_access(access_time.unix_time)}\n")
+            
 
         print(self.status.object_name)
 
     def change_status_style(self, style: str):
         self.status.object_name = style
 
-    def check_access(self, _date: str) -> bool:
-        today = datetime.strptime(date.today().strftime('%d/%m/%Y'), '%d/%m/%Y')
-        access_until = datetime.strptime( _date, '%d/%m/%Y' )
+    def check_access(self, access_until: int) -> bool:
+        today = datetime.now()
+        access_until = datetime.fromtimestamp(access_until)
+
+        print(f"{access_until} > {today}")
         
         return access_until >= today 
 
