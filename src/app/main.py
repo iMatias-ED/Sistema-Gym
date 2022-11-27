@@ -5,6 +5,9 @@ from __feature__ import snake_case, true_property
 # Typing
 from packages.shared.content_view import ContentView
 
+# Verify User
+from packages.shared.components.verify_user import VerifyUserIdentityDialog
+
 # Layout
 from packages.layout.top_menu import TopMenu 
 from packages.layout.content_box import ContentBox 
@@ -19,12 +22,26 @@ from packages.views.products.products import Products
 class Main(QMainWindow):
     root_layout = QVBoxLayout()
     views: dict[str, ContentView] = {}
+    user_verified = False
 
     def __init__(self):
         super(Main, self).__init__()
+
+        self.verify_user_dialog = VerifyUserIdentityDialog(self)
+        self.verify_user_dialog.finished.connect(self.on_login_closed)
+        self.verify_user_dialog.user_verified.connect(self.on_user_verified)
+
+    def on_login_closed(self):
+        if not self.user_verified:
+            sys.exit()
+
+    def on_user_verified(self):
+        self.user_verified = True
+
         self.setup_ui()
         self.__create_views()
         self.__add_views_to_content_box()
+        self.show()
 
     def stylesheet(self):
         styles = open( "src/app/styles.css", "r" )
@@ -63,14 +80,13 @@ class Main(QMainWindow):
         self.content.add_content(self.views['control_panel'], 4)
 
         # temporal
-        self.content.show_index(0)
+        self.content.show_index(4)
 
 # Execute
 import sys
 app = QApplication(sys.argv)
 
 window = Main()
-window.show()
 # window.show_full_screen()
 
 sys.exit(app.exec())

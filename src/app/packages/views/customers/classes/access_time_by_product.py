@@ -9,6 +9,3 @@ class AccessTimeByProduct:
         self.time = data["time"]
         self.id_product = data["id_product"]
         self.unix_time = data["unix_time"]
-
-    def formatted_date(self) -> str:
-        return datetime.fromtimestamp(self.unix_time).strftime("%d/%m/%Y")

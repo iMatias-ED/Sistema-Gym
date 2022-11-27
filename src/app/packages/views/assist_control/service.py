@@ -1,6 +1,6 @@
 
 # Services
-from ...shared.service import Service
+from ...shared.services.service import Service
 from ..products.service import ProductsService
 from ..customers.service import CustomersService
 from ..movements.service import MovementsService

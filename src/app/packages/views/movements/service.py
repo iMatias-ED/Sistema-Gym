@@ -2,7 +2,7 @@ import time
 from typing import List, Union
 
 # Services
-from ...shared.service import Service
+from ...shared.services.service import Service
 from ..products.service import ProductsService
 from ..customers.service import CustomersService
 

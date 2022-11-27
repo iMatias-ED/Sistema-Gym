@@ -73,7 +73,5 @@ class AccessTimeSummaryDialog(QDialog):
     def check_access(self, access_until: int) -> bool:
         today = datetime.now()
         access_until = datetime.fromtimestamp(access_until)
-
-        print(f"{access_until} > {today}")
-        
+                
         return access_until >= today 

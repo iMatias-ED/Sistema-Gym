@@ -1,7 +1,7 @@
 from typing import List, Union
 from datetime import datetime
 
-from ...shared.service import Service
+from ...shared.services.service import Service
 from .classes.customer import Customer
 from .classes.access_time_by_product import AccessTimeByProduct
 

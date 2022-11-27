@@ -1,7 +1,7 @@
 from typing import Union
 
 # Services
-from ...shared.service import Service
+from ...shared.services.service import Service
 
 # Classes
 from .classes.price import Price

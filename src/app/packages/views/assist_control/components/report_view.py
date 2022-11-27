@@ -57,11 +57,7 @@ class ReportView(QFrame):
 
         for access_time in self.data.customer.access_time:
             product = self.report_service.get_product_by_id(access_time.id_product)
-            print(f"{product.name}, hasta: {access_time.unix_time}, {self.check_access(access_time.unix_time)}\n")
             
-
-        print(self.status.object_name)
-
     def change_status_style(self, style: str):
         self.status.object_name = style
 
