@@ -10,6 +10,8 @@ from ..customers.service import CustomersService
 from ..products.classes.product import Product
 from ..customers.classes.customer import Customer
 from .classes.purchase import Purchase
+from .classes.cash_movement import CashMovement
+from .classes.cash_flow_type import CashFlowType
 from .classes.purchased_product import PurchasedProduct
 from .classes.product_selection import ProductSelection
 from .classes.selected_product_info import SelectedProductInfo
@@ -124,3 +126,28 @@ class MovementsService(Service):
             return purchase
 
         return [ create(dict(purchase)) for purchase in data ]
+
+    def _format_cash_flow_types(self, data: list[dict]) -> list[CashFlowType]:
+        formatted = [ CashFlowType(flow_type) for flow_type in data ]
+        return formatted
+        
+
+    def get_cash_flow_types(self):
+        query = "SELECT * FROM cash_flow_types;"
+        return self._format_cash_flow_types(self._read_query_fetchall(query))
+
+    def register_cash_flow(self, data: CashMovement):
+        query = f'''
+            INSERT INTO cash_flow (
+                id_user,
+                id_movement_type,
+                amount,
+                description
+            ) VALUES (
+                {data.id_user},
+                {data.id_cash_flow_type},
+                {data.amount},
+                '{data.description}'
+            );
+        '''
+        self._changes_query(query)

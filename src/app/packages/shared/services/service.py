@@ -4,6 +4,7 @@ from PySide6.QtCore import QObject, Signal
 # Inherits from QObject to use Signals
 class Service(QObject):
     data_changed = Signal()
+    current_user_id: int = -1
     DB_PATH = "src/app/db/test.db"
 
     # Execute Queries

@@ -1,8 +1,9 @@
 from passlib.context import CryptContext
 from .service import Service
 
-class SecurityService(Service):
+current_user_id: int = 0
 
+class SecurityService(Service):
     crypt_context = CryptContext(
         schemes=["pbkdf2_sha256"],
         default="pbkdf2_sha256",
@@ -17,5 +18,11 @@ class SecurityService(Service):
         return self.crypt_context.hash(text)
 
     def _get_user_pwd(self, ci: int) -> str:
-        query = f'''SELECT password FROM users WHERE ci={ci}'''
-        return self._read_query_fetchone(query)["password"]
+        global current_user_id
+
+        query = f'''SELECT id, password FROM users WHERE ci={ci}'''
+        
+        result = self._read_query_fetchone(query)
+        current_user_id = result["id"]
+        
+        return result["password"]
