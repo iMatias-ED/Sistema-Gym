@@ -33,8 +33,8 @@ class ControlPanelService(Service):
             );
         '''
         print(query)
-        # self._changes_query(query)
-        # self.data_changed.emit()
+        self._changes_query(query)
+        self.data_changed.emit()
 
     # Read
     def get_all(self) -> List[User] : 
@@ -83,3 +83,23 @@ class ControlPanelService(Service):
         for user in data:
             formatted.append( User( dict(user) ) ) 
         return formatted
+
+    def get_total_inflows(self):
+        query = f'''
+            SELECT SUM(amount) as total FROM cash_flow 
+            WHERE id_movement_type = 2;
+        '''
+        return self._read_query_fetchone(query)
+
+    def get_total_outflows(self):
+        query = f'''
+            SELECT SUM(amount) as total FROM cash_flow 
+            WHERE id_movement_type = 1;
+        '''
+        return self._read_query_fetchone(query)
+
+    def get_total_sales(self):
+        query = f'''
+            SELECT sum(total) as total FROM products_sales;
+        '''
+        return self._read_query_fetchone(query)

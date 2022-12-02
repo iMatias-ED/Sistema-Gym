@@ -8,46 +8,42 @@ from ...shared.content_view import ContentView
 from .service import ControlPanelService
 
 # Componentes
-from .components.table import Table
 from .components.sidebar import Sidebar
-from .components.dialog import Dialog
+from .components.users_view import UsersView
+from .components.summary_view.summary_view import SummaryView
 
 class ControlPanel(ContentView):
     service = ControlPanelService()
     root_layout = QHBoxLayout()
-    second_layout = QVBoxLayout()
+    content_layout = QStackedLayout()
 
     def setup_ui(self) -> None:
         self.set_styles(__file__)
-
-        self.table = Table(self.service)
-        self.dialog = Dialog(self, self.service)
         self.sidebar = Sidebar(self.service)
+        
+        self.users_view = UsersView() 
+        self.summary_view = SummaryView()
+
+        scrollArea = QScrollArea(self, widget_resizable=True)
+        scrollArea.set_widget(self.summary_view)
 
         self.root_layout.add_widget(self.sidebar, 20)
-        self.root_layout.add_layout(self.second_layout, 80)
+        self.root_layout.add_layout(self.content_layout, 80)
 
-        self.second_layout.add_widget( self.setup_title_frame(), 10 )
-        self.second_layout.add_widget( self.table, 90 )
+        self.content_layout.insert_widget(0, self.users_view)
+        self.content_layout.insert_widget(1, scrollArea)
 
         self.set_layout(self.root_layout)
         self.__events_manager()
 
     def __events_manager(self) -> None:
-        self.bt_create.clicked.connect( self.dialog.create )
-        self.table.edit.connect( self.dialog.edit )
+        self.sidebar.view_change_event.connect(self.on_view_change)
+        self.sidebar.view_change_event.connect(self.summary_view.on_show)
 
-    def setup_title_frame(self) -> None:
-        self.title = QLabel("Usuarios", alignment=Qt.AlignCenter, object_name="view-title")
-        self.bt_create = QPushButton("+", maximum_width=50)
-
-        layout = QHBoxLayout()
-        layout.add_widget(self.bt_create, 10)
-        layout.add_widget(self.title,  90)
-
-        frame = QFrame()
-        frame.set_layout(layout)
-        return frame        
+    @Slot(int)
+    def on_view_change(self, index: int):
+        self.content_layout.set_current_index(index)
+    
 
 
     
