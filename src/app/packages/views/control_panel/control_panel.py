@@ -8,9 +8,9 @@ from ...shared.content_view import ContentView
 from .service import ControlPanelService
 
 # Componentes
-from .components.sidebar import Sidebar
-from .components.users_view import UsersView
-from .components.summary_view.summary_view import SummaryView
+from .components.sidebar_menu import sidebar_menu
+from .components.users.users_view import UsersView
+from .components.movements_summary_view.movements_summary import MovementsSummaryView
 
 class ControlPanel(ContentView):
     service = ControlPanelService()
@@ -19,10 +19,10 @@ class ControlPanel(ContentView):
 
     def setup_ui(self) -> None:
         self.set_styles(__file__)
-        self.sidebar = Sidebar(self.service)
+        self.sidebar = sidebar_menu(self.service)
         
         self.users_view = UsersView() 
-        self.summary_view = SummaryView()
+        self.summary_view = MovementsSummaryView()
 
         scrollArea = QScrollArea(self, widget_resizable=True)
         scrollArea.set_widget(self.summary_view)

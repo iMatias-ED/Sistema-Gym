@@ -5,13 +5,13 @@ from __feature__ import snake_case, true_property
 
 from ..service import ProductsService
 
-class Table(QTableWidget):
+class ProductDataTable(QTableWidget):
     #Both emits the product_id
     edit = Signal(int)
     delete = Signal(int)
 
     def __init__(self, service: ProductsService):
-        super(Table, self).__init__()
+        super(ProductDataTable, self).__init__()
         self.products_service = service
         self.products_service.data_changed.connect( self.refresh )
 

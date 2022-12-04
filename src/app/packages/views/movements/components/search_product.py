@@ -7,14 +7,14 @@ from __feature__ import snake_case, true_property
 from ..service import MovementsService
 
 # Classes
-from ..classes.product_selection import ProductSelection
+from ..classes.sale_item import SaleItem
 from ...products.classes.product import Product
 
 # Components
-from .select_product_quantity import SelectProductQuantityDialog
+from .configure_selected_product import ConfigureSelectedProduct
 
 class SearchProductDialog (QDialog):
-    product_selected = Signal(ProductSelection)
+    product_selected = Signal(SaleItem)
 
     root_layout = QGridLayout()
     inputs_collection: List[ QLineEdit ] = []
@@ -41,7 +41,7 @@ class SearchProductDialog (QDialog):
         self.root_layout.add_widget(self.submit, self.last_row(), 1, self.last_row(), 2)        
 
         # Select Quantity Dialog
-        self.quantity_dialog = SelectProductQuantityDialog(self)
+        self.quantity_dialog = ConfigureSelectedProduct(self)
         self.quantity_dialog.selected.connect(self.on_selection_finished)
 
         self.set_layout(self.root_layout)
@@ -65,8 +65,8 @@ class SearchProductDialog (QDialog):
         for row, product in enumerate(self.data):
             self.table.set_item(row, 0, QTableWidgetItem(product.name))
 
-    @Slot(ProductSelection)
-    def on_selection_finished(self, data: ProductSelection):
+    @Slot(SaleItem)
+    def on_selection_finished(self, data: SaleItem):
         self.product_selected.emit(data)
         self.close()
 

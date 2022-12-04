@@ -2,12 +2,12 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-class Sidebar(QFrame):
+class sidebar_menu(QFrame):
     view_change_event = Signal(int)
     root_layout = QVBoxLayout()
 
     def __init__(self, service):
-        super(Sidebar, self).__init__(object_name="sidebar")
+        super(sidebar_menu, self).__init__(object_name="sidebar")
         self.users_service = service
         self.setup_ui()
 

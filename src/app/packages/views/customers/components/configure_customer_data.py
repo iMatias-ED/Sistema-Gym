@@ -8,12 +8,12 @@ from __feature__ import snake_case, true_property
 from ..service import CustomersService
 from ..classes.customer import Customer
 
-class Dialog(QDialog):
+class ConfigureCustomerDialog(QDialog):
     root_layout = QGridLayout()
     inputs_collection: List[ QLineEdit ] = []
 
     def __init__(self, parent, service:CustomersService):
-        super(Dialog, self).__init__(parent)
+        super(ConfigureCustomerDialog, self).__init__(parent)
 
         self.customers_service = service
         self.customers_service.data_changed.connect(self.on_data_changed) 

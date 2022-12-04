@@ -1,7 +1,7 @@
 from ...products.classes.price import Price
 from ...products.classes.product import Product
 
-class ProductSelection:
+class SaleItem:
     total: int
     price: Price
     quantity: int

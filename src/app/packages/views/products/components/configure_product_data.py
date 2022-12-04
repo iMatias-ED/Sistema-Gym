@@ -7,13 +7,13 @@ from ..service import ProductsService
 from ..classes.product import Product
 from ..classes.price import Price
 
-class Dialog(QDialog):
+class ConfigureProductData(QDialog):
     root_layout = QGridLayout()
     inputs_collection: List[ QLineEdit ] = []
     price_inputs_collection: List[ QLineEdit ] = []
 
     def __init__(self, parent, service:ProductsService):
-        super(Dialog, self).__init__(parent)
+        super(ConfigureProductData, self).__init__(parent)
 
         self.products_service = service
         self.products_service.data_changed.connect(self.on_data_changed) 

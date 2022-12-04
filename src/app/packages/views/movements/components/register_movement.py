@@ -3,20 +3,19 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from ..classes.cash_movement import CashMovement
-from ..classes.cash_flow_type import CashFlowType
+from ..classes.cash_flow_item import CashFlowItem
+from ..classes.movement_type import MovementType
 
 # Services 
 from ..service import MovementsService
 # from ....shared.services.security_service import current_user_id
 
-
-class RegisterCashMovementDialog(QDialog):
+class RegisterMovementDialog(QDialog):
     id_movement_type: int
-    cash_flow_data: dict[str, CashFlowType]
+    cash_flow_data: dict[str, MovementType]
 
     def __init__(self, parent: QWidget, service: MovementsService):
-        super(RegisterCashMovementDialog, self).__init__(parent)
+        super(RegisterMovementDialog, self).__init__(parent)
         
         self.movements_service = service
         self.setup_ui()
@@ -49,12 +48,12 @@ class RegisterCashMovementDialog(QDialog):
         
         data = {
             "id_user": current_user_id,
-            "id_cash_flow_type": cash_flow.id,
+            "id_movement_type": cash_flow.id,
             "amount": self.amount.text,
             "description": self.description.plain_text
         }
 
         self.hide()
-        self.movements_service.register_cash_flow( CashMovement(data) )
+        self.movements_service.register_cash_flow( CashFlowItem(data) )
 
 

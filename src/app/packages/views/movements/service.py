@@ -2,21 +2,20 @@ import time
 from typing import List, Union
 
 # Services
-from ...shared.services.service import Service
+from ...shared.services.service import DBService
 from ..products.service import ProductsService
 from ..customers.service import CustomersService
 
 # Classes
 from ..products.classes.product import Product
 from ..customers.classes.customer import Customer
-from .classes.purchase import Purchase
-from .classes.cash_movement import CashMovement
-from .classes.cash_flow_type import CashFlowType
-from .classes.purchased_product import PurchasedProduct
-from .classes.product_selection import ProductSelection
-from .classes.selected_product_info import SelectedProductInfo
+from .classes.sale_record import SaleRecord
+from .classes.cash_flow_item import CashFlowItem
+from .classes.movement_type import MovementType
+from .classes.product_sold import ProductSold
+from .classes.sale_item import SaleItem
 
-class MovementsService(Service):
+class MovementsService(DBService):
     DAY_IN_SECONDS = 86400
 
     products_service = ProductsService()
@@ -33,7 +32,7 @@ class MovementsService(Service):
     def get_product_by_code(self, code: str) -> Product:
         return self.products_service.get_by_code(code)
 
-    def save_sales(self, products_data: list[SelectedProductInfo], customer: Customer):
+    def save_sales(self, products_data: list[SaleItem], customer: Customer):
         total_days = 0
 
         query = f'''
@@ -43,15 +42,15 @@ class MovementsService(Service):
         '''
         sales_id = self._changes_query(query)
 
-        for selection in products_data:
-            product = selection.data.product
-            total_days += selection.data.price.valid_for_days
+        for item in products_data:
+            product = item.product
+            total_days += item.price.valid_for_days
 
-            self._insert_product_sales(sales_id, selection.data)
+            self._insert_product_sales(sales_id, item)
 
         self._update_customer_access_time(total_days, customer, product)
 
-    def _insert_product_sales(self, id_sales: int, data: ProductSelection):
+    def _insert_product_sales(self, id_sales: int, data: SaleItem):
         query = f'''
             INSERT INTO products_sales(
                 id_sales,
@@ -99,7 +98,7 @@ class MovementsService(Service):
         
         self._changes_query(query)
     
-    def get_purchases_by_customer_id(self, id_customer: int) -> list[Purchase]:
+    def get_purchases_by_customer_id(self, id_customer: int) -> list[SaleRecord]:
         query = f'''
             SELECT * FROM sales WHERE id_customer={id_customer};
         '''
@@ -115,11 +114,11 @@ class MovementsService(Service):
 
     def _format_purchased_products(self, data: dict):
         data["product"] = self.products_service.get_by_id(data["id_product"])
-        return PurchasedProduct(data)
+        return ProductSold(data)
 
-    def _format_purchases(self, data: list) -> list[Purchase]:
-        def create(data: dict) -> Purchase:
-            purchase = Purchase(data)
+    def _format_purchases(self, data: list) -> list[SaleRecord]:
+        def create(data: dict) -> SaleRecord:
+            purchase = SaleRecord(data)
 
             for product in self._get_products_purchased(purchase.id):
                 purchase.save_product(self._format_purchased_products(dict(product)))
@@ -127,16 +126,16 @@ class MovementsService(Service):
 
         return [ create(dict(purchase)) for purchase in data ]
 
-    def _format_cash_flow_types(self, data: list[dict]) -> list[CashFlowType]:
-        formatted = [ CashFlowType(flow_type) for flow_type in data ]
+    def _format_cash_flow_types(self, data: list[dict]) -> list[MovementType]:
+        formatted = [ MovementType(flow_type) for flow_type in data ]
         return formatted
         
 
     def get_cash_flow_types(self):
-        query = "SELECT * FROM cash_flow_types;"
+        query = "SELECT * FROM cash_movement_types;"
         return self._format_cash_flow_types(self._read_query_fetchall(query))
 
-    def register_cash_flow(self, data: CashMovement):
+    def register_cash_flow(self, data: CashFlowItem):
         query = f'''
             INSERT INTO cash_flow (
                 id_user,
@@ -145,7 +144,7 @@ class MovementsService(Service):
                 description
             ) VALUES (
                 {data.id_user},
-                {data.id_cash_flow_type},
+                {data.id_movement_type},
                 {data.amount},
                 '{data.description}'
             );

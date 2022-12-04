@@ -3,15 +3,15 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from ..service import ControlPanelService
+from ...service import ControlPanelService
 
-class Table(QTableWidget):
+class UsersDataTable(QTableWidget):
     #Both emits the user_id
     edit = Signal(int)
     delete = Signal(int)
 
     def __init__(self, service: ControlPanelService):
-        super(Table, self).__init__()
+        super(UsersDataTable, self).__init__()
         self.users_service = service
         self.users_service.data_changed.connect( self.refresh )
 

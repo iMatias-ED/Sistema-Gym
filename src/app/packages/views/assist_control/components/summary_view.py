@@ -5,13 +5,13 @@ from __feature__ import snake_case, true_property
 from datetime import datetime, date
 
 from .access_time_summary import AccessTimeSummaryDialog
-from .purchase_summary_dialog import PurchaseSummaryDialog
+from .purchases_summary import PurchasesSummaryDialog
 from ..classes.customer_summary import CustomerSummary
 
 from ..service import AssistControlService
 from ...customers.service import CustomersService
 
-class ReportView(QFrame):
+class SummaryView(QFrame):
     go_back = Signal()
     customers_service = CustomersService()
     report_service = AssistControlService()
@@ -20,7 +20,7 @@ class ReportView(QFrame):
     data: CustomerSummary
 
     def __init__(self):
-        super(ReportView, self).__init__()
+        super(SummaryView, self).__init__()
         self.setup_ui()
 
     def setup_ui(self):
@@ -32,7 +32,7 @@ class ReportView(QFrame):
 
         self.bt_go_back = QPushButton("Volver", object_name="go_back", clicked=self.emit_go_back)
 
-        self.purchase_summary = PurchaseSummaryDialog(self)
+        self.purchase_summary = PurchasesSummaryDialog(self)
         self.access_time_summary = AccessTimeSummaryDialog(self)
 
         self.root_layout.add_widget(self.bt_go_back, 1, 1, alignment=Qt.AlignCenter)

@@ -5,15 +5,15 @@ from PySide6.QtGui import QColor
 
 from __feature__ import snake_case, true_property
 
-from ..service import ControlPanelService
-from ..classes.user import User
+from ...service import ControlPanelService
+from ...classes.user import User
 
-class Dialog(QDialog):
+class ConfigureUserDataDialog(QDialog):
     root_layout = QGridLayout()
     inputs_collection: List[ QLineEdit ] = []
 
     def __init__(self, parent, service:ControlPanelService):
-        super(Dialog, self).__init__(parent)
+        super(ConfigureUserDataDialog, self).__init__(parent)
 
         self.users_service = service
         self.users_service.data_changed.connect(self.on_data_changed) 

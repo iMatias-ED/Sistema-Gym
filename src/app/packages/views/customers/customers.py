@@ -8,9 +8,9 @@ from ...shared.content_view import ContentView
 from .service import CustomersService
 
 # Componentes
-from .components.table import Table
-from .components.sidebar import Sidebar
-from .components.dialog import Dialog
+from .components.customers_data_table import CustomersDataTable
+from .components.filter_table_columns import FilterTableColumns
+from .components.configure_customer_data import ConfigureCustomerDialog
 
 class Customers(ContentView):
     service = CustomersService()
@@ -20,9 +20,9 @@ class Customers(ContentView):
     def setup_ui(self) -> None:
         self.set_styles(__file__)
 
-        self.table = Table(self.service)
-        self.dialog = Dialog(self, self.service)
-        self.sidebar = Sidebar(self.service)
+        self.table = CustomersDataTable(self.service)
+        self.dialog = ConfigureCustomerDialog(self, self.service)
+        self.sidebar = FilterTableColumns(self.service)
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)

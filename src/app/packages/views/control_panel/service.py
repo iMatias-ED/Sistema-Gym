@@ -1,12 +1,12 @@
 from typing import List, Union
 from datetime import datetime
 
-from ...shared.services.service import Service
+from ...shared.services.service import DBService
 from ...shared.services.security_service import SecurityService
 from .classes.user import User
 
 
-class ControlPanelService(Service):
+class ControlPanelService(DBService):
     TABLE = "users"
     security_service = SecurityService()
 

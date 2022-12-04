@@ -3,7 +3,7 @@ from __feature__ import snake_case, true_property
 
 from typing import Callable
 
-from ...movements.classes.purchase import Purchase
+from ...movements.classes.sale_record import SaleRecord
 from ..classes.customer_summary import CustomerSummary
 
 class PurchaseDetailDialog(QDialog):
@@ -30,17 +30,17 @@ class PurchaseDetailDialog(QDialog):
 
         self.set_layout(layout)
 
-    def show(self, data: Purchase):
+    def show(self, data: SaleRecord):
         self.date.text = data.formatted_date()
         self.total.text = f"Gs. {data.total()}"
         self.load_data(data)
         
         super().show()
 
-    def load_data(self, data:Purchase):
-        self.table.row_count = len(data.products)
+    def load_data(self, data:SaleRecord):
+        self.table.row_count = len(data.items)
 
-        for row, product in enumerate(data.products):
+        for row, product in enumerate(data.items):
             self.table.set_item(row, 0, QTableWidgetItem(product.product.name))
             self.table.set_item(row, 1, QTableWidgetItem(str(product.quantity)))
             self.table.set_item(row, 2, QTableWidgetItem(product.period))

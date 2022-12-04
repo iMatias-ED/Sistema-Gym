@@ -7,13 +7,13 @@ from .components.inflows import InflowsSummary
 from .components.outflows import OutflowsSummary
 from .components.sales import SalesSummary
 
-class SummaryView(QFrame):
+class MovementsSummaryView(QFrame):
     VIEW_INDEX = 1
     service = ControlPanelService()
     content_layout = QVBoxLayout()
 
     def __init__(self):
-        super(SummaryView, self).__init__()
+        super(MovementsSummaryView, self).__init__()
         self.setup_ui()
 
     def setup_ui(self):

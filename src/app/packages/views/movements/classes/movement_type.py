@@ -1,5 +1,5 @@
 
-class CashFlowType:
+class MovementType:
     id: int
     name: str
     description: str

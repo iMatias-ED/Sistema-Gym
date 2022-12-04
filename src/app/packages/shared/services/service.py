@@ -1,45 +1,49 @@
 import sqlite3
 from PySide6.QtCore import QObject, Signal
+from typing import Union
 
 # Inherits from QObject to use Signals
-class Service(QObject):
+class DBService(QObject):
     data_changed = Signal()
-    current_user_id: int = -1
     DB_PATH = "src/app/db/test.db"
 
+    connection: sqlite3.Connection
+
+    def __init__(self):
+        super(DBService, self).__init__()
+
+    def _open_connection(self) -> sqlite3.Cursor:
+        self.connection = sqlite3.connect(self.DB_PATH)
+        self.connection.row_factory = sqlite3.Row
+        
+        return self.connection.cursor()
+
     # Execute Queries
-    def _changes_query(self, query: str) -> int:
+    def _changes_query(self, query: str) -> Union[int, None]:
         conn = sqlite3.connect(self.DB_PATH)
         
         cursor = conn.cursor()
         cursor.execute(query)
         row_id = cursor.fetchone()
-        # print("row_id", row_id)
 
         conn.commit()
         conn.close()
 
         if row_id: return row_id[0]
-        else: return -1
 
     def _read_query_fetchall(self, query: str):
-        conn = sqlite3.connect(self.DB_PATH)
-        conn.row_factory = sqlite3.Row
-
-        cursor = conn.cursor()
+        cursor = self._open_connection()
         cursor.execute(query)
         result = cursor.fetchall()
         
-        conn.close()
+        self.connection.close()
         return result
 
     def _read_query_fetchone(self, query: str):
-        conn = sqlite3.connect(self.DB_PATH)
-        conn.row_factory = sqlite3.Row
+        cursor = self._open_connection()
         
-        cursor = conn.cursor()
         data = cursor.execute(query)
         result = data.fetchone()
 
-        conn.close()
+        self.connection.close()
         return dict(result)

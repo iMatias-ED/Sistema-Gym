@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from .components.report_view import *
+from .components.summary_view import *
 from ...shared.content_view import *
 
 class AssistControl(ContentView):
@@ -25,7 +25,7 @@ class AssistControl(ContentView):
         inputs_layout_container.set_layout(self.inputs_layout)
 
         # Report View
-        self.report_view = ReportView()
+        self.report_view = SummaryView()
         self.report_view.go_back.connect(lambda: self.show_index(0))
 
         self.stacked_layout.insert_widget(1, self.report_view)

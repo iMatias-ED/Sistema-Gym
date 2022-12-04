@@ -4,7 +4,6 @@ from __feature__ import snake_case, true_property
 
 from ..services.security_service import SecurityService
 
-
 class VerifyUserIdentityDialog(QDialog):
     user_verified = Signal(None)
     security_service = SecurityService()

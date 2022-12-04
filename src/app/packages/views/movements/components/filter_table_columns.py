@@ -8,7 +8,7 @@ from ..service import MovementsService
 # Classes
 from ...customers.classes.customer import Customer
 
-class Sidebar(QFrame):
+class FilterTableColumns(QFrame):
     summary_requested = Signal(Customer)
     root_layout = QVBoxLayout()
     info_layout = QVBoxLayout()
@@ -16,7 +16,7 @@ class Sidebar(QFrame):
     current_customer: Customer = None
 
     def __init__(self, service: MovementsService):
-        super(Sidebar, self).__init__(object_name="sidebar")
+        super(FilterTableColumns, self).__init__(object_name="sidebar")
         self.service = service
         self.setup_ui()
 

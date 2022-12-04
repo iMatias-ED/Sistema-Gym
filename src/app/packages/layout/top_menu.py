@@ -14,10 +14,10 @@ class TopMenu(QFrame):
         size_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
 
         # Create buttons 
-        self.__bt_logo = QPushButton("Logo / Panel de control", size_policy=size_policy)
-        self.__bt_movements = QPushButton("Movimientos", size_policy=size_policy)
-        self.__bt_customers = QPushButton("Clientes", size_policy=size_policy)
-        self.__bt_products = QPushButton("Productos", size_policy=size_policy)
+        self.__bt_logo       = QPushButton("Logo / Panel de control", size_policy=size_policy)
+        self.__bt_movements  = QPushButton("Movimientos", size_policy=size_policy)
+        self.__bt_customers  = QPushButton("Clientes", size_policy=size_policy)
+        self.__bt_products   = QPushButton("Productos", size_policy=size_policy)
         self.__bt_assistance = QPushButton("Marcar asistencia", size_policy=size_policy)
 
         self.__bind_buttons()

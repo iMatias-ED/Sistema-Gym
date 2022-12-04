@@ -3,13 +3,13 @@ from PySide6.QtWidgets import QFrame, QHBoxLayout, QLineEdit, QPushButton
 from __feature__ import snake_case, true_property
 
 from ..service import MovementsService
-from .select_product_quantity import SelectProductQuantityDialog
+from .configure_selected_product import ConfigureSelectedProduct
 
-from ..classes.product_selection import ProductSelection
+from ..classes.sale_item import SaleItem
 from ...products.classes.product import Product
 
 class AddProductByCode(QFrame):
-    product_selected = Signal(ProductSelection)
+    product_selected = Signal(SaleItem)
 
     def __init__(self, service: MovementsService):
         super(AddProductByCode, self).__init__()
@@ -23,7 +23,7 @@ class AddProductByCode(QFrame):
             placeholder_text="Ingrese el código del producto")
         self.submit = QPushButton("Insertar", clicked=self.on_code_inserted)
 
-        self.quantity_dialog = SelectProductQuantityDialog(self)
+        self.quantity_dialog = ConfigureSelectedProduct(self)
         self.quantity_dialog.selected.connect(self.emit_product_selected)
 
         layout = QHBoxLayout()
@@ -36,7 +36,7 @@ class AddProductByCode(QFrame):
         product = self.movements_service.get_product_by_code(self.inp_code.text)
         self.quantity_dialog.show(product)
 
-    @Slot(ProductSelection)
+    @Slot(SaleItem)
     def emit_product_selected(self, selection: Product) -> None:
         self.inp_code.text = ""
         self.product_selected.emit(selection)

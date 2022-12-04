@@ -2,18 +2,18 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-class Sidebar(QFrame):
+class FilterTableColumns(QFrame):
     filter_event = Signal(int, bool)
     root_layout = QVBoxLayout()
     checkbox_layout = QVBoxLayout()
 
     def __init__(self, service):
-        super(Sidebar, self).__init__(object_name="sidebar")
-        self.service = service
+        super(FilterTableColumns, self).__init__(object_name="sidebar")
+        self.products_service = service
         self.setup_ui()
 
     def setup_ui(self) -> None:
-        for index, label in enumerate(self.service.header_labels):
+        for index, label in enumerate(self.products_service.header_labels):
             self.create_checkbox(label, index)
         self.checkbox_layout.add_stretch()
 

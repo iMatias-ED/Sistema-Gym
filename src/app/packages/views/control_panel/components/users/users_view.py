@@ -2,9 +2,9 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
 
-from .table import Table
-from .dialog import Dialog
-from ..service import ControlPanelService
+from .users_data_table import UsersDataTable
+from .configure_user_data import ConfigureUserDataDialog
+from ...service import ControlPanelService
 
 class UsersView(QFrame):
     layout = QVBoxLayout()
@@ -15,8 +15,8 @@ class UsersView(QFrame):
         self.setup_ui()
 
     def setup_ui(self) -> None:
-        self.table = Table(self.service)
-        self.dialog = Dialog(self, self.service)
+        self.table = UsersDataTable(self.service)
+        self.dialog = ConfigureUserDataDialog(self, self.service)
 
         self.layout.add_widget( self.setup_title_frame(), 10 )
         self.layout.add_widget( self.table, 90 )

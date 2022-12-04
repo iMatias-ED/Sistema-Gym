@@ -1,7 +1,7 @@
 from typing import Union
 
 # Services
-from ...shared.services.service import Service
+from ...shared.services.service import DBService
 
 # Classes
 from .classes.price import Price
@@ -10,7 +10,7 @@ from .classes.product import Product
 
 from typing import List
 
-class ProductsService(Service):
+class ProductsService(DBService):
     header_labels = ["Eliminar", "Editar", "Código", "Nombre"]
 
     def __init__(self):

@@ -6,11 +6,11 @@ from typing import Callable
 from .purchase_detail import PurchaseDetailDialog
 
 from ..classes.customer_summary import CustomerSummary
-from ...movements.classes.purchased_product import PurchasedProduct
+from ...movements.classes.product_sold import ProductSold
 
-class PurchaseSummaryDialog(QDialog):
+class PurchasesSummaryDialog(QDialog):
     def __init__(self, parent: QWidget):
-        super(PurchaseSummaryDialog, self).__init__(parent)
+        super(PurchasesSummaryDialog, self).__init__(parent)
         self.setup_ui()
     
     def setup_ui(self):
@@ -52,5 +52,5 @@ class PurchaseSummaryDialog(QDialog):
                 row, 2, create_action_button("Detalles", self.show_purchase_detail, purchase ))
         super().show()
 
-    def show_purchase_detail(self, purchase: PurchasedProduct):
+    def show_purchase_detail(self, purchase: ProductSold):
         self.detail_dialog.show(purchase)

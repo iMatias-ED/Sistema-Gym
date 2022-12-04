@@ -11,23 +11,23 @@ from ..service import MovementsService
 from ....shared.components.error_message import ErrorMessageDialog
 
 # Classes
+from ..classes.sale_item import SaleItem
 from ...customers.classes.customer import Customer
-from ..classes.selected_product_info import SelectedProductInfo
-from ....shared.classes.error_message import ErrorMessage
+from ....shared.classes.dialog_message import DialogMessage
 
-class SummaryDialog(QDialog):
-    products: list[SelectedProductInfo]
+class SaleSummary(QDialog):
+    products: list[SaleItem]
     customer: Customer = None;
 
     root_layout = QGridLayout()
 
     # Error Messages
-    no_customer_msg = ErrorMessage("No seleccionaste un cliente", "Por favor, seleccione un cliente para continuar.")
-    no_products_msg = ErrorMessage("No hay productos seleccionados", "Por favor, seleccione al menos un producto para continuar.")
-    empty_values_msg = ErrorMessage("No hay datos seleccionados", "Para registrar un movimiento, debe seleccionar un cliente y al menos un producto.")
+    no_customer_msg = DialogMessage("No seleccionaste un cliente", "Por favor, seleccione un cliente para continuar.")
+    no_products_msg = DialogMessage("No hay productos seleccionados", "Por favor, seleccione al menos un producto para continuar.")
+    empty_values_msg = DialogMessage("No hay datos seleccionados", "Para registrar un movimiento, debe seleccionar un cliente y al menos un producto.")
 
     def __init__(self, parent, service:MovementsService):
-        super(SummaryDialog, self).__init__(parent)
+        super(SaleSummary, self).__init__(parent)
 
         self.movements_service = service
         self.setup_ui()
@@ -47,7 +47,7 @@ class SummaryDialog(QDialog):
         self.set_layout(self.root_layout)
 
     @Slot(list)
-    def set_products_collection(self, data: list[SelectedProductInfo]):
+    def set_products_collection(self, data: list[SaleItem]):
         self.products = data
 
     @Slot(Customer)

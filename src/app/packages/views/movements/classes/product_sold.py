@@ -1,6 +1,6 @@
 from ...products.classes.product import Product
 
-class PurchasedProduct:
+class ProductSold:
     id_sales: int
     quantity: int
     price: int

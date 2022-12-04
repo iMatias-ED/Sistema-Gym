@@ -6,7 +6,7 @@ from datetime import datetime
 
 from ..service import AssistControlService
 
-from ...movements.classes.purchase import Purchase
+from ...movements.classes.sale_record import SaleRecord
 from ...customers.classes.customer import Customer
 from ..classes.customer_summary import CustomerSummary
 

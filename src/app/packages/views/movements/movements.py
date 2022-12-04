@@ -8,14 +8,14 @@ from ...shared.content_view import ContentView
 from .service import MovementsService
 
 # Componentes
-from .components.table import Table
-from .components.sidebar import Sidebar
+from .components.sale_items_table import SaleItemsTable
+from .components.filter_table_columns import FilterTableColumns
 from .components.add_product_by_code import AddProductByCode
 
-from .components.summary_dialog import SummaryDialog
+from .components.sale_summary import SaleSummary
 from .components.search_product import SearchProductDialog
 from .components.search_customer import SearchCustomerDialog
-from .components.register_cash_movement import RegisterCashMovementDialog
+from .components.register_movement import RegisterMovementDialog
 
 class Movements(ContentView):
     service = MovementsService()
@@ -25,15 +25,15 @@ class Movements(ContentView):
     def setup_ui(self) -> None:
         self.set_styles(__file__)
 
-        self.table = Table(self.service)
-        self.sidebar = Sidebar(self.service)
+        self.table = SaleItemsTable(self.service)
+        self.sidebar = FilterTableColumns(self.service)
         self.code_input = AddProductByCode(self.service)
 
         # dialogs
-        self.summary_dialog = SummaryDialog(self, self.service)
+        self.summary_dialog = SaleSummary(self, self.service)
         self.search_product = SearchProductDialog(self, self.service)
         self.search_customer = SearchCustomerDialog(self, self.service)
-        self.register_movement = RegisterCashMovementDialog(self, self.service)
+        self.register_movement = RegisterMovementDialog(self, self.service)
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)

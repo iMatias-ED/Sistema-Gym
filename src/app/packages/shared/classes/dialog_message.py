@@ -1,5 +1,5 @@
 
-class ErrorMessage:
+class DialogMessage:
     title: str
     message: str
 

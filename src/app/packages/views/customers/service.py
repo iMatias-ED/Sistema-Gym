@@ -1,11 +1,11 @@
 from typing import List, Union
 from datetime import datetime
 
-from ...shared.services.service import Service
+from ...shared.services.service import DBService
 from .classes.customer import Customer
 from .classes.access_time_by_product import AccessTimeByProduct
 
-class CustomersService(Service):
+class CustomersService(DBService):
     TABLE = "customers"
 
     header_labels = ["Eliminar", "Editar", "Nombre", "CI", "RUC", "Razón Social", "Teléfono", "Email", "Género", "Fin de membresía"]
