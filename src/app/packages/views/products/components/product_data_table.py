@@ -1,62 +1,40 @@
-from typing import Callable, Dict, List, Tuple
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from __feature__ import snake_case, true_property
+from typing import List
 
 from ..service import ProductsService
+from ....shared.components.data_table import DataTable, TableItem, Action
 
-class ProductDataTable(QTableWidget):
-    #Both emits the product_id
-    edit = Signal(int)
-    delete = Signal(int)
+class ProductDataTable(DataTable):
 
     def __init__(self, service: ProductsService):
         super(ProductDataTable, self).__init__()
         self.products_service = service
         self.products_service.data_changed.connect( self.refresh )
 
-        self.config_table()
-
-    def config_table(self) -> None:
-        self.vertical_header().visible = False
-        self.column_count = len(self.products_service.header_labels)
-        self.set_horizontal_header_labels(self.products_service.header_labels)
-
-        self.horizontal_header().stretch_last_section = True
-        self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
-
+        self.setup_table(self.products_service.header_labels)
         self.load_data()
         
     def load_data(self) -> None:
         self.products = self.products_service.get_all()
-        self.row_count = len(self.products)
+        items: list[ list[TableItem] ] = []
 
-        def create_button(text:str, product_id: int, on_clicked: Callable)  -> QPushButton:
-            button = QPushButton(text)
-            button.clicked.connect( lambda: on_clicked(product_id) )
-            return button
+        for product in self.products:
+            actions: List[Action] = [
+                Action(column=0, label="X", slot=self.delete_clicked, params=product.id),
+                Action(column=1, label="E", slot=self.edit_clicked, params=product.id)
+            ]            
 
-        for row, product in enumerate(self.products):
-            self.set_cell_widget(row, 0, create_button( "X", product.id, self.delete_clicked ))
-            self.set_cell_widget(row, 1, create_button( "E", product.id, self.edit_clicked))
+            row: list[TableItem] = [
+                TableItem( column=2, value=product.code ),
+                TableItem( column=3, value=product.name ),
+                TableItem( column=4, value=product.get_price_by_name("Pago Diario").price ),
+                TableItem( column=5, value=product.get_price_by_name("Pago Semanal").price ),
+                TableItem( column=6, value=product.get_price_by_name("Pago Mensual").price ),
+                TableItem( column=7, value=product.get_price_by_name("Pago Trimestral").price ),
+                TableItem( column=8, value=product.get_price_by_name("Pago Semestral").price ),
+            ]
+            items.append( row + actions )  
 
-            self.set_item(row, 2, QTableWidgetItem(product.code))
-            self.set_item(row, 3, QTableWidgetItem(product.name))
-
-            # Prices
-            prices = self.products_service.get_prices( product.id )
-            for price in product.prices:
-                pass
-                # print(product.name, price.name, price.price)
-
-            # If the above code works correctly, delete the below code
-            for price in prices:
-                column = self.products_service.header_labels.index(price.name)
-                self.set_item(row, column, QTableWidgetItem( str(price.price) ))
-
-    def refresh(self)  -> None:
-        self.clear()
-        self.config_table()
+        self.insert_items( items )
 
     def edit_clicked(self, product_id:int) -> None:
         self.edit.emit(product_id)
@@ -64,14 +42,3 @@ class ProductDataTable(QTableWidget):
     def delete_clicked(self, product_id:int) -> None:
         self.delete.emit(product_id)
         self.products_service.delete(product_id)
-
-    @Slot(int, bool)
-    def on_filter(self, index, state) -> None:
-        if state: 
-            self.hide_column(index)
-            return
-        self.show_column(index)
-
-    @Slot()
-    def _on_data_changed(self) -> None:
-        self.refresh()

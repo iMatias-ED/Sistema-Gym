@@ -38,7 +38,5 @@ class Product:
             str_prices += f"{price.name}: {price.price}\n"
 
         return f'''
-            code: {self.code}\n
-            name: {self.name}\n
-            prices: {str_prices}
+            code: {self.code}, name: {self.name}
         '''

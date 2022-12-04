@@ -1,57 +1,42 @@
-from typing import Callable, Dict, List, Tuple
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from __feature__ import snake_case, true_property
+from typing import List
 
+# Service
 from ..service import CustomersService
 
-class CustomersDataTable(QTableWidget):
-    #Both emits the product_id
-    edit = Signal(int)
-    delete = Signal(int)
+# Components | Classes
+from ....shared.components.data_table import DataTable, TableItem, Action
 
+class CustomersDataTable(DataTable):
     def __init__(self, service: CustomersService):
         super(CustomersDataTable, self).__init__()
         self.customers_service = service
         self.customers_service.data_changed.connect( self.refresh )
 
-        self.config_table()
-
-    def config_table(self) -> None:
-        self.vertical_header().visible = False
-        self.column_count = len(self.customers_service.header_labels)
-        self.set_horizontal_header_labels(self.customers_service.header_labels)
-
-        self.horizontal_header().stretch_last_section = True
-        self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
-
+        self.setup_table( self.customers_service.header_labels )
         self.load_data()
         
     def load_data(self) -> None:
         self.customers = self.customers_service.get_all()
-        self.row_count = len(self.customers)
+        items: list[ list[TableItem] ] = []
 
-        def create_button(text:str, customer_id: int, on_clicked: Callable)  -> QPushButton:
-            button = QPushButton(text)
-            button.clicked.connect( lambda: on_clicked(customer_id) )
-            return button
+        for customer in self.customers:
+            actions: List[Action] = [
+                Action(column=0, label="X", slot=self.delete_clicked, params=customer.id),
+                Action(column=1, label="E", slot=self.edit_clicked, params=customer.id)
+            ]            
 
-        for row, customer in enumerate(self.customers):
-            self.set_cell_widget(row, 0, create_button( "X", customer.id, self.delete_clicked ))
-            self.set_cell_widget(row, 1, create_button( "E", customer.id, self.edit_clicked))
+            row: list[TableItem] = [
+                TableItem( column=2, value=customer.full_name ),
+                TableItem( column=3, value=customer.ci ),
+                TableItem( column=4, value=customer.ruc ),
+                TableItem( column=5, value=customer.invoice_to ),
+                TableItem( column=6, value=customer.phone ),
+                TableItem( column=7, value=customer.email ),
+                TableItem( column=8, value=customer.genre ),
+            ]
+            items.append( row + actions )  
 
-            self.set_item(row, 2, QTableWidgetItem(customer.full_name))
-            self.set_item(row, 3, QTableWidgetItem(str(customer.ci)))
-            self.set_item(row, 4, QTableWidgetItem(customer.ruc))
-            self.set_item(row, 5, QTableWidgetItem(customer.invoice_to))
-            self.set_item(row, 6, QTableWidgetItem(customer.phone))
-            self.set_item(row, 7, QTableWidgetItem(customer.email))
-            self.set_item(row, 8, QTableWidgetItem(customer.genre))
-            self.set_item(row, 9, QTableWidgetItem(str(customer.access_until_date)))
-
-    def refresh(self)  -> None:
-        self.clear()
-        self.config_table()
+        self.insert_items( items )
 
     def edit_clicked(self, customer_id:int) -> None:
         self.edit.emit(customer_id)
@@ -59,14 +44,3 @@ class CustomersDataTable(QTableWidget):
     def delete_clicked(self, customer_id:int) -> None:
         self.delete.emit(customer_id)
         self.customers_service.delete(customer_id)
-
-    @Slot(int, bool)
-    def on_filter(self, index, state) -> None:
-        if state: 
-            self.hide_column(index)
-            return
-        self.show_column(index)
-
-    @Slot()
-    def _on_data_changed(self) -> None:
-        self.refresh()
