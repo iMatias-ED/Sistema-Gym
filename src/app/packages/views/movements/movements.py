@@ -9,7 +9,7 @@ from .service import MovementsService
 
 # Componentes
 from .components.sale_items_table import SaleItemsTable
-from .components.filter_table_columns import FilterTableColumns
+from .components.right_sidebar import RightSidebarTools
 from .components.add_product_by_code import AddProductByCode
 
 from .components.sale_summary import SaleSummary
@@ -26,7 +26,7 @@ class Movements(ContentView):
         self.set_styles(__file__)
 
         self.table = SaleItemsTable(self.service)
-        self.sidebar = FilterTableColumns(self.service)
+        self.sidebar = RightSidebarTools(self.service)
         self.code_input = AddProductByCode(self.service)
 
         # dialogs

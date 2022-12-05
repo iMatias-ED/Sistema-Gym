@@ -5,31 +5,26 @@ from typing import List, Union
 
 # Components
 from .purchase_detail import PurchaseDetailDialog
+from ....shared.components.summary_dialog import SummaryDialog
 
 # Classes
 from ..classes.customer_summary import CustomerSummary
 from ...movements.classes.product_sold import ProductSold
 from ....shared.components.data_table import DataTable, TableItem, Action
+from ....shared.classes.summary_content import SummaryContent
 
-class PurchasesSummaryDialog(QDialog):
+class PurchasesSummaryDialog(SummaryDialog):
     def __init__(self, parent: QWidget):
         super(PurchasesSummaryDialog, self).__init__(parent)
-        self.setup_ui()
-    
-    def setup_ui(self):
-        self.title = QLabel("Titulo")
-        self.table = self.create_table()
+        
         self.detail_dialog = PurchaseDetailDialog(self)
 
-        layout = QVBoxLayout()
-        layout.add_widget(self.title)
-        layout.add_widget(self.table)
-        self.set_layout(layout)
-
-    def create_table(self):
-        table = DataTable()
-        table.setup_table(["Fecha", "Total", "Detalles"])
-        return table
+        self.setup_ui( SummaryContent(
+                title="Compras",
+                second_title="Filtro",
+                table_headers=["Fecha", "Total", "Detalles"],
+                bottom_label="X Registros encontrados"
+            ))
 
     def show(self, data:CustomerSummary ):
         table_items: List[ List[ Union[TableItem, Action] ] ] = []

@@ -26,7 +26,6 @@ class Action:
 
 # Main class
 
-
 class DataTable(QTableWidget):
     edit = Signal(int)
     delete = Signal(int)
@@ -59,6 +58,7 @@ class DataTable(QTableWidget):
                 if (isinstance(item, Action)):
                     self._insert_action_button(row, item)
 
+    # Insert Items
     def _insert_text_item(self, row: int, item: TableItem):
         self.set_item(
             row, item.column, QTableWidgetItem(str(item.value)))

@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QFrame, QLabel, QPushButton
+from PySide6.QtCore import Qt
 from __feature__ import snake_case, true_property
 
 from ...shared.content_view import ContentView
@@ -9,8 +9,8 @@ from .service import CustomersService
 
 # Componentes
 from .components.customers_data_table import CustomersDataTable
-from .components.filter_table_columns import FilterTableColumns
 from .components.configure_customer_data import ConfigureCustomerDialog
+from ...shared.components.table_columns_filter import TableColumnsFilter
 
 class Customers(ContentView):
     service = CustomersService()
@@ -22,7 +22,7 @@ class Customers(ContentView):
 
         self.table = CustomersDataTable(self.service)
         self.dialog = ConfigureCustomerDialog(self, self.service)
-        self.sidebar = FilterTableColumns(self.service)
+        self.sidebar = TableColumnsFilter(self.service.header_labels)
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)

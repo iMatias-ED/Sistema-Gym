@@ -71,8 +71,8 @@ class SaleItemsTable(DataTable):
             self.insert_data(data, key, row)
         else:
             info = self.collection[key]
-            info.data.add(data.quantity)
-            self.insert_data(info.data, key, info.row)
+            info.item.add(data.quantity)
+            self.insert_data(info.item, key, info.row)
 
     @Slot()
     def on_summary_requested(self) -> None:

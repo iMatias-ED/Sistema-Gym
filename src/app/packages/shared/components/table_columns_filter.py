@@ -1,19 +1,22 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel, QCheckBox
+from PySide6.QtCore import Signal, Qt
 from __feature__ import snake_case, true_property
 
-class FilterTableColumns(QFrame):
+from typing import List
+
+
+class TableColumnsFilter(QFrame):
     filter_event = Signal(int, bool)
-    root_layout = QVBoxLayout()
-    checkbox_layout = QVBoxLayout()
 
-    def __init__(self, service):
-        super(FilterTableColumns, self).__init__(object_name="sidebar")
-        self.products_service = service
-        self.setup_ui()
+    def __init__(self, header_labels: List[str]):
+        super(TableColumnsFilter, self).__init__()
+        self.setup_ui(header_labels)
 
-    def setup_ui(self) -> None:
-        for index, label in enumerate(self.products_service.header_labels):
+    def setup_ui(self, header_labels: List[str]) -> None:
+        self.root_layout = QVBoxLayout()
+        self.checkbox_layout = QVBoxLayout()
+
+        for index, label in enumerate(header_labels):
             self.create_checkbox(label, index)
         self.checkbox_layout.add_stretch()
 

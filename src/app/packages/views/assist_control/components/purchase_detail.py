@@ -3,37 +3,27 @@ from __feature__ import snake_case, true_property
 
 from typing import List
 
+# Components
+from ....shared.components.summary_dialog import SummaryDialog
 # Classes
 from ...movements.classes.sale_record import SaleRecord
 from ....shared.components.data_table import DataTable, TableItem
+from ....shared.classes.summary_content import SummaryContent
 
-class PurchaseDetailDialog(QDialog):
+class PurchaseDetailDialog(SummaryDialog):
     def __init__(self, parent: QWidget):
         super(PurchaseDetailDialog, self).__init__(parent)
-        self.setup_ui()
 
-    def setup_ui(self):
-        title_layout = QHBoxLayout()
-        self.title = QLabel("Fecha de compra:")
-        self.date = QLabel("xx/xx/xxxx")
-
-        title_layout.add_widget(self.title)
-        title_layout.add_widget(self.date)
-
-        self.table = self.create_table()
-
-        self.total = QLabel("Gs. X")
-
-        layout = QVBoxLayout()
-        layout.add_layout(title_layout)
-        layout.add_widget(self.table)
-        layout.add_widget(self.total)
-
-        self.set_layout(layout)
+        self.setup_ui( SummaryContent(
+                title="Fecha de compra",
+                second_title="xx/xx/xxxx",
+                table_headers=["Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"],
+                bottom_label="Gs X."
+            ))
 
     def show(self, data: SaleRecord):
-        self.date.text = data.formatted_date()
-        self.total.text = f"Gs. {data.total()}"
+        self.second_title.text = data.formatted_date()
+        self.bottom_label.text = f"Gs. {data.total()}"
         self.load_data(data)
         
         super().show()
@@ -50,8 +40,3 @@ class PurchaseDetailDialog(QDialog):
                 TableItem( column=4, value=sale.total ),
             ])
         self.table.insert_items(table_items)
-
-    def create_table(self):
-        table = DataTable()
-        table.setup_table(["Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"])
-        return table

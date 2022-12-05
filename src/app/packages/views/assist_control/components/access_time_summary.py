@@ -7,37 +7,31 @@ from datetime import datetime
 # Services
 from ..service import AssistControlService
 
+# Components
+from ....shared.components.summary_dialog import SummaryDialog
+
 # Classes
 from ...customers.classes.customer import Customer
 from ....shared.components.data_table import DataTable, TableItem
+from ....shared.classes.summary_content import SummaryContent
 
-class AccessTimeSummaryDialog(QDialog):
+class AccessTimeSummaryDialog(SummaryDialog):
     service = AssistControlService()
     has_at_least_one_access = False
 
     def __init__(self, parent: QWidget):
         super(AccessTimeSummaryDialog, self).__init__(parent)
-        self.setup_ui()
-
-    def setup_ui(self):
-        title_layout = QHBoxLayout()
-        self.title = QLabel("Nombre")
-        self.status = QLabel("Habilitado")
-
-        title_layout.add_widget(self.title)
-        title_layout.add_widget(self.status)
-
-        self.table = self.create_table()
-
-        layout = QVBoxLayout()
-        layout.add_layout(title_layout)
-        layout.add_widget(self.table)
-
-        self.set_layout(layout)
+        self.setup_ui( SummaryContent(
+                title="Nombre",
+                second_title="...",
+                table_headers=["Producto", "Fecha de expiración", "Cuenta con acceso"],
+                bottom_label="Status"
+            ))
 
     def show(self, data: Customer):
         self.load_data(data)
-        self.status.text = str(self.has_at_least_one_access)
+        self.has_at_least_one_access = False;
+        self.bottom_label.text = str(self.has_at_least_one_access)
         
         super().show()
 
@@ -58,10 +52,3 @@ class AccessTimeSummaryDialog(QDialog):
             ])
 
         self.table.insert_items(table_items)
-
-    def create_table(self):
-        table = DataTable()
-        table.setup_table(
-            ["Producto", "Fecha de expiración", "Cuenta con acceso"])
-
-        return table

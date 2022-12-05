@@ -9,8 +9,8 @@ from .service import ProductsService
 
 # Componentes
 from .components.product_data_table import ProductDataTable
-from .components.filter_table_columns import FilterTableColumns
 from .components.configure_product_data import ConfigureProductData
+from ...shared.components.table_columns_filter import TableColumnsFilter
 
 class Products(ContentView):
     service = ProductsService()
@@ -22,7 +22,7 @@ class Products(ContentView):
 
         self.table = ProductDataTable(self.service)
         self.dialog = ConfigureProductData(self, self.service)
-        self.sidebar = FilterTableColumns(self.service)
+        self.sidebar = TableColumnsFilter(self.service.header_labels)
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)
