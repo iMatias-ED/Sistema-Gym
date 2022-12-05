@@ -1,12 +1,15 @@
-from PySide6.QtWidgets import QPushButton, QWidget, QHeaderView, QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel
+from PySide6.QtWidgets import QWidget, QDialog, QVBoxLayout, QLabel
 from __feature__ import snake_case, true_property
 
-from typing import Callable
+from typing import List, Union
 
+# Components
 from .purchase_detail import PurchaseDetailDialog
 
+# Classes
 from ..classes.customer_summary import CustomerSummary
 from ...movements.classes.product_sold import ProductSold
+from ....shared.components.data_table import DataTable, TableItem, Action
 
 class PurchasesSummaryDialog(QDialog):
     def __init__(self, parent: QWidget):
@@ -24,32 +27,22 @@ class PurchasesSummaryDialog(QDialog):
         self.set_layout(layout)
 
     def create_table(self):
-        header_labels: list[str] = ["Fecha", "Total", "Detalles"]
-
-        table = QTableWidget( 
-            column_count=len(header_labels), 
-            horizontal_header_labels=header_labels )
-        table.style_sheet = "color: white;"
-
-        table.vertical_header().visible = False
-        table.horizontal_header().stretch_last_section = True
-        table.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
-
+        table = DataTable()
+        table.setup_table(["Fecha", "Total", "Detalles"])
         return table
 
     def show(self, data:CustomerSummary ):
-        def create_action_button(text:str, on_clicked: Callable, *args)  -> QPushButton:
-            button = QPushButton(text)
-            button.clicked.connect( lambda: on_clicked(*args) )
-            return button
+        table_items: List[ List[ Union[TableItem, Action] ] ] = []
 
-        self.table.row_count = len(data.purchases)
+        for purchase in data.purchases:
+            table_items.append( [
+                TableItem( column=0, value=purchase.formatted_date() ),
+                TableItem( column=1, value=purchase.total() ),
+                Action   ( column=2, label="D", 
+                    slot=self.show_purchase_detail, params=purchase)
+            ])
 
-        for row, purchase in enumerate(data.purchases):
-            self.table.set_item(row, 0, QTableWidgetItem(purchase.formatted_date()))
-            self.table.set_item(row, 1, QTableWidgetItem(purchase.total()))
-            self.table.set_cell_widget( 
-                row, 2, create_action_button("Detalles", self.show_purchase_detail, purchase ))
+        self.table.insert_items(table_items)
         super().show()
 
     def show_purchase_detail(self, purchase: ProductSold):

@@ -1,7 +1,7 @@
-from typing import Callable
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtCore import Signal, Slot
 from __feature__ import snake_case, true_property
+
+from typing import Tuple
 
 # Services
 from ..service import MovementsService
@@ -11,7 +11,7 @@ from .configure_selected_product import ConfigureSelectedProduct
 
 # Classes
 from ..classes.sale_item import SaleItem
-from ...products.classes.product import Product
+from ....shared.components.data_table import DataTable, Action, TableItem
 
 class TableSaleItem:
     row: int
@@ -24,7 +24,7 @@ class TableSaleItem:
     def __str__(self):
         return f"{self.row}:{self.item}"     
 
-class SaleItemsTable(QTableWidget):
+class SaleItemsTable(DataTable):
     data_collected = Signal(list)
     collection: dict[str: TableSaleItem] = {}
 
@@ -38,15 +38,7 @@ class SaleItemsTable(QTableWidget):
         self.edit_dialog = ConfigureSelectedProduct(self)
         self.edit_dialog.selected.connect( self.on_product_edited )
 
-        self.config_table()
-
-    def config_table(self) -> None:
-        self.vertical_header().visible = False
-        self.column_count = len(self.movements_service.header_labels)
-        self.set_horizontal_header_labels(self.movements_service.header_labels)
-
-        self.horizontal_header().stretch_last_section = True
-        self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
+        self.setup_table(self.movements_service.header_labels)
 
     def refresh(self) -> None:
         self.clear_contents()
@@ -56,7 +48,9 @@ class SaleItemsTable(QTableWidget):
         self.hide_row(self.collection[key].row)
         del self.collection[key]
 
-    def edit_clicked(self, product: Product, key:str, quantity: int, period: str):
+    # def edit_clicked(self, product: Product, key:str, quantity: int, period: str):
+    def edit_clicked(self, data: Tuple):
+        product, key, quantity, period = data
         self.current_key = key
         self.edit_dialog.show(product, quantity, period)
 
@@ -86,24 +80,17 @@ class SaleItemsTable(QTableWidget):
             [ data.item for data in list(self.collection.values())] 
         )
 
-    # Utils
-    def create_action_button(self, text:str, on_clicked: Callable, *args)  -> QPushButton:
-        button = QPushButton(text)
-        button.clicked.connect( lambda: on_clicked(*args) )
-        return button
-
     def insert_data(self, data: SaleItem, key:str, row:int) -> None:
         total = f"Gs. {data.total}"
         price = f"Gs. {data.price.price}"
 
-        self.set_cell_widget( 
-            row, 0, self.create_action_button( "X", self.remove_product, key, ))
-        self.set_cell_widget( 
-            row, 1, self.create_action_button( "E", self.edit_clicked, data.product, key, data.quantity, data.price.name ))
-        
-        self.set_item( row , 2, QTableWidgetItem(data.product.name) )
-        self.set_item( row , 3, QTableWidgetItem(str(data.quantity)) )
-        self.set_item( row , 4, QTableWidgetItem(data.price.name) )
-        self.set_item( row , 5, QTableWidgetItem(price) )
-        self.set_item( row , 6, QTableWidgetItem(total) )
-   
+        self.insert_item([
+            Action(column=0, label="X", slot=self.remove_product, params=key),
+            Action(column=1, label="E", slot=self.edit_clicked, 
+                params=(data.product, key, data.quantity, data.price.name) ),
+            TableItem( column=2, value=data.product.name ),
+            TableItem( column=3, value=data.quantity ),
+            TableItem( column=4, value=data.price.name ),
+            TableItem( column=5, value=price ),
+            TableItem( column=6, value=total )
+        ], row)

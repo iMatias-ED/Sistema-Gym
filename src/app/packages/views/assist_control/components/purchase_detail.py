@@ -1,10 +1,11 @@
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QWidget, QHeaderView, QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QWidget, QDialog, QVBoxLayout, QLabel
 from __feature__ import snake_case, true_property
 
-from typing import Callable
+from typing import List
 
+# Classes
 from ...movements.classes.sale_record import SaleRecord
-from ..classes.customer_summary import CustomerSummary
+from ....shared.components.data_table import DataTable, TableItem
 
 class PurchaseDetailDialog(QDialog):
     def __init__(self, parent: QWidget):
@@ -21,7 +22,7 @@ class PurchaseDetailDialog(QDialog):
 
         self.table = self.create_table()
 
-        self.total = QLabel("Gs. 10000")
+        self.total = QLabel("Gs. X")
 
         layout = QVBoxLayout()
         layout.add_layout(title_layout)
@@ -38,26 +39,19 @@ class PurchaseDetailDialog(QDialog):
         super().show()
 
     def load_data(self, data:SaleRecord):
-        self.table.row_count = len(data.items)
+        table_items: List[ List[TableItem] ] = []
 
-        for row, product in enumerate(data.items):
-            self.table.set_item(row, 0, QTableWidgetItem(product.product.name))
-            self.table.set_item(row, 1, QTableWidgetItem(str(product.quantity)))
-            self.table.set_item(row, 2, QTableWidgetItem(product.period))
-            self.table.set_item(row, 3, QTableWidgetItem(str(product.price)))
-            self.table.set_item(row, 4, QTableWidgetItem(str(product.total)))
+        for sale in data.items:
+            table_items.append([
+                TableItem( column=0, value=sale.product.name ),
+                TableItem( column=1, value=sale.quantity ),
+                TableItem( column=2, value=sale.period ),
+                TableItem( column=3, value=sale.price ),
+                TableItem( column=4, value=sale.total ),
+            ])
+        self.table.insert_items(table_items)
 
     def create_table(self):
-        header_labels: list[str] = [
-            "Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"]
-
-        table = QTableWidget( 
-            column_count=len(header_labels), 
-            horizontal_header_labels=header_labels )
-        table.style_sheet = "color: gray;"
-
-        table.vertical_header().visible = False
-        table.horizontal_header().stretch_last_section = True
-        table.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
-
+        table = DataTable()
+        table.setup_table(["Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"])
         return table

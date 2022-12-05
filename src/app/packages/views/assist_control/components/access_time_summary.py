@@ -1,17 +1,17 @@
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QWidget, QHeaderView, QDialog, QVBoxLayout, QTableWidget, QTableWidgetItem, QLabel
+from PySide6.QtWidgets import QHBoxLayout, QWidget, QDialog, QVBoxLayout, QLabel
 from __feature__ import snake_case, true_property
 
-from typing import Callable
+from typing import List
 from datetime import datetime
 
+# Services
 from ..service import AssistControlService
 
-from ...movements.classes.sale_record import SaleRecord
+# Classes
 from ...customers.classes.customer import Customer
-from ..classes.customer_summary import CustomerSummary
+from ....shared.components.data_table import DataTable, TableItem
 
 class AccessTimeSummaryDialog(QDialog):
-
     service = AssistControlService()
     has_at_least_one_access = False
 
@@ -22,7 +22,7 @@ class AccessTimeSummaryDialog(QDialog):
     def setup_ui(self):
         title_layout = QHBoxLayout()
         self.title = QLabel("Nombre")
-        self.status = QLabel("Habílitado")
+        self.status = QLabel("Habilitado")
 
         title_layout.add_widget(self.title)
         title_layout.add_widget(self.status)
@@ -42,36 +42,26 @@ class AccessTimeSummaryDialog(QDialog):
         super().show()
 
     def load_data(self, data:Customer):
-        self.table.row_count = len(data.access_time)
+        table_items: List[ List[TableItem] ] = []
 
-        for row, info in enumerate(data.access_time):
-            product = self.service.get_product_by_id(info.id_product)
+        for info in data.access_time:
+            # Check access time
             expired = datetime.now() > datetime.fromtimestamp(info.unix_time)
+            if not expired: self.has_at_least_one_access = True
 
-            self.table.set_item(row, 0, QTableWidgetItem(product.name))
-            self.table.set_item(row, 1, QTableWidgetItem(info.time))
-            self.table.set_item(row, 2, QTableWidgetItem(str(not expired)))
+            # Prepare the table data
+            product = self.service.get_product_by_id(info.id_product)
+            table_items.append([
+                TableItem( column=0, value=product.name ),
+                TableItem( column=1, value=info.time ),
+                TableItem( column=2, value=str(not expired) )
+            ])
 
-            if not self.has_at_least_one_access:
-                self.has_at_least_one_access = not expired
+        self.table.insert_items(table_items)
 
     def create_table(self):
-        header_labels: list[str] = [
-            "Producto", "Fecha de expiración", "Cuenta con acceso"]
-
-        table = QTableWidget( 
-            column_count=len(header_labels), 
-            horizontal_header_labels=header_labels )
-        table.style_sheet = "color: gray;"
-
-        table.vertical_header().visible = False
-        table.horizontal_header().stretch_last_section = True
-        table.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
+        table = DataTable()
+        table.setup_table(
+            ["Producto", "Fecha de expiración", "Cuenta con acceso"])
 
         return table
-
-    def check_access(self, access_until: int) -> bool:
-        today = datetime.now()
-        access_until = datetime.fromtimestamp(access_until)
-                
-        return access_until >= today 
