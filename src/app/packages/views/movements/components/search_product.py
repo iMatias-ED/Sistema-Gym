@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QVBoxLayout, QLineEdit, QPushButton, QDialog, QLabel
-from PySide6.QtCore import Signal, Slot, Qt
+from PySide6.QtCore import Signal, Slot
 from __feature__ import snake_case, true_property
 
 # Services
@@ -7,7 +6,7 @@ from ..service import MovementsService
 
 # Classes
 from ..classes.sale_item import SaleItem
-from ....shared.components.data_table import DataTable, TableItem
+from ....shared.classes.table_header_label import TableHeaderLabel
 from ....shared.components.search_dialog import SearchDialog, SearchDialogConfig
 
 # Components
@@ -20,11 +19,12 @@ class SearchProductDialog (SearchDialog):
         super(SearchProductDialog, self).__init__(parent)
 
         self.movements_service = service
-        self.setup_ui( SearchDialogConfig (
-            title="Seleccione un producto",
-            input_placeholder="Ingrese un nombre para buscar",
-            table_headers=["Nombre del producto"],
-            slot=self.on_product_selected
+
+        self.setup_ui( SearchDialogConfig(
+            "Seleccione un producto",
+            "Ingrese un nombre para buscar",
+            [ TableHeaderLabel("name", "Nombre del producto") ],
+            self.on_product_selected
         ))
         self.quantity_dialog = ConfigureSelectedProduct(self)
         self.quantity_dialog.selected.connect(self.on_selection_finished)
@@ -37,8 +37,7 @@ class SearchProductDialog (SearchDialog):
     @Slot(str)
     def update_table_data(self, text:str):
         self.data = self.movements_service.search_products(text)
-        self.table.insert_items(
-            [ [TableItem(column=0, value=p.name)] for p in self.data ])
+        self.table.test_insert( self.data )
 
     @Slot(SaleItem)
     def on_selection_finished(self, data: SaleItem):

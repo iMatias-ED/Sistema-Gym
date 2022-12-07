@@ -9,16 +9,23 @@ from ....shared.components.summary_dialog import SummaryDialog
 from ...movements.classes.sale_record import SaleRecord
 from ....shared.components.data_table import DataTable, TableItem
 from ....shared.classes.summary_content import SummaryContent
+from ....shared.classes.table_header_label import TableHeaderLabel
 
 class PurchaseDetailDialog(SummaryDialog):
     def __init__(self, parent: QWidget):
         super(PurchaseDetailDialog, self).__init__(parent)
 
         self.setup_ui( SummaryContent(
-                title="Fecha de compra",
-                second_title="xx/xx/xxxx",
-                table_headers=["Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"],
-                bottom_label="Gs X."
+                "Fecha de compra",
+                "xx/xx/xxxx",
+                [   
+                    TableHeaderLabel("name", "Producto"),
+                    TableHeaderLabel("quantity", "Cantidad"),
+                    TableHeaderLabel("period", "Periodo"),
+                    TableHeaderLabel("price", "Precio Unitario"),
+                    TableHeaderLabel("total", "Total"),
+                ],
+                "X Registros encontrados"
             ))
 
     def show(self, data: SaleRecord):

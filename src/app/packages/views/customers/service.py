@@ -1,7 +1,7 @@
 from typing import List, Union
 from datetime import datetime
 
-from ...shared.services.service import DBService
+from ...shared.services.service import DBService, TableHeaderLabel
 from .classes.customer import Customer
 from .classes.access_time_by_product import AccessTimeByProduct
 
@@ -9,6 +9,18 @@ class CustomersService(DBService):
     TABLE = "customers"
 
     header_labels = ["Eliminar", "Editar", "Nombre", "CI", "RUC", "Razón Social", "Teléfono", "Email", "Género", "Fin de membresía"]
+
+    header_labels2 = [
+        TableHeaderLabel("delete", "Eliminar"),
+        TableHeaderLabel("edit", "Editar"),
+        TableHeaderLabel("full_name", "Nombre"),
+        TableHeaderLabel("ci", "CI"),
+        TableHeaderLabel("ruc", "RUC"),
+        TableHeaderLabel("invoice_to", "Razón Social"),
+        TableHeaderLabel("phone", "Teléfono"),
+        TableHeaderLabel("email", "Email"),
+        TableHeaderLabel("genre", "Género"),
+    ]
 
     # Create
     def create(self, c:Customer) -> None:

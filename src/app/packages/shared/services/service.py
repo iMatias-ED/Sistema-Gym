@@ -1,6 +1,7 @@
 import sqlite3
 from PySide6.QtCore import QObject, Signal
 from typing import Union
+from ..classes.table_header_label import TableHeaderLabel
 
 # Inherits from QObject to use Signals
 class DBService(QObject):

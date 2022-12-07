@@ -1,16 +1,25 @@
 from typing import List, Union
 from datetime import datetime
 
-from ...shared.services.service import DBService
+from ...shared.services.service import DBService, TableHeaderLabel
 from ...shared.services.security_service import SecurityService
 from .classes.user import User
-
 
 class ControlPanelService(DBService):
     TABLE = "users"
     security_service = SecurityService()
 
     header_labels = ["Eliminar", "Editar", "Nombre", "CI", "Teléfono", "Email", "Género"]
+
+    header_labels2 = [
+        TableHeaderLabel("action", "Eliminar"),
+        TableHeaderLabel("action", "Editar"),
+        TableHeaderLabel("full_name", "Nombre"),
+        TableHeaderLabel("ci", "CI"),
+        TableHeaderLabel("phone", "Teléfono"),
+        TableHeaderLabel("email", "Email"),
+        TableHeaderLabel("genre", "Género"),
+    ]
 
     # Create
     def create(self, c:User) -> None:

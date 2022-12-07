@@ -8,18 +8,28 @@ from .classes.price import Price
 from .classes.period import Period
 from .classes.product import Product
 
+from ...shared.classes.table_header_label import TableHeaderLabel
+
 from typing import List
 
 class ProductsService(DBService):
     header_labels = ["Eliminar", "Editar", "Código", "Nombre"]
 
+
     def __init__(self):
         super(ProductsService, self).__init__()
+        
+        self.header_labels_2 = [
+            TableHeaderLabel("action", "Eliminar"),
+            TableHeaderLabel("action", "Editar"),
+            TableHeaderLabel("code", "Código"),
+            TableHeaderLabel("name", "Nombre")
+        ]
 
         # Add price periods to header labels
         for period in self.get_periods():
-            if period.name not in self.header_labels:
-                self.header_labels.append( period.name )
+            self.header_labels_2.append( 
+                TableHeaderLabel(period.name, period.name) )
 
     # Create
     def create(self, data: Product) -> None:

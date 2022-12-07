@@ -4,7 +4,7 @@ from typing import List, Union
 from ...service import ControlPanelService
 
 # Classes
-from .....shared.components.data_table import DataTable, TableItem, Action
+from .....shared.components.data_table import DataTable, DevAction, TableItem, Action
 
 class UsersDataTable(DataTable):
 
@@ -13,24 +13,17 @@ class UsersDataTable(DataTable):
         self.users_service = service
         self.users_service.data_changed.connect( self.refresh )
 
-        self.setup_table(self.users_service.header_labels)
+        self.setup_dev(self.users_service.header_labels2)
         self.load_data()
         
     def load_data(self) -> None:
         self.users = self.users_service.get_all()
-        table_items: List[ List[ Union[ Action, TableItem ] ]] = []
 
-        for user in self.users:
-            table_items.append([
-                Action( column=0, label="X", slot=self.delete_clicked , params=user.id ),
-                Action( column=1, label="E", slot=self.edit_clicked , params=user.id ),
-                TableItem( column=2, value=user.full_name),
-                TableItem( column=3, value=user.ci),
-                TableItem( column=4, value=user.phone),
-                TableItem( column=5, value=user.email),
-                TableItem( column=6, value=user.genre),
-            ])
-        self.insert_items(table_items)
+        actions = [
+            DevAction(0, "X", self.delete_clicked, "id"),
+            DevAction(1, "E", self.edit_clicked, "id"),
+        ]
+        self.test_insert(self.users, actions)
 
     def edit_clicked(self, user_id:int) -> None:
         self.edit.emit(user_id)

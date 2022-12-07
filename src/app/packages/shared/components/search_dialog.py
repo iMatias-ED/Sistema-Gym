@@ -50,7 +50,7 @@ class SearchDialog(QDialog):
     def search(self): 
         self.show()
 
-    def _create_table(self, header_labels: List[str]) -> DataTable:
+    def _create_table(self, header_labels: List) -> DataTable:
         table = DataTable()
-        table.setup_table(header_labels)
+        table.setup_dev(header_labels)
         return table

@@ -1,7 +1,9 @@
 from typing import List
 
 from ..service import ProductsService
-from ....shared.components.data_table import DataTable, TableItem, Action
+from ....shared.components.data_table import SubValue, DevAction, DataTable, TableItem, Action
+
+
 
 class ProductDataTable(DataTable):
 
@@ -10,31 +12,19 @@ class ProductDataTable(DataTable):
         self.products_service = service
         self.products_service.data_changed.connect( self.refresh )
 
-        self.setup_table(self.products_service.header_labels)
+        # self.setup_table(self.products_service.header_labels)
+        self.setup_dev(self.products_service.header_labels_2)
         self.load_data()
         
     def load_data(self) -> None:
         self.products = self.products_service.get_all()
-        items: list[ list[TableItem] ] = []
+        sub_values = { "prices": [SubValue("name", "price")] }
+        actions = [
+            DevAction(0, "X", self.delete_clicked, "id"),
+            DevAction(1, "E", self.edit_clicked, "id"),
+        ]
 
-        for product in self.products:
-            actions: List[Action] = [
-                Action(column=0, label="X", slot=self.delete_clicked, params=product.id),
-                Action(column=1, label="E", slot=self.edit_clicked, params=product.id)
-            ]            
-
-            row: list[TableItem] = [
-                TableItem( column=2, value=product.code ),
-                TableItem( column=3, value=product.name ),
-                TableItem( column=4, value=product.get_price_by_name("Pago Diario").price ),
-                TableItem( column=5, value=product.get_price_by_name("Pago Semanal").price ),
-                TableItem( column=6, value=product.get_price_by_name("Pago Mensual").price ),
-                TableItem( column=7, value=product.get_price_by_name("Pago Trimestral").price ),
-                TableItem( column=8, value=product.get_price_by_name("Pago Semestral").price ),
-            ]
-            items.append( row + actions )  
-
-        self.insert_items( items )
+        self.test_insert(self.products, actions, sub_values)
 
     def edit_clicked(self, product_id:int) -> None:
         self.edit.emit(product_id)

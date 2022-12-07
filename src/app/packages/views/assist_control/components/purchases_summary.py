@@ -11,6 +11,7 @@ from ....shared.components.summary_dialog import SummaryDialog
 from ..classes.customer_summary import CustomerSummary
 from ...movements.classes.product_sold import ProductSold
 from ....shared.components.data_table import DataTable, TableItem, Action
+from ....shared.classes.table_header_label import TableHeaderLabel
 from ....shared.classes.summary_content import SummaryContent
 
 class PurchasesSummaryDialog(SummaryDialog):
@@ -20,10 +21,14 @@ class PurchasesSummaryDialog(SummaryDialog):
         self.detail_dialog = PurchaseDetailDialog(self)
 
         self.setup_ui( SummaryContent(
-                title="Compras",
-                second_title="Filtro",
-                table_headers=["Fecha", "Total", "Detalles"],
-                bottom_label="X Registros encontrados"
+                "Compras",
+                "Filtro",
+                [   
+                    TableHeaderLabel("date", "Fecha"),
+                    TableHeaderLabel("total", "Total"),
+                    TableHeaderLabel("action", "Detalles"),
+                ],
+                "X Registros encontrados"
             ))
 
     def show(self, data:CustomerSummary ):

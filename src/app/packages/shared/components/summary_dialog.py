@@ -3,6 +3,7 @@ from __feature__ import snake_case, true_property
 
 from typing import List
 
+from ...shared.classes.table_header_label import TableHeaderLabel
 from ..classes.summary_content import SummaryContent
 from .data_table import DataTable, TableItem, Action
 
@@ -31,7 +32,7 @@ class SummaryDialog(QDialog):
 
         self.set_layout(layout)
 
-    def create_table(self, header_labels: List[str]):
+    def create_table(self, header_labels: List[TableHeaderLabel]):
         table = DataTable()
-        table.setup_table(header_labels)
+        table.setup_dev(header_labels)
         return table

@@ -80,7 +80,7 @@ class Main(QMainWindow):
         self.content.add_content(self.views['control_panel'], 4)
 
         # temporal
-        self.content.show_index(2)
+        self.content.show_index(1)
 
 # Execute
 import sys
