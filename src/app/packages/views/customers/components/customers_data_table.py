@@ -20,8 +20,8 @@ class CustomersDataTable(DataTable):
         self.customers = self.customers_service.get_all()
 
         actions: List[DevAction] = [
-            DevAction(0, "X", self.delete_clicked, "id"),
-            DevAction(1, "E", self.edit_clicked, "id"),
+            DevAction(0, "X", self.delete_clicked, True, "id"),
+            DevAction(1, "E", self.edit_clicked, True, "id"),
         ]
 
         self.test_insert(self.customers, actions)

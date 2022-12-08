@@ -14,6 +14,6 @@ class Price:
         if "id"             in price:    self.id = price["id"]
         if "valid_for_days" in price:    self.valid_for_days = price["valid_for_days"]
 
-    def __str__(self):
-        return f"{self.name}: {self.price}"
+    # def __str__(self):
+    #     return f"{self.name}: {self.price}"
 

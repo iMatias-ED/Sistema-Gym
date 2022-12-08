@@ -12,9 +12,19 @@ from ....shared.components.summary_dialog import SummaryDialog
 
 # Classes
 from ...customers.classes.customer import Customer
-from ....shared.components.data_table import DataTable, TableItem
 from ....shared.classes.summary_content import SummaryContent
 from ....shared.classes.table_header_label import TableHeaderLabel
+
+class TableItem:
+    product_name: str
+    date: str
+    has_access: bool
+
+    def __init__(self, name: str, date: str, has_access: bool):
+        self.product_name = name
+        self.date = date
+        self.has_access = has_access
+
 class AccessTimeSummaryDialog(SummaryDialog):
     service = AssistControlService()
     has_at_least_one_access = False
@@ -24,11 +34,9 @@ class AccessTimeSummaryDialog(SummaryDialog):
         self.setup_ui( SummaryContent(
                 "Nombre",
                 "...",
-                [   
-                    TableHeaderLabel("name", "Producto"),
+                [   TableHeaderLabel("product_name", "Producto"),
                     TableHeaderLabel("date", "Fecha de expiracion"),
-                    TableHeaderLabel("has_access", "Cuenta con Acceso"),
-                ],
+                    TableHeaderLabel("has_access", "Cuenta con Acceso")],
                 "Status"
             ))
 
@@ -40,7 +48,7 @@ class AccessTimeSummaryDialog(SummaryDialog):
         super().show()
 
     def load_data(self, data:Customer):
-        table_items: List[ List[TableItem] ] = []
+        table_items: List[ TableItem ] = []
 
         for info in data.access_time:
             # Check access time
@@ -49,10 +57,6 @@ class AccessTimeSummaryDialog(SummaryDialog):
 
             # Prepare the table data
             product = self.service.get_product_by_id(info.id_product)
-            table_items.append([
-                TableItem( column=0, value=product.name ),
-                TableItem( column=1, value=info.time ),
-                TableItem( column=2, value=str(not expired) )
-            ])
-
-        self.table.insert_items(table_items)
+            table_items.append(TableItem(product.name, info.time, not expired))
+        
+        self.table.test_insert(table_items)

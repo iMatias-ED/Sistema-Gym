@@ -14,6 +14,7 @@ from .classes.cash_flow_item import CashFlowItem
 from .classes.movement_type import MovementType
 from .classes.product_sold import ProductSold
 from .classes.sale_item import SaleItem
+from ...shared.classes.table_header_label import TableHeaderLabel
 
 class MovementsService(DBService):
     DAY_IN_SECONDS = 86400
@@ -22,6 +23,16 @@ class MovementsService(DBService):
     customers_service = CustomersService()
 
     header_labels = ["Eliminar", "Editar", "Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"]
+    header_labels_2 = [
+        TableHeaderLabel("action", "Eliminar"),
+        TableHeaderLabel("action", "Editar"),
+        TableHeaderLabel("product_name", "Producto"),
+        TableHeaderLabel("quantity", "Cantidad"),
+        TableHeaderLabel("period", "Periodo"),
+        TableHeaderLabel("price", "Precio Unitario"),
+        TableHeaderLabel("total", "Total"),
+    ]
+
 
     def search_users(self, name: str) -> List[Customer]:
         return self.customers_service.search(name)

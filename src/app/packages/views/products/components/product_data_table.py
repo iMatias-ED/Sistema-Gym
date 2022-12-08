@@ -18,10 +18,10 @@ class ProductDataTable(DataTable):
         
     def load_data(self) -> None:
         self.products = self.products_service.get_all()
-        sub_values = { "prices": [SubValue("name", "price")] }
+        sub_values = { "prices": [SubValue("name", "price", True)] }
         actions = [
-            DevAction(0, "X", self.delete_clicked, "id"),
-            DevAction(1, "E", self.edit_clicked, "id"),
+            DevAction(0, "X", self.delete_clicked, True, "id"),
+            DevAction(1, "E", self.edit_clicked, True, "id"),
         ]
 
         self.test_insert(self.products, actions, sub_values)

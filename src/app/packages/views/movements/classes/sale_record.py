@@ -4,7 +4,9 @@ from .product_sold import ProductSold
 class SaleRecord:
     id: int
     date: int
+    total: int
     id_customer: int
+    formatted_date: str
     items: list[ProductSold]
 
     def __init__(self, data: dict):
@@ -14,15 +16,14 @@ class SaleRecord:
         self.id_customer = data["id_customer"]
 
         if "id" in data: self.id = data["id"]
+        self.formatted_date = datetime.fromtimestamp(self.date).strftime("%d/%m/%Y")
 
     def save_product(self, product: ProductSold):
         self.items.append(product)
+        self.update_total()
 
-    def total(self) -> str:
+    def update_total(self) -> None:
         total = 0
         for product in self.items:
             total += product.total
-        return str(total)
-
-    def formatted_date(self) -> str:
-        return datetime.fromtimestamp(self.date).strftime("%d/%m/%Y")
+        self.total = total

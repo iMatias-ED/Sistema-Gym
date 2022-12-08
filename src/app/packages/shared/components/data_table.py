@@ -2,7 +2,7 @@ from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QPushButton, QHeaderView
 from __feature__ import snake_case, true_property
 
-from typing import Callable, Any, Union, List
+from typing import Callable, Any, Union, List, Iterable
 
 from ..classes.table_header_label import TableHeaderLabel
 
@@ -30,20 +30,25 @@ class DevAction:
     label: str
     slot: Callable
     params: Any
+    params_are_attr: bool
 
-    def __init__(self, column: int, label: str, slot: Callable, *args):
+    def __init__(self, column: int, label: str, slot: Callable, params_are_attr: bool = True, *args):
         self.column = column
         self.label = label
         self.slot = slot
         self.params = args
+        self.params_are_attr = params_are_attr
 
 class SubValue:
     column_name_attr: str
+    is_column_name_an_attr: bool
     value_attr: str
+    
 
-    def __init__(self, column_name: str, value_attr_name: str):
+    def __init__(self, column_name: str, value_attr_name: str, is_column_attr: bool = False):
         self.column_name_attr = column_name
         self.value_attr = value_attr_name
+        self.is_column_name_an_attr = is_column_attr
 
 # Main class
 class DataTable(QTableWidget):
@@ -64,7 +69,7 @@ class DataTable(QTableWidget):
 
     def test_insert(self, 
         data: List[Any], actions: List[DevAction] = [],
-        sub_items: dict[str, List[SubValue]] = {}
+        sub_values: dict[str, List[SubValue]] = {}
     ):
         self.row_count = len(data)
 
@@ -73,15 +78,32 @@ class DataTable(QTableWidget):
                 index = self.get_index(key)
                 
                 # Column name doesn't exists in table
-                if key in sub_items: 
+                if key in sub_values: 
                     sub_item = getattr(row_item, key)
 
-                    for item in sub_item:
-                        for sub_value in sub_items[key]:
-                            value = getattr(item, sub_value.value_attr)
-                            index = self.get_index(getattr(item, sub_value.column_name_attr))
+                    if isinstance(sub_item, Iterable):
+                        for item in sub_item:
+                            for sub_value in sub_values[key]:
+                                value = getattr(item, sub_value.value_attr)
+
+                                if sub_value.is_column_name_an_attr:
+                                    index = self.get_index(getattr(item, sub_value.column_name_attr))
+                                else:
+                                    index = self.get_index(sub_value.column_name_attr)
+                                
+                                # print(sub_value.column_name_attr, index)
+                                self.dev_insert_item(value, row, index)
+                    else: 
+                        for sub_value in sub_values[key]:
+                            value = getattr(sub_item, sub_value.value_attr)
+                            
+                            if sub_value.is_column_name_an_attr:
+                                index = self.get_index(getattr(sub_item, sub_value.column_name_attr))
+                            else:
+                                index = self.get_index(sub_value.column_name_attr)
+
+                            # index = self.get_index(column_name)
                             self.dev_insert_item(value, row, index)
-                    continue
 
                 if index == None: continue
                 else:
@@ -90,12 +112,91 @@ class DataTable(QTableWidget):
                     for action in actions:
                         self.dev_insert_action_button(action, row_item, row)
 
+    def test_insert_one(self, 
+        row_item: Any, row: int, actions: List[DevAction] = [],
+        sub_values: dict[str, List[SubValue]] = {}
+    ):
+        # print("row_item", row_item)
+        # print("actions", actions)
+        # print("sub_items", sub_items)
+
+        for key, value in row_item.__dict__.items():
+            if key in sub_values:
+                for sub_value in sub_values[key]:
+                    attr = getattr(row_item, key)
+                    if sub_value.is_column_name_an_attr:
+                        index = self.get_index(
+                            getattr(attr, sub_value.column_name_attr))
+                    else: index = self.get_index(sub_value.column_name_attr)
+                    value = getattr(attr, sub_value.value_attr)
+                    # print("SUB_VALUE", index, value)
+                    self.dev_insert_item(value, row, index)
+                continue
+            
+            index = self.get_index(key)
+            if index == None: continue
+        
+            value = getattr(row_item, key)
+            self.dev_insert_item(value, row, index)
+
+            for action in actions:
+                self.dev_insert_action_button(action, row_item, row)
+
+        # for key, value in row_item.__dict__.items():
+        #         index = self.get_index(key)
+                
+        #         # Column name doesn't exists in table
+        #         if key in sub_items: 
+        #             sub_item = getattr(row_item, key)
+
+        #             if isinstance(sub_item, Iterable):
+        #                 for item in sub_item:
+        #                     for sub_value in sub_items[key]:
+        #                         value = getattr(item, sub_value.value_attr)
+
+        #                         if sub_value.is_column_name_an_attr:
+        #                             index = self.get_index(getattr(item, sub_value.column_name_attr))
+        #                         else:
+        #                             index = self.get_index(sub_value.column_name_attr)
+                                
+        #                         # print(sub_value.column_name_attr, index)
+        #                         self.dev_insert_item(value, row, index)
+        #             else: 
+        #                 for sub_value in sub_items[key]:
+        #                     value = getattr(sub_item, sub_value.value_attr)
+                            
+        #                     if sub_value.is_column_name_an_attr:
+        #                         index = self.get_index(getattr(sub_item, sub_value.column_name_attr))
+        #                     else:
+        #                         index = self.get_index(sub_value.column_name_attr)
+
+        #                     # index = self.get_index(column_name)
+        #                     self.dev_insert_item(value, row, index)
+
+        #         if index == None: continue
+        #         else:
+        #             self.dev_insert_item(value, row, index)
+
+        #             for action in actions:
+        #                 self.dev_insert_action_button(action, row_item, row)
+
     def dev_insert_item(self, value, row, column):
         self.set_item(row, column, QTableWidgetItem(str(value)))
 
-    def dev_insert_action_button(self, config: Action, item: Any, row: int):
-        params = [ getattr(item, param) for param in config.params ]
-        # print(params)
+    def dev_insert_action_button(self, config: DevAction, item: Any, row: int):
+        # print("\n##########\nconfig", config)
+        # print("params", config.params)
+
+        params = []
+        for param in config.params:
+            if not config.params_are_attr:
+                params.append(param)
+                continue
+
+            if param == "<self>": params.append(item)
+            else: params.append(getattr(item, param))
+
+        # print("result params from ", config.label, params)
 
         self.set_cell_widget( row, config.column,
             self.dev_create_button(config.label, config.slot, *params))

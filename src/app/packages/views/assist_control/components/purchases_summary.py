@@ -10,7 +10,7 @@ from ....shared.components.summary_dialog import SummaryDialog
 # Classes
 from ..classes.customer_summary import CustomerSummary
 from ...movements.classes.product_sold import ProductSold
-from ....shared.components.data_table import DataTable, TableItem, Action
+from ....shared.components.data_table import DevAction, DataTable, TableItem, Action
 from ....shared.classes.table_header_label import TableHeaderLabel
 from ....shared.classes.summary_content import SummaryContent
 
@@ -21,28 +21,20 @@ class PurchasesSummaryDialog(SummaryDialog):
         self.detail_dialog = PurchaseDetailDialog(self)
 
         self.setup_ui( SummaryContent(
-                "Compras",
-                "Filtro",
-                [   
-                    TableHeaderLabel("date", "Fecha"),
-                    TableHeaderLabel("total", "Total"),
-                    TableHeaderLabel("action", "Detalles"),
-                ],
-                "X Registros encontrados"
-            ))
+            "Compras",
+            "Filtro",
+            [   
+                TableHeaderLabel("formatted_date", "Fecha"),
+                TableHeaderLabel("total", "Total"),
+                TableHeaderLabel("action", "Detalles"),
+            ],
+            "X Registros encontrados"
+        ))
 
     def show(self, data:CustomerSummary ):
-        table_items: List[ List[ Union[TableItem, Action] ] ] = []
+        actions = [ DevAction(2, "D", self.show_purchase_detail, True, "<self>") ]
 
-        for purchase in data.purchases:
-            table_items.append( [
-                TableItem( column=0, value=purchase.formatted_date() ),
-                TableItem( column=1, value=purchase.total() ),
-                Action   ( column=2, label="D", 
-                    slot=self.show_purchase_detail, params=purchase)
-            ])
-
-        self.table.insert_items(table_items)
+        self.table.test_insert(data.purchases, actions)
         super().show()
 
     def show_purchase_detail(self, purchase: ProductSold):
