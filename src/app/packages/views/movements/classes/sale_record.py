@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 from .product_sold import ProductSold
 
 class SaleRecord:
@@ -7,7 +8,7 @@ class SaleRecord:
     total: int
     id_customer: int
     formatted_date: str
-    items: list[ProductSold]
+    items: List[ProductSold]
 
     def __init__(self, data: dict):
         self.items = []

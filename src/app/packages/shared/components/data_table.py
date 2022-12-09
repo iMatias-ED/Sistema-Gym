@@ -2,7 +2,7 @@ from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QPushButton, QHeaderView
 from __feature__ import snake_case, true_property
 
-from typing import Callable, Any, Union, List, Iterable
+from typing import Callable, Any, Union, List, Iterable, Dict
 
 from ..classes.table_header_label import TableHeaderLabel
 
@@ -69,7 +69,7 @@ class DataTable(QTableWidget):
 
     def test_insert(self, 
         data: List[Any], actions: List[DevAction] = [],
-        sub_values: dict[str, List[SubValue]] = {}
+        sub_values: Dict[str, List[SubValue]] = {}
     ):
         self.row_count = len(data)
 
@@ -114,7 +114,7 @@ class DataTable(QTableWidget):
 
     def test_insert_one(self, 
         row_item: Any, row: int, actions: List[DevAction] = [],
-        sub_values: dict[str, List[SubValue]] = {}
+        sub_values: Dict[str, List[SubValue]] = {}
     ):
         # print("row_item", row_item)
         # print("actions", actions)
@@ -224,7 +224,7 @@ class DataTable(QTableWidget):
         self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
 
     # Insert one row
-    def insert_item(self, data: list[ Union[TableItem, Action] ], row: int):
+    def insert_item(self, data: List[ Union[TableItem, Action] ], row: int):
         for item in data:
             if (isinstance(item, TableItem)):
                 self._insert_text_item(row, item)
@@ -232,7 +232,7 @@ class DataTable(QTableWidget):
                 self._insert_action_button(row, item)
 
     # Insert many rows
-    def insert_items(self, data: list[list[Union[TableItem, Action]]]):
+    def insert_items(self, data: List[List[Union[TableItem, Action]]]):
         self.row_count = len(data)
 
         for row, row_data in enumerate(data):

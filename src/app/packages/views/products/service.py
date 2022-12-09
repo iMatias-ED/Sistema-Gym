@@ -134,7 +134,7 @@ class ProductsService(DBService):
 
     # Formatting
     # TODO: Use list comprehensions 
-    def _format_products(self, data: Union[dict, list[dict]]) -> Union[Product, List[Product]]:
+    def _format_products(self, data: Union[dict, List[dict]]) -> Union[Product, List[Product]]:
         formatted = []
         
         #  Format only one product

@@ -124,7 +124,7 @@ class CustomersService(DBService):
         return self._format_customers(self._read_query_fetchall(query))
 
     # Formatting
-    def _format_customers(self, data: Union[dict, list[dict]]) -> List[Customer]:
+    def _format_customers(self, data: Union[dict, List[dict]]) -> List[Customer]:
         formatted = []
 
         if isinstance(data, dict):

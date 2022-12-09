@@ -43,7 +43,7 @@ class MovementsService(DBService):
     def get_product_by_code(self, code: str) -> Product:
         return self.products_service.get_by_code(code)
 
-    def save_sales(self, products_data: list[SaleItem], customer: Customer):
+    def save_sales(self, products_data: List[SaleItem], customer: Customer):
         total_days = 0
 
         query = f'''
@@ -109,7 +109,7 @@ class MovementsService(DBService):
         
         self._changes_query(query)
     
-    def get_purchases_by_customer_id(self, id_customer: int) -> list[SaleRecord]:
+    def get_purchases_by_customer_id(self, id_customer: int) -> List[SaleRecord]:
         query = f'''
             SELECT * FROM sales WHERE id_customer={id_customer};
         '''
@@ -127,7 +127,7 @@ class MovementsService(DBService):
         data["product"] = self.products_service.get_by_id(data["id_product"])
         return ProductSold(data)
 
-    def _format_purchases(self, data: list) -> list[SaleRecord]:
+    def _format_purchases(self, data: list) -> List[SaleRecord]:
         def create(data: dict) -> SaleRecord:
             purchase = SaleRecord(data)
 
@@ -137,7 +137,7 @@ class MovementsService(DBService):
 
         return [ create(dict(purchase)) for purchase in data ]
 
-    def _format_cash_flow_types(self, data: list[dict]) -> list[MovementType]:
+    def _format_cash_flow_types(self, data: List[dict]) -> List[MovementType]:
         formatted = [ MovementType(flow_type) for flow_type in data ]
         return formatted
         

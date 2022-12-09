@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal, Slot
 from __feature__ import snake_case, true_property
 
-from typing import Tuple
+from typing import Dict
 
 # Services
 from ..service import MovementsService
@@ -27,7 +27,7 @@ class TableSaleItem:
 
 class SaleItemsTable(DataTable):
     data_collected = Signal(list)
-    collection: dict[str: TableSaleItem] = {}
+    collection: Dict[str, TableSaleItem] = {}
 
     current_key: str
 
