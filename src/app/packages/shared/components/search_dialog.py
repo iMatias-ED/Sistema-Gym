@@ -4,7 +4,7 @@ from PySide6.QtCore import Signal, Slot, Qt
 from __feature__ import snake_case, true_property
 
 # Classes
-from .data_table import DataTable, TableItem
+from .data_table import DataTable
 from ..classes.search_dialog_config import SearchDialogConfig
 
 
@@ -52,5 +52,5 @@ class SearchDialog(QDialog):
 
     def _create_table(self, header_labels: List) -> DataTable:
         table = DataTable()
-        table.setup_dev(header_labels)
+        table.setup_table(header_labels)
         return table

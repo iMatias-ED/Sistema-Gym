@@ -22,8 +22,7 @@ class MovementsService(DBService):
     products_service = ProductsService()
     customers_service = CustomersService()
 
-    header_labels = ["Eliminar", "Editar", "Producto", "Cantidad", "Periodo", "Precio Unitario", "Total"]
-    header_labels_2 = [
+    header_labels = [
         TableHeaderLabel("action", "Eliminar"),
         TableHeaderLabel("action", "Editar"),
         TableHeaderLabel("product_name", "Producto"),

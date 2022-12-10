@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QHBoxLayout, QWidget, QDialog, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget
 from __feature__ import snake_case, true_property
 
 from typing import List
@@ -59,4 +59,4 @@ class AccessTimeSummaryDialog(SummaryDialog):
             product = self.service.get_product_by_id(info.id_product)
             table_items.append(TableItem(product.name, info.time, not expired))
         
-        self.table.test_insert(table_items)
+        self.table.insert_values(table_items)

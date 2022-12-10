@@ -8,9 +8,7 @@ from .classes.access_time_by_product import AccessTimeByProduct
 class CustomersService(DBService):
     TABLE = "customers"
 
-    header_labels = ["Eliminar", "Editar", "Nombre", "CI", "RUC", "Razón Social", "Teléfono", "Email", "Género", "Fin de membresía"]
-
-    header_labels2 = [
+    header_labels = [
         TableHeaderLabel("delete", "Eliminar"),
         TableHeaderLabel("edit", "Editar"),
         TableHeaderLabel("full_name", "Nombre"),
@@ -129,7 +127,8 @@ class CustomersService(DBService):
 
         if isinstance(data, dict):
             new_customer = Customer( dict(data) )
-            for time in self._get_access_time(new_customer.id):
+            access_time = self._get_access_time(new_customer.id)
+            for time in access_time:
                 new_customer.add_access_time( AccessTimeByProduct(dict( time )) )
             return new_customer
 

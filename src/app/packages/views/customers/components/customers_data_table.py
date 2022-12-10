@@ -4,7 +4,7 @@ from typing import List
 from ..service import CustomersService
 
 # Components | Classes
-from ....shared.components.data_table import DataTable, DevAction, TableItem, Action
+from ....shared.components.data_table import DataTable, Action
 
 
 class CustomersDataTable(DataTable):
@@ -13,18 +13,18 @@ class CustomersDataTable(DataTable):
         self.customers_service = service
         self.customers_service.data_changed.connect(self.refresh)
 
-        self.setup_dev(self.customers_service.header_labels2)
+        self.setup_table(self.customers_service.header_labels)
         self.load_data()
 
     def load_data(self) -> None:
         self.customers = self.customers_service.get_all()
 
-        actions: List[DevAction] = [
-            DevAction(0, "X", self.delete_clicked, True, "id"),
-            DevAction(1, "E", self.edit_clicked, True, "id"),
+        actions: List[Action] = [
+            Action(0, "X", self.delete_clicked, True, "id"),
+            Action(1, "E", self.edit_clicked, True, "id"),
         ]
 
-        self.test_insert(self.customers, actions)
+        self.insert_values(self.customers, actions)
 
     def edit_clicked(self, customer_id: int) -> None:
         self.edit.emit(customer_id)

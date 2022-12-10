@@ -22,7 +22,7 @@ class Customers(ContentView):
 
         self.table = CustomersDataTable(self.service)
         self.dialog = ConfigureCustomerDialog(self, self.service)
-        self.sidebar = TableColumnsFilter(self.service.header_labels)
+        self.sidebar = TableColumnsFilter([ h.label for h in self.service.header_labels ])
 
         self.root_layout.add_layout(self.second_layout, 80)
         self.root_layout.add_widget(self.sidebar, 20)

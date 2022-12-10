@@ -37,7 +37,7 @@ class SearchProductDialog (SearchDialog):
     @Slot(str)
     def update_table_data(self, text:str):
         self.data = self.movements_service.search_products(text)
-        self.table.test_insert( self.data )
+        self.table.insert_values( self.data )
 
     @Slot(SaleItem)
     def on_selection_finished(self, data: SaleItem):

@@ -1,7 +1,5 @@
-from PySide6.QtWidgets import QWidget, QDialog, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget
 from __feature__ import snake_case, true_property
-
-from typing import List, Union
 
 # Components
 from .purchase_detail import PurchaseDetailDialog
@@ -10,7 +8,7 @@ from ....shared.components.summary_dialog import SummaryDialog
 # Classes
 from ..classes.customer_summary import CustomerSummary
 from ...movements.classes.product_sold import ProductSold
-from ....shared.components.data_table import DevAction, DataTable, TableItem, Action
+from ....shared.components.data_table import Action
 from ....shared.classes.table_header_label import TableHeaderLabel
 from ....shared.classes.summary_content import SummaryContent
 
@@ -32,9 +30,9 @@ class PurchasesSummaryDialog(SummaryDialog):
         ))
 
     def show(self, data:CustomerSummary ):
-        actions = [ DevAction(2, "D", self.show_purchase_detail, True, "<self>") ]
+        actions = [ Action(2, "D", self.show_purchase_detail, True, "<self>") ]
 
-        self.table.test_insert(data.purchases, actions)
+        self.table.insert_values(data.purchases, actions)
         super().show()
 
     def show_purchase_detail(self, purchase: ProductSold):

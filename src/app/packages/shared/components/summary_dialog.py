@@ -5,8 +5,7 @@ from typing import List
 
 from ...shared.classes.table_header_label import TableHeaderLabel
 from ..classes.summary_content import SummaryContent
-from .data_table import DataTable, TableItem, Action
-
+from .data_table import DataTable
 class SummaryDialog(QDialog):
 
     def setup_ui(self, content: SummaryContent):
@@ -34,5 +33,5 @@ class SummaryDialog(QDialog):
 
     def create_table(self, header_labels: List[TableHeaderLabel]):
         table = DataTable()
-        table.setup_dev(header_labels)
+        table.setup_table(header_labels)
         return table

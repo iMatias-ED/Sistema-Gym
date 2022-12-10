@@ -55,8 +55,8 @@ class SummaryView(QFrame):
         self.name.text = self.data.customer.full_name
         self.registered_until.text = self.data.customer.access_until_date
 
-        for access_time in self.data.customer.access_time:
-            product = self.report_service.get_product_by_id(access_time.id_product)
+        # for access_time in self.data.customer.access_time:
+        #     product = self.report_service.get_product_by_id(access_time.id_product)
             
     def change_status_style(self, style: str):
         self.status.object_name = style

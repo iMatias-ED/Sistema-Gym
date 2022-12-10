@@ -1,9 +1,5 @@
-from typing import List
-
 from ..service import ProductsService
-from ....shared.components.data_table import SubValue, DevAction, DataTable, TableItem, Action
-
-
+from ....shared.components.data_table import SubValue, Action, DataTable
 
 class ProductDataTable(DataTable):
 
@@ -12,19 +8,18 @@ class ProductDataTable(DataTable):
         self.products_service = service
         self.products_service.data_changed.connect( self.refresh )
 
-        # self.setup_table(self.products_service.header_labels)
-        self.setup_dev(self.products_service.header_labels_2)
+        self.setup_table(self.products_service.header_labels)
         self.load_data()
         
     def load_data(self) -> None:
         self.products = self.products_service.get_all()
         sub_values = { "prices": [SubValue("name", "price", True)] }
         actions = [
-            DevAction(0, "X", self.delete_clicked, True, "id"),
-            DevAction(1, "E", self.edit_clicked, True, "id"),
+            Action(0, "X", self.delete_clicked, True, "id"),
+            Action(1, "E", self.edit_clicked, True, "id"),
         ]
 
-        self.test_insert(self.products, actions, sub_values)
+        self.insert_values(self.products, actions, sub_values)
 
     def edit_clicked(self, product_id:int) -> None:
         self.edit.emit(product_id)

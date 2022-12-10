@@ -63,7 +63,6 @@ class Movements(ContentView):
         self.bt_register_movement.clicked.connect(self.register_movement.show)
 
     def setup_title_frame(self) -> None:
-        # self.title = QLabel("Movimientos", alignment=Qt.AlignCenter, object_name="view-title")
         self.bt_search_product = QPushButton("B", maximum_width=50)
         self.bt_register_movement = QPushButton("Movement")
 

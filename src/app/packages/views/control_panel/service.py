@@ -41,7 +41,6 @@ class ControlPanelService(DBService):
                 '{self.security_service.encrypt(c.password)}'
             );
         '''
-        print(query)
         self._changes_query(query)
         self.data_changed.emit()
 

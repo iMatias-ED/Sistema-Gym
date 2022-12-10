@@ -13,13 +13,10 @@ from ...shared.classes.table_header_label import TableHeaderLabel
 from typing import List
 
 class ProductsService(DBService):
-    header_labels = ["Eliminar", "Editar", "Código", "Nombre"]
-
-
     def __init__(self):
         super(ProductsService, self).__init__()
         
-        self.header_labels_2 = [
+        self.header_labels = [
             TableHeaderLabel("action", "Eliminar"),
             TableHeaderLabel("action", "Editar"),
             TableHeaderLabel("code", "Código"),
@@ -28,7 +25,7 @@ class ProductsService(DBService):
 
         # Add price periods to header labels
         for period in self.get_periods():
-            self.header_labels_2.append( 
+            self.header_labels.append( 
                 TableHeaderLabel(period.name, period.name) )
 
     # Create

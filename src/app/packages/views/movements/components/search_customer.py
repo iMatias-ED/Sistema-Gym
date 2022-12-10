@@ -42,4 +42,4 @@ class SearchCustomerDialog(SearchDialog):
     @Slot(str)
     def update_table_data(self, text:str):
         self.data = self.movements_service.search_users(text)
-        self.table.test_insert(self.data)
+        self.table.insert_values(self.data)

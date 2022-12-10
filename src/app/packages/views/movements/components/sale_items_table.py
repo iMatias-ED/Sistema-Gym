@@ -12,7 +12,7 @@ from .configure_selected_product import ConfigureSelectedProduct
 # Classes
 from ..classes.sale_item import SaleItem
 from ...products.classes.product import Product
-from ....shared.components.data_table import SubValue, DevAction, DataTable, Action, TableItem
+from ....shared.components.data_table import SubValue, Action, DataTable
 
 class TableSaleItem:
     row: int
@@ -39,8 +39,7 @@ class SaleItemsTable(DataTable):
         self.edit_dialog = ConfigureSelectedProduct(self)
         self.edit_dialog.selected.connect( self.on_product_edited )
 
-        # self.setup_table(self.movements_service.header_labels)
-        self.setup_dev(self.movements_service.header_labels_2)
+        self.setup_table(self.movements_service.header_labels)
 
     def refresh(self) -> None:
         self.clear_contents()
@@ -51,8 +50,6 @@ class SaleItemsTable(DataTable):
         del self.collection[key]
 
     def edit_clicked(self, product: Product, key:str, quantity: int, period: str):
-    # def edit_clicked(self, data: Tuple):
-        # product, key, quantity, period = data
         self.current_key = key
         self.edit_dialog.show(product, quantity, period)
 
@@ -83,12 +80,9 @@ class SaleItemsTable(DataTable):
         )
 
     def insert_data(self, data: SaleItem, key:str, row:int) -> None:
-        total = f"Gs. {data.total}"
-        price = f"Gs. {data.price.price}"
-
         actions = [
-            DevAction(0, "X", self.remove_product, False, key),
-            DevAction(1, "E", self.edit_clicked, False,
+            Action(0, "X", self.remove_product, False, key),
+            Action(1, "E", self.edit_clicked, False,
                 data.product, key, data.quantity, data.price.name )
         ]
         sub_values = {
@@ -98,16 +92,5 @@ class SaleItemsTable(DataTable):
                 SubValue("price", "price", False)
             ],
         }
-        self.test_insert_one(data, row, actions, sub_values)
+        self.insert_value(data, row, actions, sub_values)
 
-
-        # self.insert_item([
-        #     Action(column=0, label="X", slot=self.remove_product, params=key),
-        #     Action(column=1, label="E", slot=self.edit_clicked, 
-        #         params=(data.product, key, data.quantity, data.price.name) ),
-        #     TableItem( column=2, value=data.product.name ),
-        #     TableItem( column=3, value=data.quantity ),
-        #     TableItem( column=4, value=data.price.name ),
-        #     TableItem( column=5, value=data.price.price ),
-        #     TableItem( column=6, value=total )
-        # ], row)

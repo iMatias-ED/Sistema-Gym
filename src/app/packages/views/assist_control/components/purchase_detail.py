@@ -35,8 +35,8 @@ class PurchaseDetailDialog(SummaryDialog):
 
     def load_data(self, data:SaleRecord):        
         sub_values = { "product": [SubValue("name", "name", False)] }
-        self.table.test_insert(
-            data=data.items,
+        self.table.insert_values(
+            row_items=data.items,
             sub_values=sub_values    
         )
 
