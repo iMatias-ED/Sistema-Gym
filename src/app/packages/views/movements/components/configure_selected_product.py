@@ -1,6 +1,7 @@
 from typing import Union
 
-from PySide6.QtCore import Signal
+from PySide6.QtGui import QRegularExpressionValidator
+from PySide6.QtCore import Signal, QRegularExpression
 from PySide6.QtWidgets import QDialog, QLineEdit, QLabel, QComboBox, QPushButton, QVBoxLayout, QHBoxLayout
 from __feature__ import snake_case, true_property
 
@@ -13,6 +14,8 @@ class ConfigureSelectedProduct(QDialog):
     price: Price
     product: Product
     selected = Signal(SaleItem)
+
+    ONLY_NUMBERS_VALIDATOR = QRegularExpressionValidator(QRegularExpression("[0-9]*"))
 
     def __init__(self, parent):
         super(ConfigureSelectedProduct, self).__init__(parent)
@@ -27,7 +30,7 @@ class ConfigureSelectedProduct(QDialog):
 
         self.bt_plus = QPushButton("+", minimum_width=45, clicked=self.plus_1)
         self.bt_minus = QPushButton("-", minimum_width=45, clicked=self.minus_1)
-        self.quantity = QLineEdit(text="1" )
+        self.quantity = QLineEdit( validator=self.ONLY_NUMBERS_VALIDATOR)
         self.quantity.textChanged.connect(self.calculate_amount)
 
         self.submit = QPushButton("Seleccionar", clicked=self.on_submit)
@@ -63,6 +66,8 @@ class ConfigureSelectedProduct(QDialog):
         
         if selected:
             self.price = self.product.get_price_by_name(selected)
+
+            if self.quantity.text == "": self.quantity.text = "1"
             
             self.total = int(self.quantity.text) * self.price.price
             self.amount.text = f"Gs. {self.total}"
@@ -84,4 +89,7 @@ class ConfigureSelectedProduct(QDialog):
         self.quantity.text = str(int(self.quantity.text) + 1)
     
     def minus_1(self):
+        if int(self.quantity.text) <= 1:
+            self.quantity.text = "1"
+            return
         self.quantity.text = str(int(self.quantity.text) - 1)

@@ -5,6 +5,8 @@ from __feature__ import snake_case, true_property
 from ..service import MovementsService
 from .configure_selected_product import ConfigureSelectedProduct
 
+from ....shared.components.error_message import ErrorMessageDialog, DialogMessage
+
 from ..classes.sale_item import SaleItem
 from ...products.classes.product import Product
 
@@ -33,10 +35,22 @@ class AddProductByCode(QFrame):
         self.set_layout(layout)
 
     def on_code_inserted(self) -> None:
-        product = self.movements_service.get_product_by_code(self.inp_code.text)
+        try: 
+            product = self.movements_service.get_product_by_code(self.inp_code.text)
+        except TypeError:
+            ErrorMessageDialog(self, self.reset_inp_code).show(DialogMessage(
+                "Producto no encontrado.",
+                f"No se encontró ningún producto con el código {self.inp_code.text}"
+            ))
+            return
+
         self.quantity_dialog.show(product)
 
     @Slot(SaleItem)
     def emit_product_selected(self, selection: Product) -> None:
         self.inp_code.text = ""
         self.product_selected.emit(selection)
+
+    def reset_inp_code(self):
+        self.inp_code.text = ""
+        self.inp_code.set_focus()
