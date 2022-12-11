@@ -1,12 +1,14 @@
 from typing import Callable, Dict, Tuple, List
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QGridLayout, QLineEdit, QDialog, QLabel, QPushButton, QComboBox, QDateTimeEdit
+from PySide6.QtCore import Slot, Qt, QLocale, QDate
 from PySide6.QtGui import QColor
 
 from __feature__ import snake_case, true_property
+import sqlite3
 
 from ..service import CustomersService
 from ..classes.customer import Customer
+from ....shared.components.error_message import ErrorMessageDialog, DialogMessage
 
 class ConfigureCustomerDialog(QDialog):
     root_layout = QGridLayout()
@@ -69,15 +71,32 @@ class ConfigureCustomerDialog(QDialog):
     # Signal Slots
     @Slot()
     def on_create_submit(self) -> None:
-        self.customers_service.create( Customer(self._collect_data()) )
+        try:
+            self.customers_service.create( Customer(self._collect_data()) )
+        except sqlite3.IntegrityError as e:
+            self.manage_error(e.args[0])
     
     @Slot()
     def on_edit_submit(self, customer_id:int) -> None:
-        self.customers_service.update( Customer(self._collect_data(customer_id)) )
+        try:
+            self.customers_service.update( Customer(self._collect_data(customer_id)) )
+        except sqlite3.IntegrityError as e:
+            self.manage_error(e.args[0])
 
     @Slot()
     def on_data_changed(self) -> None:
         self.hide()
+
+    def manage_error(self, error: str):
+        if "ci" in error:
+            ErrorMessageDialog(self, self.reset_inp_ci()).show(DialogMessage(
+                "El número de cédula ya existe",
+                f"Ya existe un cliente con el número de cédula {self.inp_ci.text}"
+            ))
+
+    def reset_inp_ci(self):
+        self.inp_ci.text = ""
+        self.inp_ci.set_focus()
 
     # Widgets Creations
     def _create_title(self, text:str, row:int, obj_name:str = "") -> QLabel:

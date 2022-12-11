@@ -22,14 +22,14 @@ class DBService(QObject):
     # Execute Queries
     def _changes_query(self, query: str) -> Union[int, None]:
         conn = sqlite3.connect(self.DB_PATH)
-        
         cursor = conn.cursor()
-        cursor.execute(query)
-        row_id = cursor.fetchone()
-
-        conn.commit()
-        conn.close()
-
+        
+        try:
+            cursor.execute(query)
+            row_id = cursor.fetchone()
+            conn.commit()
+        finally:
+            conn.close()
         if row_id: return row_id[0]
 
     def _read_query_fetchall(self, query: str):

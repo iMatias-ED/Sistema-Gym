@@ -1,4 +1,6 @@
-from typing import Callable, Dict, Tuple, List
+from typing import Callable, List
+import sqlite3
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from __feature__ import snake_case, true_property
@@ -6,6 +8,7 @@ from __feature__ import snake_case, true_property
 from ..service import ProductsService
 from ..classes.product import Product
 from ..classes.price import Price
+from ....shared.components.error_message import ErrorMessageDialog, DialogMessage
 
 class ConfigureProductData(QDialog):
     root_layout = QGridLayout()
@@ -70,12 +73,38 @@ class ConfigureProductData(QDialog):
             
     # Signal Slots
     @Slot()
-    def on_create_submit(self) -> None:        
-        self.products_service.create( self._collect_data() )
+    def on_create_submit(self) -> None:
+        try:         
+            self.products_service.create( self._collect_data() )
+        except sqlite3.IntegrityError as e:
+            self.manage_error(e.args[0])
     
     @Slot()
     def on_edit_submit(self, product_id) -> None:
-        self.products_service.update( self._collect_data(product_id) )
+        try:
+            self.products_service.update( self._collect_data(product_id) )
+        except sqlite3.IntegrityError as e:
+            self.manage_error(e.args[0])
+
+    def manage_error(self, error: str):
+        if "code" in error:
+            ErrorMessageDialog(self, self.reset_inp_code).show(DialogMessage(
+                "Código duplicado",
+                f'Ya existe un producto con el código "{self.inp_code.text}"'
+            ))
+        if "name" in error:
+            ErrorMessageDialog(self, self.reset_inp_name).show(DialogMessage(
+                "Nombre duplicado",
+                f'Ya existe un producto con el nombre "{self.inp_name.text}"'
+            ))
+
+    def reset_inp_code(self):
+        self.inp_code.text = ""
+        self.inp_code.set_focus()
+
+    def reset_inp_name(self):
+        self.inp_name.text = ""
+        self.inp_name.set_focus()
 
     @Slot()
     def on_data_changed(self) -> None:

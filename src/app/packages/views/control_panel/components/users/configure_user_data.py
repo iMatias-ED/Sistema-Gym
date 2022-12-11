@@ -1,9 +1,12 @@
 from typing import Callable, Dict, Tuple, List
+import sqlite3
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import QColor
 
 from __feature__ import snake_case, true_property
+from .....shared.components.error_message import ErrorMessageDialog, DialogMessage
 
 from ...service import ControlPanelService
 from ...classes.user import User
@@ -65,11 +68,46 @@ class ConfigureUserDataDialog(QDialog):
     # Signal Slots
     @Slot()
     def on_create_submit(self) -> None:
-        self.users_service.create( User(self._collect_data()) )
-    
+        try:         
+            self.users_service.create( User(self._collect_data()) )
+        except sqlite3.IntegrityError as e:
+            self.manage_error(e.args[0])
+
     @Slot()
     def on_edit_submit(self, customer_id:int) -> None:
-        self.users_service.update( User(self._collect_data(customer_id)) )
+        try:         
+            self.users_service.update( User(self._collect_data(customer_id)) )
+        except sqlite3.IntegrityError as e:
+            self.manage_error(e.args[0])
+
+    def manage_error(self, error: str):
+        if "ci" in error:
+            ErrorMessageDialog(self, self.reset_inp_ci).show(DialogMessage(
+                "Número de cédula duplicado",
+                f'Ya existe un usuario con el número de cédula "{self.inp_ci.text}"'
+            ))
+        if "phone" in error:
+            ErrorMessageDialog(self, self.reset_inp_phone).show(DialogMessage(
+                "Número de teléfono duplicado",
+                f'Ya existe un usuario con el número de teléfono "{self.inp_phone.text}"'
+            ))
+        if "email" in error:
+            ErrorMessageDialog(self, self.reset_inp_email).show(DialogMessage(
+                "Correo electrónico duplicado",
+                f'Ya existe un usuario con el email "{self.inp_email.text}"'
+            ))
+    
+    def reset_inp_ci(self):
+        self.inp_ci.text = ""
+        self.inp_ci.set_focus()
+
+    def reset_inp_phone(self):
+        self.inp_phone.text = ""
+        self.inp_phone.set_focus()
+    
+    def reset_inp_email(self):
+        self.inp_email.text = ""
+        self.inp_email.set_focus()
 
     @Slot()
     def on_data_changed(self) -> None:
