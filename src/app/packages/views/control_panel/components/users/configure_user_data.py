@@ -6,7 +6,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import QColor
 
 from __feature__ import snake_case, true_property
-from .....shared.components.error_message import ErrorMessageDialog, DialogMessage
+from .....shared.components.error_message import ErrorDialog, ErrorMessage
 
 from ...service import ControlPanelService
 from ...classes.user import User
@@ -82,17 +82,17 @@ class ConfigureUserDataDialog(QDialog):
 
     def manage_error(self, error: str):
         if "ci" in error:
-            ErrorMessageDialog(self, self.reset_inp_ci).show(DialogMessage(
+            ErrorDialog(self, self.reset_inp_ci).show(ErrorMessage(
                 "Número de cédula duplicado",
                 f'Ya existe un usuario con el número de cédula "{self.inp_ci.text}"'
             ))
         if "phone" in error:
-            ErrorMessageDialog(self, self.reset_inp_phone).show(DialogMessage(
+            ErrorDialog(self, self.reset_inp_phone).show(ErrorMessage(
                 "Número de teléfono duplicado",
                 f'Ya existe un usuario con el número de teléfono "{self.inp_phone.text}"'
             ))
         if "email" in error:
-            ErrorMessageDialog(self, self.reset_inp_email).show(DialogMessage(
+            ErrorDialog(self, self.reset_inp_email).show(ErrorMessage(
                 "Correo electrónico duplicado",
                 f'Ya existe un usuario con el email "{self.inp_email.text}"'
             ))

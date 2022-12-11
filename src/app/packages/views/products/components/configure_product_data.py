@@ -8,7 +8,7 @@ from __feature__ import snake_case, true_property
 from ..service import ProductsService
 from ..classes.product import Product
 from ..classes.price import Price
-from ....shared.components.error_message import ErrorMessageDialog, DialogMessage
+from ....shared.components.error_message import ErrorDialog, ErrorMessage
 
 class ConfigureProductData(QDialog):
     root_layout = QGridLayout()
@@ -88,12 +88,12 @@ class ConfigureProductData(QDialog):
 
     def manage_error(self, error: str):
         if "code" in error:
-            ErrorMessageDialog(self, self.reset_inp_code).show(DialogMessage(
+            ErrorDialog(self, self.reset_inp_code).show(ErrorMessage(
                 "Código duplicado",
                 f'Ya existe un producto con el código "{self.inp_code.text}"'
             ))
         if "name" in error:
-            ErrorMessageDialog(self, self.reset_inp_name).show(DialogMessage(
+            ErrorDialog(self, self.reset_inp_name).show(ErrorMessage(
                 "Nombre duplicado",
                 f'Ya existe un producto con el nombre "{self.inp_name.text}"'
             ))

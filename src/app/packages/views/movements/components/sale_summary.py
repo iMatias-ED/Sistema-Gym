@@ -8,12 +8,12 @@ from __feature__ import snake_case, true_property
 from ..service import MovementsService
 
 # Components
-from ....shared.components.error_message import ErrorMessageDialog
+from ....shared.components.error_message import ErrorDialog
 
 # Classes
 from ..classes.sale_item import SaleItem
 from ...customers.classes.customer import Customer
-from ....shared.classes.dialog_message import DialogMessage
+from ....shared.classes.error_message import ErrorMessage
 
 class SaleSummary(QDialog):
     products: list[SaleItem]
@@ -22,9 +22,9 @@ class SaleSummary(QDialog):
     root_layout = QGridLayout()
 
     # Error Messages
-    no_customer_msg = DialogMessage("No seleccionaste un cliente", "Por favor, seleccione un cliente para continuar.")
-    no_products_msg = DialogMessage("No hay productos seleccionados", "Por favor, seleccione al menos un producto para continuar.")
-    empty_values_msg = DialogMessage("No hay datos seleccionados", "Para registrar un movimiento, debe seleccionar un cliente y al menos un producto.")
+    no_customer_msg = ErrorMessage("No seleccionaste un cliente", "Por favor, seleccione un cliente para continuar.")
+    no_products_msg = ErrorMessage("No hay productos seleccionados", "Por favor, seleccione al menos un producto para continuar.")
+    empty_values_msg = ErrorMessage("No hay datos seleccionados", "Para registrar un movimiento, debe seleccionar un cliente y al menos un producto.")
 
     def __init__(self, parent, service:MovementsService):
         super(SaleSummary, self).__init__(parent)
@@ -34,7 +34,7 @@ class SaleSummary(QDialog):
 
     def setup_ui(self) -> None:
         self.minimum_width = 450 
-        self.error_msg = ErrorMessageDialog(self)
+        self.error_msg = ErrorDialog(self)
 
         self.title    = self._create_title("Resumen", self.last_row())
         self.title    = self._create_title("Gs 100.000", self.last_row(), "monto-total")

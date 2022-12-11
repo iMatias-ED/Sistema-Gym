@@ -5,7 +5,7 @@ from ..service import CustomersService
 
 # Components | Classes
 from ....shared.components.data_table import DataTable, Action
-
+from ....shared.components.confirmation_message import ConfirmationDialog, ConfirmationMessage
 
 class CustomersDataTable(DataTable):
     def __init__(self, service: CustomersService):
@@ -20,7 +20,7 @@ class CustomersDataTable(DataTable):
         self.customers = self.customers_service.get_all()
 
         actions: List[Action] = [
-            Action(0, "X", self.delete_clicked, True, "id"),
+            Action(0, "X", self.delete_clicked, True, "full_name", "id"),
             Action(1, "E", self.edit_clicked, True, "id"),
         ]
 
@@ -29,6 +29,13 @@ class CustomersDataTable(DataTable):
     def edit_clicked(self, customer_id: int) -> None:
         self.edit.emit(customer_id)
 
-    def delete_clicked(self, customer_id: int) -> None:
+    def delete_clicked(self, customer_name:str, customer_id:int) -> None:
+        ConfirmationDialog(self, lambda: self.delete(customer_id)).show(ConfirmationMessage(
+            "¿Está seguro?",
+            f'''Se eliminará el cliente "{customer_name}" y toda la información asociada.''',
+            "Esta acción no se puede deshacer."
+        ))
+
+    def delete(self, customer_id: int) -> None:
         self.delete.emit(customer_id)
         self.customers_service.delete(customer_id)

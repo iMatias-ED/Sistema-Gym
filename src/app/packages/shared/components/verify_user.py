@@ -5,7 +5,7 @@ from PySide6.QtGui import QRegularExpressionValidator
 from __feature__ import snake_case, true_property
 
 from ..services.security_service import SecurityService
-from ..components.error_message import ErrorMessageDialog, DialogMessage
+from ..components.error_message import ErrorDialog, ErrorMessage
 
 class VerifyUserIdentityDialog(QDialog):
     user_verified = Signal(None)
@@ -38,22 +38,22 @@ class VerifyUserIdentityDialog(QDialog):
         try: 
             verified = self.security_service.check_password(self.inp_ci.text, self.inp_pwd.text)
         except TypeError:
-            message = DialogMessage(
+            message = ErrorMessage(
                 "Usuario no encontrado.",
                 f"No se encontró ningún usuario con el número de cédula {self.inp_ci.text}"
             )
-            ErrorMessageDialog(self, self.reset_inp_ci).show(message)
+            ErrorDialog(self, self.reset_inp_ci).show(message)
             return
 
         if (verified): 
             self.user_verified.emit()
             self.close()
         else: 
-            message = DialogMessage(
+            message = ErrorMessage(
                 "Contraseña incorrecta.",
                 "La contraseña ingresada es incorrecta."
             )
-            ErrorMessageDialog(self, self.reset_inp_pwd).show(message)
+            ErrorDialog(self, self.reset_inp_pwd).show(message)
 
     def reset_inp_ci(self):
         self.inp_ci.text = ""

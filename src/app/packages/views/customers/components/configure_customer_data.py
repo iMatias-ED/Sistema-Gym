@@ -8,7 +8,7 @@ import sqlite3
 
 from ..service import CustomersService
 from ..classes.customer import Customer
-from ....shared.components.error_message import ErrorMessageDialog, DialogMessage
+from ....shared.components.error_message import ErrorDialog, ErrorMessage
 
 class ConfigureCustomerDialog(QDialog):
     root_layout = QGridLayout()
@@ -89,7 +89,7 @@ class ConfigureCustomerDialog(QDialog):
 
     def manage_error(self, error: str):
         if "ci" in error:
-            ErrorMessageDialog(self, self.reset_inp_ci()).show(DialogMessage(
+            ErrorDialog(self, self.reset_inp_ci()).show(ErrorMessage(
                 "El número de cédula ya existe",
                 f"Ya existe un cliente con el número de cédula {self.inp_ci.text}"
             ))

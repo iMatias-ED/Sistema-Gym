@@ -6,7 +6,7 @@ from __feature__ import snake_case, true_property
 
 from .components.summary_view import SummaryView
 from ...shared.content_view import ContentView
-from ...shared.components.error_message import ErrorMessageDialog, DialogMessage
+from ...shared.components.error_message import ErrorDialog, ErrorMessage
 
 class AssistControl(ContentView):
     inputs_layout = QVBoxLayout()
@@ -47,11 +47,11 @@ class AssistControl(ContentView):
         try:
             self.report_view.load_data( int(self.inp_ci.text) )
         except TypeError:
-            error_msg = DialogMessage(
+            error_msg = ErrorMessage(
                 "Número de cédula no encontrado.",
                 f"No encontramos ningún cliente con el número de cédula {self.inp_ci.text} "
             )
-            ErrorMessageDialog(self, self.reset_inp_ci).show(error_msg)
+            ErrorDialog(self, self.reset_inp_ci).show(error_msg)
             return
         
         self.set_styles(__file__) 
