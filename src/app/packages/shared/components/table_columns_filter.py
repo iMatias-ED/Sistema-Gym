@@ -20,8 +20,9 @@ class TableColumnsFilter(QFrame):
             self.create_checkbox(label, index)
         self.checkbox_layout.add_stretch()
 
-        self.title = QLabel('Ocultar Columnas', object_name="view-title", alignment=Qt.AlignCenter)
+        self.title = QLabel('Filtrar datos', object_name="columns-filter-title", alignment=Qt.AlignCenter)
         self.root_layout.add_widget(self.title, 10)
+        self.root_layout.add_spacing(10)
         self.root_layout.add_layout(self.checkbox_layout, 90)
         
         self.set_layout(self.root_layout)

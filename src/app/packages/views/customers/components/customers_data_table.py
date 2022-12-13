@@ -20,8 +20,8 @@ class CustomersDataTable(DataTable):
         self.customers = self.customers_service.get_all()
 
         actions: List[Action] = [
-            Action(0, "X", self.delete_clicked, True, "full_name", "id"),
-            Action(1, "E", self.edit_clicked, True, "id"),
+            Action(0, "X", self.delete_clicked, True, "src/assets/remove.png", "full_name", "id"),
+            Action(1, "E", self.edit_clicked, True, "src/assets/edit.png", "id"),
         ]
 
         self.insert_values(self.customers, actions)

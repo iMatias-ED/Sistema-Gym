@@ -15,8 +15,8 @@ class ProductDataTable(DataTable):
         self.products = self.products_service.get_all()
         sub_values = { "prices": [SubValue("name", "price", True)] }
         actions = [
-            Action(0, "X", self.delete_clicked, True, "name", "id"),
-            Action(1, "E", self.edit_clicked, True, "id"),
+            Action(0, "X", self.delete_clicked, True, "src/assets/remove.png", "name", "id"),
+            Action(1, "E", self.edit_clicked, True, "src/assets/edit.png", "id"),
         ]
 
         self.insert_values(self.products, actions, sub_values)

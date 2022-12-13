@@ -26,6 +26,7 @@ class Main(QMainWindow):
 
     def __init__(self):
         super(Main, self).__init__()
+        self.style_sheet = self.stylesheet()
 
         self.verify_user_dialog = VerifyUserIdentityDialog(self)
         self.verify_user_dialog.finished.connect(self.on_login_closed)
@@ -41,15 +42,14 @@ class Main(QMainWindow):
         self.setup_ui()
         self.__create_views()
         self.__add_views_to_content_box()
-        self.show()
+        # self.show()
+        self.show_full_screen()
 
-    def stylesheet(self):
+    def stylesheet(self) -> str:
         styles = open( "src/app/styles.css", "r" )
         return styles.read()
 
     def setup_ui(self):
-        self.style_sheet = self.stylesheet()
-
         self.top_menu = TopMenu()
         self.content = ContentBox()
         self.top_menu.view_change.connect( self.show_content )

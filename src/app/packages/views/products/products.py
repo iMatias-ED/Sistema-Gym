@@ -24,8 +24,8 @@ class Products(ContentView):
         self.dialog = ConfigureProductData(self, self.service)
         self.sidebar = TableColumnsFilter([ h.label for h in self.service.header_labels ])
 
-        self.root_layout.add_layout(self.second_layout, 80)
-        self.root_layout.add_widget(self.sidebar, 20)
+        self.root_layout.add_layout(self.second_layout, 85)
+        self.root_layout.add_widget(self.sidebar, 15)
         self.root_layout.add_child_widget(self.dialog)
 
         self.second_layout.add_widget( self.setup_title_frame(), 10 )
@@ -41,12 +41,10 @@ class Products(ContentView):
         self.sidebar.filter_event.connect( self.table.on_filter )
 
     def setup_title_frame(self) -> None:
-        self.title = QLabel("Productos", alignment=Qt.AlignCenter, object_name="view-title")
-        self.bt_create = QPushButton("+", maximum_width=50)
+        self.bt_create = QPushButton("Nuevo producto", object_name="bt-title-section")
 
         layout = QHBoxLayout()
-        layout.add_widget(self.bt_create, 10)
-        layout.add_widget(self.title,  90)
+        layout.add_widget(self.bt_create, 10, Qt.AlignLeft)
 
         frame = QFrame()
         frame.set_layout(layout)

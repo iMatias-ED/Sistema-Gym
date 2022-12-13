@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QFrame, QLabel, QPushButton
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QFrame, QLabel, QPushButton, QSizePolicy
 from PySide6.QtCore import Qt
 from __feature__ import snake_case, true_property
 
@@ -24,8 +24,8 @@ class Customers(ContentView):
         self.dialog = ConfigureCustomerDialog(self, self.service)
         self.sidebar = TableColumnsFilter([ h.label for h in self.service.header_labels ])
 
-        self.root_layout.add_layout(self.second_layout, 80)
-        self.root_layout.add_widget(self.sidebar, 20)
+        self.root_layout.add_layout(self.second_layout, 85)
+        self.root_layout.add_widget(self.sidebar, 15)
         self.root_layout.add_child_widget(self.dialog)
 
         self.second_layout.add_widget( self.setup_title_frame(), 10 )
@@ -41,12 +41,10 @@ class Customers(ContentView):
         self.sidebar.filter_event.connect( self.table.on_filter )
 
     def setup_title_frame(self) -> None:
-        self.title = QLabel("Clientes", alignment=Qt.AlignCenter, object_name="view-title")
-        self.bt_create = QPushButton("+", maximum_width=50)
+        self.bt_create = QPushButton("Nuevo cliente", object_name="bt-title-section")
 
         layout = QHBoxLayout()
-        layout.add_widget(self.bt_create, 10)
-        layout.add_widget(self.title,  90)
+        layout.add_widget(self.bt_create, 10, Qt.AlignLeft)
 
         frame = QFrame()
         frame.set_layout(layout)

@@ -1,5 +1,6 @@
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, QSize
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QPushButton, QSizePolicy
+from PySide6.QtGui import QIcon 
 from __feature__ import snake_case, true_property
 
 class TopMenu(QFrame):
@@ -12,14 +13,19 @@ class TopMenu(QFrame):
 
     def setup_ui(self):
         size_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        logo_icon = QIcon("src/assets/logo-sin-slogan.png")
+        logo_size = QSize(250, 200)
 
         # Create buttons 
-        self.__bt_logo       = QPushButton("Logo / Panel de control", size_policy=size_policy)
+        self.__bt_logo       = QPushButton( size_policy=size_policy, icon=logo_icon)
+        self.__bt_logo.icon_size = logo_size
+
         self.__bt_movements  = QPushButton("Movimientos", size_policy=size_policy)
         self.__bt_customers  = QPushButton("Clientes", size_policy=size_policy)
         self.__bt_products   = QPushButton("Productos", size_policy=size_policy)
         self.__bt_assistance = QPushButton("Marcar asistencia", size_policy=size_policy)
 
+        self.buttons_collection = [self.__bt_movements, self.__bt_customers, self.__bt_products, self.__bt_assistance, self.__bt_logo]
         self.__bind_buttons()
 
         # Create Layout
@@ -36,6 +42,10 @@ class TopMenu(QFrame):
         self.set_layout(buttons_layout)
 
     def button_clicked(self, value: int):
+        for button in self.buttons_collection:
+            button.style_sheet = "border-bottom-color: gray;"
+        self.buttons_collection[value].style_sheet = "border-bottom-color: #249AF2"
+
         self.view_change.emit( value )
 
     def __bind_buttons(self):

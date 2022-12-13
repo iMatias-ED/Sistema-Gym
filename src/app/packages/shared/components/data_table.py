@@ -1,5 +1,6 @@
-from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QPushButton, QHeaderView
+from PySide6.QtCore import Signal, Slot, Qt, QSize
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QTableView, QTableWidget, QTableWidgetItem, QPushButton, QHeaderView
 from __feature__ import snake_case, true_property
 
 from typing import Callable, Any, Union, List, Iterable, Dict
@@ -25,6 +26,10 @@ class DataTable(QTableWidget):
 
         self.horizontal_header().stretch_last_section = True
         self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
+        
+        # self.focus_policy = Qt.NoFocus
+        self.vertical_header().default_section_size = 35
+        self.selection_behavior = QTableView.SelectRows
 
     def insert_values(self, row_items: List[Any], actions: List[Action] = [], sub_values: Dict[str, List[SubValue]] = {} ):
         self.row_count = len(row_items)
@@ -92,10 +97,16 @@ class DataTable(QTableWidget):
             else: params.append(getattr(item, param))
 
         self.set_cell_widget( row, config.column,
-            self._create_action_button(config.label, config.slot, *params))
+            self._create_action_button(config, config.slot, *params))
 
-    def _create_action_button(self, text: str, on_clicked: Callable, *args) -> QPushButton:
-        return QPushButton(text, clicked=lambda: on_clicked(*args))
+    def _create_action_button(self, config: Action, on_clicked: Callable, *args) -> QPushButton:
+        button = QPushButton(config.label, clicked=lambda: on_clicked(*args))
+        if config.icon_path:
+            button.text = ""
+            button.icon = QIcon(config.icon_path)
+            button.icon_size = QSize(25, 25)
+        
+        return button
 
     def get_index(self, key: str) -> Union[int, None]:
         result = None

@@ -1,27 +1,172 @@
 /* General styles */
-QMainWindow, QFrame, QPushButton {
-    background-color: #242526;
+/* 
+    #F29B18 -> naranja claro
+    #1DBF53 -> verde
+    #F3570C -> naranja logo
+    #249AF2 -> azul
+    #F20600 -> rojo
+*/
+
+QMainWindow, QFrame, QPushButton, QDialog {
+    background-color: #111;
 }
 
-QFrame, QPushButton {
-    border-radius: 10px;
+QPushButton {
+    border-radius: 5px;
+    color: #fcfcfc;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
-/* Content Box */
-#content-box {
-    border-right: 1px solid #f3570c;
-    border-left: 1px solid #f3570c;
+QTableWidget, QCheckBox, QLabel {
+    color: white
 }
 
 /* Top Menu Buttons */
 #top-menu {
-    border: 1px solid #f3570c;
+    border-top: 1px solid #f3570c;
 }
 
-QPushButton {
-    color: #fcfcfc;
+#top-menu QPushButton {
     font-size: 30px;
+    border-radius: 0px;
     font-family: Georgia;
-    border-right: 1px solid #f3570c;
+    border-bottom: 3px solid gray;
 }
 
+/* 
+    Shared Components 
+*/
+
+/* Login dialog */
+#login-dialog {
+    border: 1px solid gray;
+}
+
+#login-dialog #login-title {
+    color: darkgray;
+    font-size: 14px;
+    background-color: transparent;
+    margin-bottom: 25px;
+}
+
+#login-dialog QLineEdit, #login-dialog QPushButton {
+    height: 45px;
+    border-radius: 5px;
+}
+
+#login-dialog QLineEdit {
+    margin: 2px 25px;
+    padding: 0px 15px;
+    font-size: 14px;
+}
+
+#login-dialog QPushButton {
+    margin: 20px 25px 50px 25px;
+    font-size: 18px;
+    border: 1px solid gray;
+    background-color: transparent;
+}
+
+#login-dialog QPushButton:hover {
+    color: #f3570c;
+    border-color: #f3570c;
+}
+
+/* Error Message Dialog */
+#error-message {
+    border: 1px solid gray;
+}
+
+#error-message #title {
+    font-size: 30px;
+    font-weight: 600;
+    color: #F29B18;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #F29B18;
+}
+
+#error-message #message {
+    color: white;
+    font-size: 16px;
+    margin: 20px;
+}
+
+#error-message QPushButton {
+    margin: 10px;
+}
+
+/* 
+    Views
+*/
+
+#bt-title-section {
+    border: 1px solid #249AF2;
+    font: 15px Georgia;
+    height: 45px;
+    padding: 0px 15px;
+}
+
+/* 
+    DataTables
+*/
+
+/* Table Header */
+QHeaderView::section {
+    font: normal normal 600 16px Georgia;
+}
+
+QTableCornerButton::section, QHeaderView::section {
+    border: none;
+    color: #111;
+    min-height: 45px;
+    background-color: #1DBF53;
+}
+
+/* Table content */
+QTableWidget {
+    font-family: Arial;
+    font-size: 15px;
+}
+
+QTableView:item:selected {
+    color: #249AF2;
+    background-color: transparent;
+    border-bottom: 1px solid #249AF2;
+}
+
+QTableWidget QPushButton {
+    border-color: white;
+    background-color: transparent;
+    font-size: 18px;
+}
+
+/* 
+    Sidebar Styles 
+*/
+#sidebar {
+    padding: 0px 20px;
+    border-left: 1px solid white;
+    border-top: 1px solid white;
+}
+#columns-filter-title {
+    color: white;
+    font-size: 20px;
+    border-radius: 5px;
+    border: 1px solid #1DBF53;
+}
+
+QCheckBox {
+    font-size: 15px;
+    font-family: Arial;
+}
+
+QCheckBox::indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #1DBF53;
+}
+
+QCheckBox::indicator:checked {
+    background-color: darkgray;
+}

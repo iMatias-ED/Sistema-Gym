@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QWidget, QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout
-from PySide6.QtCore import Signal, QRegularExpression
-from PySide6.QtGui import QRegularExpressionValidator
+from PySide6.QtWidgets import QMainWindow, QWidget, QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout
+from PySide6.QtCore import Signal, QRegularExpression, QSize, Qt
+from PySide6.QtGui import QRegularExpressionValidator, QPixmap
 
 from __feature__ import snake_case, true_property
 
@@ -15,18 +15,24 @@ class VerifyUserIdentityDialog(QDialog):
 
     def __init__(self, parent: QWidget):
         super(VerifyUserIdentityDialog, self).__init__(parent)
+        self.object_name = "login-dialog"
         
         self.setup_ui()
         self.show()
 
     def setup_ui(self):
-        self.title = QLabel("Verificación")
-        self.inp_ci = QLineEdit(placeholder_text="Ingrese su Número de cédula", validator=self.ONLY_NUMBERS_VALIDATOR)
-        self.inp_pwd = QLineEdit(placeholder_text="Ingrese su Número de contraseña")
+        self.logo_pixmap = QPixmap("src/assets/logo-cropped.jpeg")
+        self.logo = QLabel(object_name="login-logo")
+        self.logo.set_pixmap(self.logo_pixmap.scaled(QSize(500, 700), Qt.KeepAspectRatio))
 
-        self.bt_verifica = QPushButton("Verificá", clicked=self.verify_user)
+        self.title = QLabel("Ingrese sus credenciales para continuar", object_name="login-title", alignment=Qt.AlignCenter)
+        self.inp_ci = QLineEdit("7478938", placeholder_text="Ingrese su número de cédula", validator=self.ONLY_NUMBERS_VALIDATOR)
+        self.inp_pwd = QLineEdit("12345", placeholder_text="Ingrese su contraseña")
+
+        self.bt_verifica = QPushButton("Inicie sesión", clicked=self.verify_user)
 
         layout = QVBoxLayout()
+        layout.add_widget(self.logo)
         layout.add_widget(self.title)
         layout.add_widget(self.inp_ci)
         layout.add_widget(self.inp_pwd)
