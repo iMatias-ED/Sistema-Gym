@@ -68,7 +68,6 @@ QTableWidget, QCheckBox, QLabel {
 }
 
 #login-dialog QPushButton:hover {
-    color: #f3570c;
     border-color: #f3570c;
 }
 
@@ -93,6 +92,13 @@ QTableWidget, QCheckBox, QLabel {
 
 #error-message QPushButton {
     margin: 10px;
+    height: 45px;
+    font-size: 18px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+#error-message QPushButton:hover {
+    border-color: #f3570c;
 }
 
 /* 
@@ -104,6 +110,71 @@ QTableWidget, QCheckBox, QLabel {
     font: 15px Georgia;
     height: 45px;
     padding: 0px 15px;
+}
+#bt-title-section:hover {
+    border-color: #f3570c;
+}
+
+/* CALENDAR */
+QCalendarWidget QToolButton, QCalendarWidget QWidget {
+    font: 16px Arial;
+    background-color: #111;
+    border: 1px solid gray;
+}
+
+QCalendarWidget QToolButton {
+    height: 40px;
+    icon-size: 28px;
+}
+ 
+QCalendarWidget QWidget { 
+    color: #1DBF53; 
+} 
+
+/*
+    Config dialogs
+*/
+QDialog {
+    border: 1px solid darkgray;
+}
+
+#config-dialog {
+    font-size: 16px;
+    padding: 0px 20px;
+}
+
+#config-dialog #config-dialog-title {
+    color: #1DBF53;
+    font-size: 30px;
+    margin: 15px 0px;
+    font-weight: 600;
+}
+
+#config-dialog #save_button {
+    border-radius: 5px;
+    border: 1px solid gray;
+    height: 40px;
+    margin: 20px 0px;
+    font-size: 18px;
+}
+
+#config-dialog #save_button:hover {
+    border: 1px solid #1DBF53;
+    color: #1DBF53;
+}
+
+#config-dialog #input-label {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#config-dialog QLineEdit,
+QDialog QComboBox, QDialog QDateTimeEdit {
+    height: 40px;
+    font-size: 15px;
+    padding: 0px 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
 }
 
 /* 

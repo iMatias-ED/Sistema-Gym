@@ -1,32 +1,83 @@
-QLabel {
-    font-size: 50px;
+#inputs-title {
+    font-size: 36px;
+    color: #1DBF53;
+}
+#inputs-sub-title {
+    font-size: 20px;
+    color: darkgray;
+    margin: 15px 0px 30px 0px;
 }
 
-QLineEdit {
-    height: 45px;
+#input-ci, #bt-continue{
     border-radius: 5px;
     margin-bottom: 15px;
 }
 
+#input-ci {
+    height: 50px;
+    font-size: 20px;
+    padding-left: 15px;
+}
+#bt-continue {
+    font-size: 18px;
+    height: 45px;
+    border: 1px solid #249AF2;
+}
+#bt-continue:hover {
+    border-color: #f3570c
+}
+
 /* Report View */
-#name {
-    color: #f3570c;
+#summary-view QLabel, 
+#summary-view QPushButton {
+    font-size: 70px;
 }
-#last-pay {
-    color: #fcfcfc;
+
+#summary-view #name {
+    color: darkgray;
+    margin-top: 0px;
 }
-#registered-until {
-    color: #fcfcfc;
+#summary-view #summary-button, 
+#summary-view #register-button {
+    border: 1px solid #249AF2;
+    padding: 15px;
+    font-size: 20px;
+    margin: 10px 0px;
+}
+#summary-view #summary-button:hover {
+    border-color: #f3570c;
+}
+
+#summary-view #register-button {
+    color: #F29B18;
+    border-color: darkgray !important;
+}
+#summary-view #register-button:hover {
+    border-color: #F20600 !important;
+}
+
+
+#status-expired, #status-ok {
+    font-size: 30px;
 }
 
 #status-ok {
-    color: greenyellow;
+    color: #1DBF53;
 }
 #status-expired {
     color: #f3570c;
 }
 
-#go_back {
-    background-color: #f3570c;;
-    font-size: 15px;
+/* 
+    Summary dialogs 
+*/
+#summary-dialog QLabel {
+    font-size: 50px;
+    margin: 0px;
+}
+#summary-dialog #title {
+    color: #249AF2;
+}
+#summary-dialog QTableWidget {
+    margin: 20px 0px;
 }

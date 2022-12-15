@@ -27,8 +27,8 @@ class ControlPanel(ContentView):
         scrollArea = QScrollArea(self, widget_resizable=True)
         scrollArea.set_widget(self.summary_view)
 
-        self.root_layout.add_widget(self.sidebar, 20)
-        self.root_layout.add_layout(self.content_layout, 80)
+        self.root_layout.add_widget(self.sidebar, 15)
+        self.root_layout.add_layout(self.content_layout, 85)
 
         self.content_layout.insert_widget(0, self.users_view)
         self.content_layout.insert_widget(1, scrollArea)

@@ -30,7 +30,7 @@ class PurchasesSummaryDialog(SummaryDialog):
         ))
 
     def show(self, data:CustomerSummary ):
-        actions = [ Action(2, "D", self.show_purchase_detail, True, "<self>") ]
+        actions = [ Action(2, "D", self.show_purchase_detail, True, "src/assets/plus.png", "<self>") ]
 
         self.table.insert_values(data.purchases, actions)
         super().show()

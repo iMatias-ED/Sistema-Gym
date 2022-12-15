@@ -32,19 +32,27 @@ class AccessTimeSummaryDialog(SummaryDialog):
     def __init__(self, parent: QWidget):
         super(AccessTimeSummaryDialog, self).__init__(parent)
         self.setup_ui( SummaryContent(
-                "Nombre",
+                "Matías Acosta",
                 "...",
                 [   TableHeaderLabel("product_name", "Producto"),
                     TableHeaderLabel("date", "Fecha de expiracion"),
                     TableHeaderLabel("has_access", "Cuenta con Acceso")],
-                "Status"
+                "Habilitado"
             ))
 
     def show(self, data: Customer):
         self.load_data(data)
-        self.has_at_least_one_access = False;
-        self.bottom_label.text = str(self.has_at_least_one_access)
+
+        if self.has_at_least_one_access: 
+            status = "Habilitado"
+            self.bottom_label.style_sheet = "color: #1DBF53" 
+        else: 
+            status = "No habilitado"
+            self.bottom_label.style_sheet = "color: #F20600" 
         
+        self.bottom_label.text = status
+        
+        self.has_at_least_one_access = False;
         super().show()
 
     def load_data(self, data:Customer):

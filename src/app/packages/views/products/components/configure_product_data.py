@@ -19,17 +19,17 @@ class ConfigureProductData(QDialog):
         super(ConfigureProductData, self).__init__(parent)
 
         self.products_service = service
+        self.object_name = "config-dialog"
         self.products_service.data_changed.connect(self.on_data_changed) 
 
         self.setup_ui()
-        # self.set_window_flags(Qt.FramelessWindowHint)
 
     def setup_ui(self) -> None:
-        self.minimum_width = 450 
+        self.minimum_width = 500 
         self.minimum_height = 300
 
         # Products data
-        self.title = self._create_title("Productos", self.last_row())
+        self.title = self._create_title("Ingrese los datos del producto", self.last_row())
         self.inp_code = self._create_input("Código", "Código del producto", self.last_row(), "code")
         self.inp_name = self._create_input("Nombre", "Nombre del producto", self.last_row(), "name")
         
@@ -38,7 +38,7 @@ class ConfigureProductData(QDialog):
         self.setup_price_inputs()
 
         # Button
-        self.submit = QPushButton("Guardar")
+        self.submit = QPushButton("Guardar", object_name="save_button")
         self.root_layout.add_widget(self.submit, self.last_row(), 1, self.last_row(), 2)
 
         self.set_layout(self.root_layout)
@@ -142,12 +142,12 @@ class ConfigureProductData(QDialog):
 
     # Widgets Creations
     def _create_title(self, text:str, row:int) -> QLabel:
-        title = QLabel(text, alignment=Qt.AlignCenter, object_name="dialog-title")
+        title = QLabel(text, alignment=Qt.AlignCenter, object_name= "config-dialog-title")
         self.root_layout.add_widget(title, row, 1, row, 2)
         return title
 
     def _create_input(self, title:str, placeholder:str, row:int, object_name: str = "") -> QLineEdit:
-        label = QLabel(title)
+        label = QLabel(title, object_name="input-label")
         line_edit = QLineEdit( placeholder_text=placeholder, object_name=str(object_name))
 
         self.inputs_collection.append(line_edit)

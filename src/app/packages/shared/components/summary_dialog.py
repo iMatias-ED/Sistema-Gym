@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QHBoxLayout, QWidget
+from PySide6.QtCore import Qt
 from __feature__ import snake_case, true_property
 
 from typing import List
@@ -9,19 +10,23 @@ from .data_table import DataTable
 class SummaryDialog(QDialog):
 
     def setup_ui(self, content: SummaryContent):
+        self.minimum_width = 500
+        self.object_name = "summary-dialog"
+
         # Title section
-        self.title = QLabel(content.title)
+        self.title = QLabel(content.title, object_name="title", alignment=Qt.AlignCenter)
         self.second_title = QLabel(content.second_title)
 
         title_layout = QHBoxLayout()
-        title_layout.add_widget(self.title)
-        title_layout.add_widget(self.second_title)
+        title_layout.add_widget(self.title, 0)
+        title_layout.add_spacing(20)
+        title_layout.add_widget(self.second_title, 0, Qt.AlignRight)
 
         # Table section
         self.table = self.create_table(content.table_headers)
 
         # Total section
-        self.bottom_label = QLabel(content.bottom_label)
+        self.bottom_label = QLabel(content.bottom_label, object_name="bottom-label", alignment=Qt.AlignCenter)
 
         # Add widgets to layout
         layout = QVBoxLayout()

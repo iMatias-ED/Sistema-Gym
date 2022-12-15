@@ -1,7 +1,7 @@
 from typing import Union
 
-from PySide6.QtGui import QRegularExpressionValidator
-from PySide6.QtCore import Signal, QRegularExpression
+from PySide6.QtGui import QRegularExpressionValidator, QIcon, QColor
+from PySide6.QtCore import Signal, QRegularExpression, Qt, QSize
 from PySide6.QtWidgets import QDialog, QLineEdit, QLabel, QComboBox, QPushButton, QVBoxLayout, QHBoxLayout
 from __feature__ import snake_case, true_property
 
@@ -19,21 +19,28 @@ class ConfigureSelectedProduct(QDialog):
 
     def __init__(self, parent):
         super(ConfigureSelectedProduct, self).__init__(parent)
+        self.object_name = "configure-selected-product"
         self.setup_ui()
 
     def setup_ui(self):
-        self.title = QLabel()
-        self.amount = QLabel()
+        self.minimum_width = 350
+
+        self.title = QLabel(object_name="title", alignment=Qt.AlignCenter)
+        self.amount = QLabel(object_name="amount", alignment=Qt.AlignCenter)
 
         self.periods = QComboBox()
         self.periods.currentTextChanged.connect(self.calculate_amount)
 
-        self.bt_plus = QPushButton("+", minimum_width=45, clicked=self.plus_1)
-        self.bt_minus = QPushButton("-", minimum_width=45, clicked=self.minus_1)
-        self.quantity = QLineEdit( validator=self.ONLY_NUMBERS_VALIDATOR)
+        self.bt_plus = QPushButton( minimum_width=45, clicked=self.plus_1, icon=QIcon("src/assets/plus.png"))
+        self.bt_minus = QPushButton( minimum_width=45, clicked=self.minus_1, icon=QIcon("src/assets/minus.png"))
+        self.quantity = QLineEdit( validator=self.ONLY_NUMBERS_VALIDATOR, maximum_width=150, object_name="quantity" )
         self.quantity.textChanged.connect(self.calculate_amount)
 
-        self.submit = QPushButton("Seleccionar", clicked=self.on_submit)
+        # icons
+        self.bt_plus.set_icon_size(QSize(35, 35))
+        self.bt_minus.set_icon_size(QSize(35, 35))
+
+        self.submit = QPushButton("Seleccionar", clicked=self.on_submit, object_name="bt-add-product")
 
         layout = QVBoxLayout()
         quantity_layout = QHBoxLayout()
@@ -56,10 +63,18 @@ class ConfigureSelectedProduct(QDialog):
         self.title.text = product.name
         if quantity: self.quantity.text = str(quantity)
 
-        self.periods.add_items([ p.name for p in product.prices ])
+        self.add_period_items(product)
         if period: self.periods.set_current_index(self.periods.find_text(period))
         
         super().show()
+
+    def add_period_items(self, product: Product):
+        periods = [ p.name for p in product.prices ]
+        model = self.periods.model()
+
+        for index, period in enumerate(periods):
+            self.periods.add_item(period)
+            model.set_data(model.index(index, 0), QColor("white"), Qt.BackgroundRole)
 
     def calculate_amount(self):
         selected = self.periods.current_text

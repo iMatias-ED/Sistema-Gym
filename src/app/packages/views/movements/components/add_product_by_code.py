@@ -1,5 +1,5 @@
-from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLineEdit, QPushButton
+from PySide6.QtCore import Signal, Slot, Qt
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLineEdit, QPushButton, QLabel
 from __feature__ import snake_case, true_property
 
 from ..service import MovementsService
@@ -15,22 +15,37 @@ class AddProductByCode(QFrame):
 
     def __init__(self, service: MovementsService):
         super(AddProductByCode, self).__init__()
-
+        self.object_name = "code-input-section"
         self.movements_service = service
         self.setup_ui()
 
     def setup_ui(self):
         self.inp_code = QLineEdit(
-            minimum_height=45,
-            placeholder_text="Ingrese el código del producto")
-        self.submit = QPushButton("Insertar", clicked=self.on_code_inserted)
+            placeholder_text="Ingrese el código del producto",
+            object_name="code-input",
+            maximum_width=800,
+        )
+        self.inp_code.returnPressed.connect(self.on_code_inserted)
+
+        self.submit = QPushButton( "Insertar", 
+            clicked=self.on_code_inserted,
+            object_name="bt-add-product",
+            maximum_width=150,
+        )
+
+        self.total = QLabel( "Gs. 10.000.000", 
+            alignment=Qt.AlignCenter, 
+            object_name="total" 
+        )
 
         self.quantity_dialog = ConfigureSelectedProduct(self)
         self.quantity_dialog.selected.connect(self.emit_product_selected)
 
         layout = QHBoxLayout()
-        layout.add_widget(self.inp_code, 70)
-        layout.add_widget(self.submit, 30)
+        layout.add_widget(self.inp_code)
+        layout.add_widget(self.submit)
+        layout.add_spacing(20)
+        layout.add_widget(self.total)
 
         self.set_layout(layout)
 
@@ -40,7 +55,7 @@ class AddProductByCode(QFrame):
         except TypeError:
             ErrorDialog(self, self.reset_inp_code).show(ErrorMessage(
                 "Producto no encontrado.",
-                f"No se encontró ningún producto con el código {self.inp_code.text}"
+                f'No se encontró ningún producto con el código "{self.inp_code.text}"'
             ))
             return
 

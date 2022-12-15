@@ -29,12 +29,10 @@ class UsersView(QFrame):
         self.table.edit.connect( self.dialog.edit )
 
     def setup_title_frame(self) -> None:
-        self.title = QLabel("Usuarios", alignment=Qt.AlignCenter, object_name="view-title")
-        self.bt_create = QPushButton("+", maximum_width=50)
+        self.bt_create = QPushButton("Nuevo usuario", object_name="bt-title-section")
 
         layout = QHBoxLayout()
-        layout.add_widget(self.bt_create, 10)
-        layout.add_widget(self.title,  90)
+        layout.add_widget(self.bt_create, 10, Qt.AlignLeft)
 
         frame = QFrame()
         frame.set_layout(layout)

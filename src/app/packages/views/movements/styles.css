@@ -1,118 +1,165 @@
-#view-title {
-    font: normal normal 500 30px Georgia;
+#preview-sidebar QPushButton {
+    height: 45px;
+    margin: 0px 10px;
 }
 
-QTableWidget, QCheckBox, QLabel, QHeaderView::section {
-    color: white
+#preview-sidebar #title {
+    font: 600 24px Arial;
+    color: darkgray;
 }
 
-/* 
-    Table Styles 
-*/
-
-/* Table Header */
-QHeaderView::section {
-    font: normal normal 500 15px Georgia;
+#preview-sidebar #data {
+    font: 500 16px Arial;
+    margin: 5px 5px 5px 10px;
+    color: darkgray;
 }
 
-QTableCornerButton::section, QHeaderView::section {
-    border: none;
-    min-height: 45px;
-    background-color: #8C6D3F;
+#preview-sidebar #bt-search-customer {
+    font: 500 16px;
+    background-color: #249AF2;
 }
 
-/* Table content */
-QTableWidget {
-    font-family: Arial;
+#preview-sidebar #bt-continue {
+    height: 60px;
+    font: 500 18px;
+    border: 1px solid #249AF2;
 }
-
-QTableWidget QPushButton {
-    border-color: white;
-    font-size: 18px;
+#preview-sidebar #bt-continue:hover {
+    border-color: #F3570C;
 }
 
 /* 
-    Sidebar Styles 
+    Add Product by code
 */
-#sidebar {
-    padding: 0px 20px;
-    border-left: 1px solid white;
-    border-top: 1px solid white;
+#code-input-section {
+    border-right: 1px solid darkgray;
 }
 
-QCheckBox {
-    font-family: Arial;
+#code-input-section #total {
+    font: 500 55px Arial;
+    color: #F29B18;
+    border-left: 1px solid darkgray;
+    border-bottom: 1px solid darkgray;
+    margin-bottom: 5px;
 }
 
-QCheckBox::indicator {
-    width: 30px;
-    height: 30px;
-    border-radius: 15px;
-    background-color: #1DBF53;
-}
-
-QCheckBox::indicator:checked {
-    background-color: #F3570C;
-}
-
-/* 
-    Dialog Styles 
-*/
-#dialog-title {
-    font: 18px Georgia;
-    margin: 20px 0px;
-}
-
-QDialog {
-    background-color: #242526;
-    border: 2px solid #1DBF53;
-}
-
-QDialog QLabel {
-    font-size: 15px;
-}
-
-QDialog QLineEdit, QDialog QComboBox, QDialog QDateTimeEdit {
-    padding-left: 7px;
-}
-
-QDialog QComboBox, QDialog QDateTimeEdit {
-    background-color: white;
-}
-
-QDialog QLineEdit, QDialog QPushButton, QDialog QComboBox, QDialog QDateTimeEdit {
-    height: 35px;
-    font-size: 13px;
+#code-input, #bt-add-product {
+    height: 60px;
     border-radius: 5px;
-    border: 1px solid white;
-}
-QDialog QPushButton {
-    margin: 15px 0px;
+    font-size: 24px;
 }
 
-/* CALENDAR */
-QCalendarWidget QToolButton, QCalendarWidget QWidget {
-    font: 16px Arial;
-    background-color: #242526;
+#code-input {
+    padding: 0px 30px;
+    /* text-transform: uppercase; */
+}
+/* #code-input::placeholder {
+    text-transform: none;
+} */
+
+#bt-add-product {
+        border: 1px solid #249AF2;
+        color: white;
+}
+#bt-add-product:hover {
+        border-color: #F3570C;
 }
 
-QCalendarWidget QToolButton {
-    height: 40px;
-    icon-size: 28px;
-}
- 
-QCalendarWidget QWidget { 
-    color: #1DBF53; 
+/*
+    Configure selected product
+*/
+#configure-selected-product #title, #configure-selected-product #amount {
+    font: 600 20px Arial;
+    margin: 8px 5px;
 }
 
-#search-button {
-    font-size: 15px;
-    background-color: #F3570C;
+#configure-selected-product #title {
+    color: darkgray;
+}
+
+#configure-selected-product #amount {
+    font-size: 30px;
+    color: #F29B18;
+}
+
+#configure-selected-product #quantity,
+#configure-selected-product #bt-add-product,
+#configure-selected-product QComboBox {
+    height: 45px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+#configure-selected-product #quantity {
+    padding: 0px 10px;
+}
+
+/*
+    Search Dialog
+*/
+#search-dialog #title {
+    font: 600 20px Arial;
+    margin: 8px 5px;
+    color: darkgray;
+}
+
+#search-dialog #search-input, #search-dialog #bt-select {
+    height: 45px;
+    margin: 20px 0px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+#search-dialog #search-input {
+    padding-left: 10px;
+}
+
+#search-dialog #bt-select {
+    border: 1px solid #249AF2;
+}
+#search-dialog #bt-select:hover {
+    border-color: #F3570C;
+}
+
+/* 
+    Register Movement
+*/
+#register-movement #title {
+    font: 600 20px Arial;
+    margin: 8px 5px;
+    margin-bottom: 15px;
+    color: darkgray;
+}
+
+#register-movement QLineEdit, 
+#register-movement QPushButton,
+#register-movement QComboBox {
+    height: 45px;
+    margin: 0px 0px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+#register-movement QLineEdit, 
+#register-movement QComboBox {
+    padding: 0px 10px;
+}
+
+#register-movement QPlainTextEdit {
+    padding: 10px;
     color: white;
+    font-size: 16px;
+    margin: 15px 0px;
+    border: 1px solid #249AF2;
 }
-#bt-continue {
-    font-size: 15px;
-    background-color: #1DBF53;
-    color: black;
+
+#register-movement QPushButton {
+    margin: 10px 0px;
+    border: 1px solid #249AF2;
 }
- 
+#register-movement QPushButton:hover {
+    border: 1px solid #F3570C;
+}
+
+
+

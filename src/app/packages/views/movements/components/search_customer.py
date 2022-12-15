@@ -1,4 +1,3 @@
-from typing import List
 from PySide6.QtCore import Signal, Slot
 from __feature__ import snake_case, true_property
 
@@ -19,7 +18,7 @@ class SearchCustomerDialog(SearchDialog):
         self.movements_service = service
         self.movements_service.data_changed.connect(self.on_data_changed) 
 
-        self.setup_ui( SearchDialogConfig(
+        self.setup_ui( SearchDialogConfig (
             "Seleccione un cliente",
             "Ingrese un nombre para buscar",
             [ 

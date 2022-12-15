@@ -16,7 +16,7 @@ class SalesSummary(QFrame):
 
         self.set_layout(self.root_layout)
 
-        self.style_sheet = "border: 1px solid darkgreen;"
+        # self.style_sheet = "background: gray; border: 1px solid blue;"
 
     def refresh(self, data: dict):
         self.amount.text = f'Gs. {data["total"]}'

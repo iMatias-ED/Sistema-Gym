@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QFrame, QVBoxLayout,QHBoxLayout
+from PySide6.QtCore import Slot
 from __feature__ import snake_case, true_property
 
 from ...service import ControlPanelService
@@ -10,7 +10,7 @@ from .components.sales import SalesSummary
 class MovementsSummaryView(QFrame):
     VIEW_INDEX = 1
     service = ControlPanelService()
-    content_layout = QVBoxLayout()
+    content_layout = QHBoxLayout()
 
     def __init__(self):
         super(MovementsSummaryView, self).__init__()
@@ -21,12 +21,12 @@ class MovementsSummaryView(QFrame):
         self.outflows = OutflowsSummary()
         self.sales = SalesSummary()
 
-        h_layout = QHBoxLayout()
+        h_layout = QVBoxLayout()
         h_layout.add_widget(self.inflows)
         h_layout.add_widget(self.outflows)
 
-        self.content_layout.add_widget(self.sales)
-        self.content_layout.add_layout(h_layout)
+        self.content_layout.add_widget(self.sales, 70)
+        self.content_layout.add_layout(h_layout, 30)
 
         self.set_layout(self.content_layout)
 

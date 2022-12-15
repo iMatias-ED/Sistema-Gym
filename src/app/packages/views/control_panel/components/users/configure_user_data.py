@@ -18,17 +18,17 @@ class ConfigureUserDataDialog(QDialog):
     def __init__(self, parent, service:ControlPanelService):
         super(ConfigureUserDataDialog, self).__init__(parent)
 
+        self.object_name = "config-dialog"
         self.users_service = service
         self.users_service.data_changed.connect(self.on_data_changed) 
 
         self.setup_ui()
-        # self.set_window_flags(Qt.FramelessWindowHint)
 
     def setup_ui(self) -> None:
-        self.minimum_width = 450 
+        self.minimum_width = 500
 
         # Products data
-        self.title          = self._create_title("Usuarios", self.last_row())
+        self.title          = self._create_title("Datos del usuario", self.last_row(), "config-dialog-title")
         self.inp_name       = self._create_input("Nombre y Apellido", "Nombre completo", self.last_row(), "full_name")
         self.inp_password   = self._create_input("Contraseña", "Ingrese su contraseña", self.last_row(), "password")
         self.inp_ci         = self._create_input("Cédula de identidad", "Número de Cédula", self.last_row(), "ci")
@@ -38,7 +38,7 @@ class ConfigureUserDataDialog(QDialog):
         
 
         # Button
-        self.submit = QPushButton("Guardar")
+        self.submit = QPushButton("Guardar", object_name="save_button")
         self.root_layout.add_widget(self.submit, self.last_row(), 1, self.last_row(), 2)
 
         self.set_layout(self.root_layout)
@@ -120,7 +120,7 @@ class ConfigureUserDataDialog(QDialog):
         return title
 
     def _create_input(self, title:str, placeholder:str, row:int, obj_name:str = "") -> QLineEdit:
-        label = QLabel(title)
+        label = QLabel(title, object_name="input-label")
         line_edit = QLineEdit(placeholder_text=placeholder, object_name=obj_name)
 
         self.inputs_collection.append(line_edit)
@@ -130,9 +130,8 @@ class ConfigureUserDataDialog(QDialog):
         return line_edit
 
     def _create_combo_box(self, title:str, values: List[str], row:int, obj_name:str = "") -> QComboBox:
-        label = QLabel(title)
+        label = QLabel(title, object_name="input-label")
         combo_box = QComboBox(object_name = obj_name)
-        # self.inputs_collection.append(combo_box)
 
         model = combo_box.model()
         for index, genre in enumerate(values):

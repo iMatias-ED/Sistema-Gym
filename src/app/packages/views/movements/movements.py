@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QPushButton, QFrame
+from PySide6.QtCore import Qt
 from __feature__ import snake_case, true_property
 
 from ...shared.content_view import ContentView
@@ -35,8 +35,8 @@ class Movements(ContentView):
         self.search_customer = SearchCustomerDialog(self, self.service)
         self.register_movement = RegisterMovementDialog(self, self.service)
 
-        self.root_layout.add_layout(self.second_layout, 80)
-        self.root_layout.add_widget(self.sidebar, 20)
+        self.root_layout.add_layout(self.second_layout, 85)
+        self.root_layout.add_widget(self.sidebar, 15)
 
         self.second_layout.add_widget( self.setup_title_frame(), 10 )
         self.second_layout.add_widget( self.table, 70 )
@@ -63,12 +63,12 @@ class Movements(ContentView):
         self.bt_register_movement.clicked.connect(self.register_movement.show)
 
     def setup_title_frame(self) -> None:
-        self.bt_search_product = QPushButton("B", maximum_width=50)
-        self.bt_register_movement = QPushButton("Movement")
+        self.bt_search_product = QPushButton("Buscar producto", object_name="bt-title-section")
+        self.bt_register_movement = QPushButton("Entradas / Salidas de dinero", object_name="bt-title-section")
 
         layout = QHBoxLayout()
-        layout.add_widget(self.bt_search_product)
-        layout.add_widget(self.bt_register_movement)
+        layout.add_widget(self.bt_search_product, 0, Qt.AlignLeft)
+        layout.add_widget(self.bt_register_movement, 0, Qt.AlignRight)
 
         frame = QFrame()
         frame.set_layout(layout)

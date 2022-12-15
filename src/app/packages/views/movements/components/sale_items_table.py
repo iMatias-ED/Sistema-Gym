@@ -81,8 +81,8 @@ class SaleItemsTable(DataTable):
 
     def insert_data(self, data: SaleItem, key:str, row:int) -> None:
         actions = [
-            Action(0, "X", self.remove_product, False, key),
-            Action(1, "E", self.edit_clicked, False,
+            Action(0, "X", self.remove_product, False, "src/assets/remove.png", key),
+            Action(1, "E", self.edit_clicked, False, "src/assets/edit.png",
                 data.product, key, data.quantity, data.price.name )
         ]
         sub_values = {

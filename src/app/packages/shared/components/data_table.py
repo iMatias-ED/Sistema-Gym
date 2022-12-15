@@ -28,7 +28,7 @@ class DataTable(QTableWidget):
         self.horizontal_header().set_section_resize_mode(QHeaderView.Stretch)
         
         # self.focus_policy = Qt.NoFocus
-        self.vertical_header().default_section_size = 35
+        self.vertical_header().default_section_size = 40
         self.selection_behavior = QTableView.SelectRows
 
     def insert_values(self, row_items: List[Any], actions: List[Action] = [], sub_values: Dict[str, List[SubValue]] = {} ):

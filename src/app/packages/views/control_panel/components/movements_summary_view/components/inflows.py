@@ -16,7 +16,5 @@ class InflowsSummary(QFrame):
 
         self.set_layout(self.root_layout)
 
-        self.style_sheet = "border: 1px solid darkgreen;"
-
     def refresh(self, data: dict):
         self.amount.text = f'Gs. {data["total"]}'

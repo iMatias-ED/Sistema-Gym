@@ -10,14 +10,13 @@ from ..classes.search_dialog_config import SearchDialogConfig
 
 class SearchDialog(QDialog):
 
-    def setup_ui(self, config: SearchDialogConfig) -> None:
-        # self.set_window_flags(Qt.FramelessWindowHint)
-        
+    def setup_ui(self, config: SearchDialogConfig) -> None:        
+        self.object_name = "search-dialog"
         self.root_layout = QVBoxLayout()
-        self.minimum_width = 450 
+        self.minimum_width = 400 
 
         # Products data
-        self.title    = QLabel    ( config.title, alignment=Qt.AlignCenter, object_name="dialog-title" ) 
+        self.title    = QLabel    ( config.title, alignment=Qt.AlignCenter, object_name="title" ) 
         self.input    = QLineEdit ( placeholder_text=config.input_placeholder, object_name="search-input" )
         self.table    = self._create_table(config.table_headers)
         
@@ -33,7 +32,7 @@ class SearchDialog(QDialog):
         self.update_table_data("")
 
         # Button
-        self.submit = QPushButton("Seleccionar", clicked=config.slot)
+        self.submit = QPushButton("Seleccionar", clicked=config.slot, object_name="bt-select")
         self.root_layout.add_widget(self.submit)
 
         self.set_layout(self.root_layout)
