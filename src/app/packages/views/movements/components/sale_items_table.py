@@ -26,13 +26,15 @@ class TableSaleItem:
         return f"{self.row}:{self.item}"     
 
 class SaleItemsTable(DataTable):
-    data_collected = Signal(list)
+    total_changed = Signal(int)
+    data_collected = Signal(list, int)
     collection: Dict[str, TableSaleItem] = {}
 
     current_key: str
 
     def __init__(self, service: MovementsService):
         super(SaleItemsTable, self).__init__()
+        self.total = 0
         self.movements_service = service
         self.movements_service.data_changed.connect( self.refresh )
 
@@ -45,7 +47,12 @@ class SaleItemsTable(DataTable):
         self.clear_contents()
         self.collection.clear()
 
-    def remove_product(self, key:str) -> None:   
+    def remove_product(self, key:str) -> None: 
+        sale_item = self.collection[key].item
+
+        self.total -= sale_item.price.price * sale_item.quantity 
+        self.total_changed.emit(self.total)
+
         self.hide_row(self.collection[key].row)
         del self.collection[key]
 
@@ -61,7 +68,7 @@ class SaleItemsTable(DataTable):
     @Slot(SaleItem)
     def on_product_select(self, data: SaleItem) -> None:
         key = f'{data.product.code}::{data.price.name}'
-        
+
         if key not in self.collection:
             self.row_count += 1
             row = self.row_count - 1
@@ -73,10 +80,14 @@ class SaleItemsTable(DataTable):
             info.item.add(data.quantity)
             self.insert_data(info.item, key, info.row)
 
+        self.total += data.price.price * data.quantity
+        self.total_changed.emit(self.total)
+
     @Slot()
     def on_summary_requested(self) -> None:
         self.data_collected.emit( 
-            [ data.item for data in list(self.collection.values())] 
+            [ data.item for data in list(self.collection.values())],
+            self.total 
         )
 
     def insert_data(self, data: SaleItem, key:str, row:int) -> None:

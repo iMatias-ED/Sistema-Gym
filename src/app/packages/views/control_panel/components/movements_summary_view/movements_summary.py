@@ -19,7 +19,9 @@ class MovementsSummaryView(QFrame):
     def setup_ui(self):
         self.inflows = InflowsSummary()
         self.outflows = OutflowsSummary()
+
         self.sales = SalesSummary()
+        self.sales.date_changed.connect( lambda : self.on_show(self.VIEW_INDEX) )
 
         h_layout = QVBoxLayout()
         h_layout.add_widget(self.inflows)
@@ -32,7 +34,9 @@ class MovementsSummaryView(QFrame):
 
     @Slot(int)
     def on_show(self, index: int):
+        date = self.sales.date_picker.text
+
         if index == self.VIEW_INDEX:
-            self.sales.refresh(self.service.get_total_sales())
-            self.inflows.refresh(self.service.get_total_inflows())
-            self.outflows.refresh(self.service.get_total_outflows())
+            self.sales.refresh(self.service.get_total_sales(date))
+            self.inflows.refresh(self.service.get_total_inflows(date), date)
+            self.outflows.refresh(self.service.get_total_outflows(date), date)

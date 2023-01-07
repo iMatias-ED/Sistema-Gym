@@ -4,10 +4,9 @@ from .product_sold import ProductSold
 
 class SaleRecord:
     id: int
-    date: int
+    date: str
     total: int
     id_customer: int
-    formatted_date: str
     items: List[ProductSold]
 
     def __init__(self, data: dict):
@@ -17,7 +16,6 @@ class SaleRecord:
         self.id_customer = data["id_customer"]
 
         if "id" in data: self.id = data["id"]
-        self.formatted_date = datetime.fromtimestamp(self.date).strftime("%d/%m/%Y")
 
     def save_product(self, product: ProductSold):
         self.items.append(product)

@@ -31,11 +31,13 @@ class AddProductByCode(QFrame):
             clicked=self.on_code_inserted,
             object_name="bt-add-product",
             maximum_width=150,
+            minimum_width=120
         )
 
-        self.total = QLabel( "Gs. 10.000.000", 
+        self.total = QLabel( "Gs. 0", 
             alignment=Qt.AlignCenter, 
-            object_name="total" 
+            object_name="total",
+            minimum_width=400
         )
 
         self.quantity_dialog = ConfigureSelectedProduct(self)
@@ -65,6 +67,10 @@ class AddProductByCode(QFrame):
     def emit_product_selected(self, selection: Product) -> None:
         self.inp_code.text = ""
         self.product_selected.emit(selection)
+
+    @Slot(int)
+    def update_total(self, value: int):
+        self.total.text = f"Gs. {value}"
 
     def reset_inp_code(self):
         self.inp_code.text = ""

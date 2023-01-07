@@ -1,6 +1,7 @@
 from typing import List, Union
 from datetime import datetime
 
+from .classes.cash_flow_item import CashFlowItem
 from ...shared.services.service import DBService, TableHeaderLabel
 from ...shared.services.security_service import SecurityService
 from .classes.user import User
@@ -65,7 +66,21 @@ class ControlPanelService(DBService):
                 ci = {c.ci},
                 phone = '{c.phone}',
                 email = '{c.email}',
-                genre = '{c.genre}',
+                genre = '{c.genre}'
+            WHERE id = {c.id}
+            RETURNING id
+            ;
+        '''
+        self._changes_query(query)
+
+        if c.password != "":
+            self.change_password(c)
+
+        self.data_changed.emit()
+
+    def change_password(self, c:User ) -> None:
+        query = f''' 
+            UPDATE users SET
                 password = '{self.security_service.encrypt(c.password)}'
             WHERE id = {c.id}
             RETURNING id
@@ -92,22 +107,64 @@ class ControlPanelService(DBService):
             formatted.append( User( dict(user) ) ) 
         return formatted
 
-    def get_total_inflows(self):
+    def get_all_inflows(self, date: str):
+        query = f'''
+            SELECT 
+                user.full_name as user_name,
+                amount,
+                description,
+                date
+            FROM cash_flow 
+                LEFT JOIN users as user ON id_user=user.id
+            WHERE 
+                id_movement_type = 2 AND
+                STRFTIME('%d/%m/%Y', date) = '{date}';
+        '''
+        return self.format_cash_flow(self._read_query_fetchall(query))
+
+    def get_all_outflows(self, date: str):
+        query = f'''
+            SELECT 
+                user.full_name as user_name,
+                amount,
+                description,
+                date
+            FROM cash_flow 
+                LEFT JOIN users as user ON id_user=user.id
+            WHERE 
+                id_movement_type = 1 AND
+                STRFTIME('%d/%m/%Y', date) = '{date}'
+            ;
+        '''
+        return self.format_cash_flow(self._read_query_fetchall(query))
+
+    def format_cash_flow(self, data: list[dict]):
+        return [ CashFlowItem(dict(row)) for row in data ]
+
+    # Totals
+    def get_total_inflows(self, date: str):
         query = f'''
             SELECT SUM(amount) as total FROM cash_flow 
-            WHERE id_movement_type = 2;
+            WHERE 
+                id_movement_type = 2 AND
+                STRFTIME('%d/%m/%Y', date) = '{date}';
         '''
         return self._read_query_fetchone(query)
 
-    def get_total_outflows(self):
+    def get_total_outflows(self, date: str):
         query = f'''
             SELECT SUM(amount) as total FROM cash_flow 
-            WHERE id_movement_type = 1;
+            WHERE 
+                id_movement_type = 1 AND
+                STRFTIME('%d/%m/%Y', date)  = '{date}';
         '''
         return self._read_query_fetchone(query)
 
-    def get_total_sales(self):
+    def get_total_sales(self, date: str):
         query = f'''
-            SELECT sum(total) as total FROM products_sales;
+            SELECT sum(total) as total 
+                FROM products_sales
+                    LEFT JOIN sales ON id_sales = sales.id
+            WHERE STRFTIME('%d/%m/%Y', sales.date)  = '{date}';
         '''
         return self._read_query_fetchone(query)

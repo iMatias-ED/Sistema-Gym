@@ -8,7 +8,7 @@
 */
 
 QMainWindow, QFrame, QPushButton, QDialog {
-    background-color: #111;
+    background-color: #050505;
 }
 
 QPushButton {
@@ -118,8 +118,7 @@ QTableWidget, QCheckBox, QLabel {
 /* CALENDAR */
 QCalendarWidget QToolButton, QCalendarWidget QWidget {
     font: 16px Arial;
-    background-color: #111;
-    border: 1px solid gray;
+    background-color: #050505;
 }
 
 QCalendarWidget QToolButton {
@@ -188,7 +187,7 @@ QHeaderView::section {
 
 QTableCornerButton::section, QHeaderView::section {
     border: none;
-    color: #111;
+    color: #050505;
     min-height: 45px;
     background-color: #1DBF53;
 }

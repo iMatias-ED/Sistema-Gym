@@ -19,11 +19,15 @@ class TableItem:
     product_name: str
     date: str
     has_access: bool
+    status_text: str
 
     def __init__(self, name: str, date: str, has_access: bool):
         self.product_name = name
         self.date = date
         self.has_access = has_access
+
+        if has_access: self.status_text = "Si"
+        else: self.status_text = "No"
 
 class AccessTimeSummaryDialog(SummaryDialog):
     service = AssistControlService()
@@ -33,10 +37,10 @@ class AccessTimeSummaryDialog(SummaryDialog):
         super(AccessTimeSummaryDialog, self).__init__(parent)
         self.setup_ui( SummaryContent(
                 "Matías Acosta",
-                "...",
+                "",
                 [   TableHeaderLabel("product_name", "Producto"),
                     TableHeaderLabel("date", "Fecha de expiracion"),
-                    TableHeaderLabel("has_access", "Cuenta con Acceso")],
+                    TableHeaderLabel("status_text", "Cuenta con Acceso")],
                 "Habilitado"
             ))
 

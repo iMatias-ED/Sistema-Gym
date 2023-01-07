@@ -41,7 +41,7 @@ class SummaryView(QFrame):
         self.purchase_summary = PurchasesSummaryDialog(self)
         self.access_time_summary = AccessTimeSummaryDialog(self)
 
-        self.root_layout.add_spacing(70)
+        self.root_layout.add_stretch()
         self.root_layout.add_widget(self.name, 0, Qt.AlignCenter)
         self.root_layout.add_widget(self.status, 0, Qt.AlignCenter)
 
@@ -49,7 +49,7 @@ class SummaryView(QFrame):
         self.root_layout.add_widget(self.my_products, 0, Qt.AlignCenter)
         self.root_layout.add_widget(self.my_buys, 0, Qt.AlignCenter)
         self.root_layout.add_widget(self.bt_continue, 0, Qt.AlignCenter)
-        self.root_layout.add_spacing(80)
+        self.root_layout.add_spacing(50)
 
         self.set_layout(self.root_layout)
 

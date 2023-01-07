@@ -1,7 +1,7 @@
 from typing import Dict
 from PySide6.QtWidgets import QDialog, QWidget, QLabel, QComboBox, QLineEdit, QPushButton, QPlainTextEdit, QVBoxLayout
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QRegularExpression
+from PySide6.QtGui import QColor, QRegularExpressionValidator
 from __feature__ import snake_case, true_property
 
 from ..classes.cash_flow_item import CashFlowItem
@@ -13,6 +13,7 @@ from ..service import MovementsService
 class RegisterMovementDialog(QDialog):
     id_movement_type: int
     cash_flow_data: Dict[str, MovementType]
+    ONLY_NUMBERS_VALIDATOR = QRegularExpressionValidator(QRegularExpression("[0-9]*"))
 
     def __init__(self, parent: QWidget, service: MovementsService):
         super(RegisterMovementDialog, self).__init__(parent)
@@ -28,7 +29,7 @@ class RegisterMovementDialog(QDialog):
         self.select_flow_type = QComboBox(object_name="select-flow-type")
         self.add_flow_type_items()
 
-        self.amount = QLineEdit( placeholder_text="Ingrese el monto en Gs." )
+        self.amount = QLineEdit( placeholder_text="Ingrese el monto en Gs.", validator=self.ONLY_NUMBERS_VALIDATOR )
         self.description = QPlainTextEdit(placeholder_text="Ingrese una descripción")
         self.submit = QPushButton("Guardar", clicked=self._on_submit)
 

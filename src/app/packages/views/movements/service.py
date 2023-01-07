@@ -112,6 +112,15 @@ class MovementsService(DBService):
         query = f'''
             SELECT * FROM sales WHERE id_customer={id_customer};
         '''
+        return self._format_purchases (self._read_query_fetchall(query))
+
+    def get_customers_purchases_until(self, id_customer: int, date: str) -> List[SaleRecord]:
+        query = f'''
+            SELECT * FROM sales
+            WHERE 
+                id_customer={id_customer} AND
+                STRFTIME('%d/%m/%Y', date) = '{date}';
+        '''
 
         return self._format_purchases (self._read_query_fetchall(query))
 

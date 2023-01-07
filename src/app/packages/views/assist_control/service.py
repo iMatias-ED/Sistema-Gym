@@ -23,3 +23,6 @@ class AssistControlService(DBService):
     def get_product_by_id(self, id: int) -> Product:
         return self.products_service.get_by_id(id)
 
+    def get_purchases(self, customer_id, limit_date: str):
+        return self.movements_service.get_customers_purchases_until(customer_id, limit_date)
+

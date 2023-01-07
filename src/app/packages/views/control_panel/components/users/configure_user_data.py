@@ -35,7 +35,6 @@ class ConfigureUserDataDialog(QDialog):
         self.inp_phone      = self._create_input("Teléfono", "Número de contacto", self.last_row(), "phone")
         self.inp_email      = self._create_input("Correo Electrónico", "ejemplo@gmail.com", self.last_row(), "email")
         self.inp_genre      = self._create_combo_box("Género", ["Masculino", "Femenino"], self.last_row(), "genre")
-        
 
         # Button
         self.submit = QPushButton("Guardar", object_name="save_button")
@@ -46,18 +45,30 @@ class ConfigureUserDataDialog(QDialog):
     def last_row(self) -> int:
         return self.root_layout.row_count()
 
+    def reset(self):
+        for inp in self.inputs_collection:
+            inp.text = ""
+        self.inp_password.placeholder_text = "Ingrese su contraseña"
+
     # Open mode
     def create(self) -> None:
+        self.reset()
         self._reconnect_submit(self.on_create_submit)
         self.clear()
         self.show()
 
     @Slot(int)
     def edit(self, user_id:int) -> None:
+        self.reset()
         user = self.users_service.get_by_id(user_id)
 
         for inp in self.inputs_collection:
             value = str(getattr(user, inp.object_name))
+
+            if inp.object_name == "password":
+                inp.placeholder_text = "Ingrese un valor para cambiar su contraseña"
+                continue
+
             inp.text = value
 
         self.inp_genre.current_index = self.inp_genre.find_text( user.genre )

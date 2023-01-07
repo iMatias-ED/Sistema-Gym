@@ -7,4 +7,38 @@
     border: 1px solid #249AF2;
 }
 
+/* Sales */
+QDateTimeEdit {
+    height: 45px;
+    font-size: 16px;
+    padding: 0px 10px;
+    border-radius: 5px;
+}
+
+/* 
+    Cash Flow Summary Dialog
+*/
+#cash-flow-summary-dialog QLabel, #movements-summary #title{
+    font: 600 20px Arial;
+    margin: 8px 5px;
+    margin-bottom: 15px;
+    color: darkgray;
+}
+#cash-flow-summary-dialog QTableWidget {
+    margin-bottom: 20px;
+}
+
+/* Movements summary */
+#movements-summary {
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+#movements-summary #total {
+    font: 500 36px Arial;
+    color: #F29B18;
+}
+#movements-summary QPushButton {
+    margin-top: 10px;
+}
  

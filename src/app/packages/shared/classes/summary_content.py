@@ -2,6 +2,8 @@ from ..classes.table_header_label import TableHeaderLabel
 from typing import List
 
 class SummaryContent:
+    """If second_title == '<date_picker>', a datepicker will be displayed in the second_title section"""
+    
     title: str
     second_title: str
     table_content: List
@@ -9,6 +11,7 @@ class SummaryContent:
     bottom_label: str
 
     def __init__(self, title: str, second_title: str, headers: List[TableHeaderLabel], bottom_label: str):
+
         self.title = title
         self.second_title = second_title
         self.table_headers = headers

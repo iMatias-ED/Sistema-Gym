@@ -26,6 +26,7 @@ class Main(QMainWindow):
 
     def __init__(self):
         super(Main, self).__init__()
+        self.size = QSize(1366, 720)
         self.style_sheet = self.stylesheet()
 
         self.verify_user_dialog = VerifyUserIdentityDialog(self)
@@ -42,8 +43,8 @@ class Main(QMainWindow):
         self.setup_ui()
         self.__create_views()
         self.__add_views_to_content_box()
-        # self.show()
-        self.show_full_screen()
+        self.show()
+        # self.show_full_screen()
 
     def stylesheet(self) -> str:
         styles = open( "src/app/styles.css", "r" )

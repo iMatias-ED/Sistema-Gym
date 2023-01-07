@@ -73,8 +73,9 @@ class CustomersService(DBService):
             email,
             genre,
             invoice_to,
-            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
+            STRFTIME('%d/%m/%Y', access_until_date) as access_until_date
         FROM {self.TABLE} WHERE ci={ci}; '''
+
         return self._format_customers(self._read_query_fetchone(query))
 
     def _get_access_time( self, id: int ):

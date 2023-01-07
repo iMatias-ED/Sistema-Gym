@@ -27,7 +27,7 @@ class PurchaseDetailDialog(SummaryDialog):
         ))
 
     def show(self, data: SaleRecord):
-        self.second_title.text = data.formatted_date
+        self.second_title.text = data.date
         self.bottom_label.text = f"Gs. {data.total}"
         self.load_data(data)
         

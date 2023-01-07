@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QVBoxLayout, QStackedLayout, QLineEdit, QLabel, QP
 from PySide6.QtCore import Qt, QRegularExpression
 from PySide6.QtGui import QRegularExpressionValidator
 
+import traceback
 from __feature__ import snake_case, true_property
 
 from .components.summary_view import SummaryView
@@ -39,7 +40,7 @@ class AssistControl(ContentView):
         validator = QRegularExpressionValidator(regexp)
         self.inp_ci.set_validator(validator)
 
-        self.inputs_layout.add_spacing(200)
+        self.inputs_layout.add_stretch()
         self.inputs_layout.add_widget(self.title)
         self.inputs_layout.add_widget(self.sub_title)
         self.inputs_layout.add_layout(input_layout)
@@ -61,8 +62,10 @@ class AssistControl(ContentView):
 
     def show_report(self):
         try:
-            self.report_view.load_data( int(self.inp_ci.text) )
+            ci = int(self.inp_ci.text)
+            self.report_view.load_data( ci )
         except TypeError:
+            traceback.print_exc()
             error_msg = ErrorMessage(
                 "Número de cédula no encontrado.",
                 f"No encontramos ningún cliente con el número de cédula {self.inp_ci.text} "
@@ -70,6 +73,7 @@ class AssistControl(ContentView):
             ErrorDialog(self, self.reset_inp_ci).show(error_msg)
             return
         except ValueError:
+            traceback.print_exc()
             error_msg = ErrorMessage(
                 "Número de cédula no encontrado.",
                 f"No encontramos ningún cliente con el número de cédula {self.inp_ci.text} "

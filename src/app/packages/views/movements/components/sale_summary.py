@@ -1,7 +1,7 @@
 from typing import Callable, Dict, Tuple, List
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QRegularExpressionValidator
 from __feature__ import snake_case, true_property
 
 # Services 
@@ -19,7 +19,8 @@ class SaleSummary(QDialog):
     products: list[SaleItem]
     customer: Customer = None;
 
-    root_layout = QGridLayout()
+    root_layout = QVBoxLayout()
+    ONLY_NUMBERS_VALIDATOR = QRegularExpressionValidator(QRegularExpression("[0-9]*"))
 
     # Error Messages
     no_customer_msg = ErrorMessage("No seleccionaste un cliente", "Por favor, seleccione un cliente para continuar.")
@@ -33,37 +34,82 @@ class SaleSummary(QDialog):
         self.setup_ui()
 
     def setup_ui(self) -> None:
+        self.object_name = "sale-summary"
         self.minimum_width = 450 
         self.error_msg = ErrorDialog(self)
 
-        self.title    = self._create_title("Resumen", self.last_row())
-        self.title    = self._create_title("Gs 100.000", self.last_row(), "monto-total")
-        self.inp_name = self._create_input("Ingrese un nombre para buscar", self.last_row(), "search-input")
+        self.title = QLabel("Vista previa", alignment=Qt.AlignCenter, object_name="title")
+
+        user_layout = QHBoxLayout()
+        self.customer_name = QLabel("Nombre y apellido", alignment=Qt.AlignCenter, object_name="customer-data")
+        self.customer_ruc = QLabel("RUC", alignment=Qt.AlignCenter, object_name="customer-data")
+        user_layout.add_widget(self.customer_name)
+        user_layout.add_widget(self.customer_ruc)
+
+        total_layout = QHBoxLayout()
+        self.total_label = QLabel("Total:", object_name="value-label")
+        self.total = QLabel("Gs. 0", alignment=Qt.AlignCenter, object_name="total")
+        total_layout.add_widget(self.total_label)
+        total_layout.add_widget(self.total)
+
+        self.inp_amount = QLineEdit(placeholder_text="Ingrese el monto recibido", validator=self.ONLY_NUMBERS_VALIDATOR, object_name="input-amount")
+        self.inp_amount.textChanged.connect(self.calculate_change)
+
+        change_layout = QHBoxLayout()
+        self.change_label = QLabel("Su vuelto es:", object_name="value-label")
+        self.change = QLabel("Gs. 0", alignment=Qt.AlignCenter, object_name="change-amount")
+        change_layout.add_widget(self.change_label)
+        change_layout.add_widget(self.change)
 
         # Button
-        self.submit = QPushButton("Seleccionar", clicked=self.on_submit)
-        self.root_layout.add_widget(self.submit, self.last_row(), 1, self.last_row(), 2)
+        self.submit = QPushButton("Confirmar venta", clicked=self.on_submit, object_name="bt-save")
+
+        self.root_layout.add_widget(self.title)
+        self.root_layout.add_layout(user_layout)
+        self.root_layout.add_spacing(15)
+        self.root_layout.add_layout(total_layout)
+        self.root_layout.add_widget(self.inp_amount)
+        self.root_layout.add_layout(change_layout)
+        self.root_layout.add_widget(self.submit)
 
         self.set_layout(self.root_layout)
 
-    @Slot(list)
-    def set_products_collection(self, data: list[SaleItem]):
+    @Slot(list, int)
+    def set_products_collection(self, data: list[SaleItem], total: int):
         self.products = data
+        self.total_value = total
+
+        self.inp_amount.text = str(total)
+        self.total.text = f"Gs. {total}"
 
     @Slot(Customer)
     def set_selected_customer(self, customer: Customer):
-        self.customer = customer
-        self.on_data_received()
-
-    def on_data_received(self):
-        if self.customer is None and len(self.products) == 0:
-            self.error_msg.show(self.empty_values_msg)
-            return
-        
-        if self.customer is None:
+        if not isinstance(customer, Customer):
             self.error_msg.show(self.no_customer_msg)
             return
-            
+
+        self.customer = customer
+        
+        self.customer_ruc.text = customer.ruc
+        self.customer_name.text = customer.full_name
+        
+        self.on_data_received()
+
+    def calculate_change(self):
+        if self.inp_amount.text == "":
+            self.change.text = f"Gs. {self.total_value}"
+            return
+
+        value = int(self.inp_amount.text)
+
+        self.change_value = value - self.total_value
+        self.change.text = f"Gs. {self.change_value }"
+
+        if self.change_value < 0:
+            self.submit.enabled = False
+        else: self.submit.enabled = True
+
+    def on_data_received(self):        
         if len(self.products) == 0:
             self.error_msg.show(self.no_products_msg)
             return
@@ -74,19 +120,3 @@ class SaleSummary(QDialog):
     def on_submit(self):
         self.hide()
         self.movements_service.save_sales(self.products, self.customer)
-
-    # Widgets Creations
-    def _create_title(self, text:str, row:int, obj_name:str = "") -> QLabel:
-        title = QLabel(text, alignment=Qt.AlignCenter, object_name=obj_name)
-        self.root_layout.add_widget(title, row, 1, row, 2)
-        return title
-
-    def last_row(self) -> int:
-        return self.root_layout.row_count()
-
-    def _create_input(self, placeholder:str, row:int, obj_name:str = "") -> QLineEdit:
-        line_edit = QLineEdit( placeholder_text=placeholder, object_name=obj_name)
-
-        self.root_layout.add_widget(line_edit, row, 1, row, 2)
-
-        return line_edit

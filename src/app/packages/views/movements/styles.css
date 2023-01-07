@@ -161,5 +161,69 @@
     border: 1px solid #F3570C;
 }
 
+/* 
+    Sale summary
+*/
+#sale-summary {
+    font-size: 20px;
+}
+
+#sale-summary #title {
+    font: 600 20px Arial;
+    margin: 8px 5px;
+    margin-bottom: 15px;
+    color: darkgray;
+}
+
+#sale-summary #total, 
+#sale-summary #change-amount{
+    font-size: 36px;
+}
+
+#sale-summary #value-label {
+    font: 600 26px Arial;
+    margin: 8px 5px;
+    margin-bottom: 15px;
+    color: darkgray;
+}
+
+#sale-summary #customer-data {
+    font: 500 16px Arial;
+    color: #1DBF53;
+    padding-bottom: 8px;
+    border-bottom: 1px solid darkgray;
+}
+
+#sale-summary #input-amount {
+    height: 45px;
+    border-radius: 5px;
+    font-size: 18px;
+    padding: 0px 10px;
+}
+#sale-summary #input-amount, 
+#sale-summary #bt-save {
+    margin: 15px 30px;
+}
+
+#sale-summary #total, 
+#sale-summary #change-amount {
+    color: #F29B18;
+}
+
+#sale-summary #bt-save {
+    height: 45px;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-bottom: 25px;
+    border: 1px solid #249AF2;
+}
+#sale-summary #bt-save:hover {
+    border-color: #F29B18;
+}
+#sale-summary #bt-save:disabled {
+    color: darkgray;
+    border-color: #F20600;
+}
+
 
 
