@@ -1,14 +1,16 @@
 from PySide6.QtGui import QIcon
-from PySide6.QtCore import QRect, Qt, Signal, QSize
+from PySide6.QtCore import QRect, Qt, Signal, QSize, QTimer
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QPushButton, QLabel
 from __feature__ import snake_case, true_property
 
+import time
 from datetime import datetime, date
 
 from .access_time_summary import AccessTimeSummaryDialog
 from .purchases_summary import PurchasesSummaryDialog
 from ..classes.customer_summary import CustomerSummary
 
+from ....shared.components.success_message import SuccessMessage
 from ..service import AssistControlService
 from ...customers.service import CustomersService
 
@@ -53,9 +55,6 @@ class SummaryView(QFrame):
 
         self.set_layout(self.root_layout)
 
-    def register_assistance(self):
-        pass
-
     def show_purchases_summary(self):
         self.purchase_summary.show(self.data)
 
@@ -77,5 +76,17 @@ class SummaryView(QFrame):
         
         return access_until >= today 
 
+    def register_assistance(self):
+        self.report_service.register_assistance(self.data.customer)
+        
+        message = SuccessMessage(self)
+        message.show("¡Registro exitoso!")
+        
+        QTimer.single_shot( 2000, lambda: self.auto_close_in(message) )
+
+    def auto_close_in(self, dialog: SuccessMessage):
+        self.emit_go_back()
+        dialog.hide()
+        
     def emit_go_back(self):
         self.go_back.emit()

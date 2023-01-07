@@ -13,7 +13,6 @@ class AssistControl(ContentView):
     inputs_layout = QVBoxLayout()
     stacked_layout = QStackedLayout()
 
-    
     def setup_ui(self):
         self.set_styles(__file__)
 
@@ -89,4 +88,5 @@ class AssistControl(ContentView):
         self.inp_ci.set_focus()
 
     def show_index(self, index:int ) -> None:
+        self.reset_inp_ci()
         self.stacked_layout.set_current_index(index)

@@ -6,8 +6,10 @@ from ..customers.service import CustomersService
 from ..movements.service import MovementsService
 
 # Classes
-from .classes.customer_summary import CustomerSummary
+
+from ..customers.classes.customer import Customer
 from ..products.classes.product import Product
+from .classes.customer_summary import CustomerSummary
 
 class AssistControlService(DBService):
     products_service = ProductsService()
@@ -26,3 +28,9 @@ class AssistControlService(DBService):
     def get_purchases(self, customer_id, limit_date: str):
         return self.movements_service.get_customers_purchases_until(customer_id, limit_date)
 
+    def register_assistance(self, customer: Customer):
+        query = f'''
+            INSERT INTO assistance_record(id_customer)
+            VALUES ({customer.id});
+        '''
+        self._changes_query(query)
