@@ -23,6 +23,7 @@ class Main(QMainWindow):
     root_layout = QVBoxLayout()
     views: dict[str, ContentView] = {}
     user_verified = False
+    last_shown_index: int = None;
 
     def __init__(self):
         super(Main, self).__init__()
@@ -39,6 +40,7 @@ class Main(QMainWindow):
 
     def on_user_verified(self):
         self.user_verified = True
+        self.verify_user_dialog.user_verified.disconnect(self.on_user_verified)
 
         self.setup_ui()
         self.__create_views()
@@ -63,8 +65,25 @@ class Main(QMainWindow):
         self.set_central_widget(widget)
 
     @Slot(int)
-    def show_content(self, index: int):
+    def show_content(self, index: int, ):
+        if self.last_shown_index == 3:
+            self.verify_user_dialog.show()
+
+            def after_verification():
+                self.content.show_index(index)
+                self.top_menu.active_button(index)
+                self.last_shown_index = index
+
+                # Delete the slot after using it. Avoid multiple calls.
+                self.verify_user_dialog.user_verified.disconnect(after_verification)
+
+            self.verify_user_dialog.user_verified.connect(after_verification)
+            return
+            
+
+        self.last_shown_index = index
         self.content.show_index(index)
+        self.top_menu.active_button(index)
 
     def __create_views(self): 
         self.views['assist_control'] = AssistControl()
@@ -81,7 +100,7 @@ class Main(QMainWindow):
         self.content.add_content(self.views['control_panel'], 4)
 
         # temporal
-        self.content.show_index(4)
+        self.show_content(0)
 
 # Execute
 import sys

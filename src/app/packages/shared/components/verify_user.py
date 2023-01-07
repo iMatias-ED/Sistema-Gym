@@ -40,6 +40,11 @@ class VerifyUserIdentityDialog(QDialog):
 
         self.set_layout(layout)
 
+    def show(self):
+        self.reset_inp_pwd()
+        self.reset_inp_ci()
+        super().show()
+
     def verify_user(self):
         try: 
             verified = self.security_service.check_password(self.inp_ci.text, self.inp_pwd.text)

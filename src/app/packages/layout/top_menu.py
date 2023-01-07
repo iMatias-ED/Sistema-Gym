@@ -42,11 +42,13 @@ class TopMenu(QFrame):
         self.set_layout(buttons_layout)
 
     def button_clicked(self, value: int):
+        self.view_change.emit( value )
+
+    def active_button(self, value: int):
         for button in self.buttons_collection:
             button.style_sheet = "border-bottom-color: gray;"
         self.buttons_collection[value].style_sheet = "border-bottom-color: #249AF2"
 
-        self.view_change.emit( value )
 
     def __bind_buttons(self):
         self.__bt_movements.clicked.connect(lambda: self.button_clicked(0) ) 
