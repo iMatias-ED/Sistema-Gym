@@ -1,11 +1,13 @@
 from datetime import datetime
 
 class AccessTimeByProduct:
-    time: str # date in format %d/%m/%Y
+    access_until_date: str # date in format %d/%m/%Y
     id_product:int
-    unix_time:int
 
     def __init__(self, data: dict):
-        self.time = data["time"]
+        self.access_until_date = data["access_until_date"]
         self.id_product = data["id_product"]
-        self.unix_time = data["unix_time"]
+
+    def expiration_as_date(self) -> datetime:
+        print("aud", self.access_until_date)
+        return datetime.strptime(self.access_until_date, "%d/%m/%Y")

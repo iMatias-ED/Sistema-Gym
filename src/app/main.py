@@ -68,6 +68,7 @@ class Main(QMainWindow):
     def show_content(self, index: int, ):
         if self.last_shown_index == 3:
             self.verify_user_dialog.show()
+            self.verify_user_dialog.bt_verify.text = "Continuar"
 
             def after_verification():
                 self.content.show_index(index)
@@ -100,7 +101,7 @@ class Main(QMainWindow):
         self.content.add_content(self.views['control_panel'], 4)
 
         # temporal
-        self.show_content(0)
+        self.show_content(1)
 
 # Execute
 import sys

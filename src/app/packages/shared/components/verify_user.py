@@ -29,20 +29,20 @@ class VerifyUserIdentityDialog(QDialog):
         self.inp_ci = QLineEdit("7478938", placeholder_text="Ingrese su número de cédula", validator=self.ONLY_NUMBERS_VALIDATOR)
         self.inp_pwd = QLineEdit("12345", placeholder_text="Ingrese su contraseña")
 
-        self.bt_verifica = QPushButton("Inicie sesión", clicked=self.verify_user)
+        self.bt_verify = QPushButton("Inicie sesión", clicked=self.verify_user)
 
         layout = QVBoxLayout()
         layout.add_widget(self.logo)
         layout.add_widget(self.title)
         layout.add_widget(self.inp_ci)
         layout.add_widget(self.inp_pwd)
-        layout.add_widget(self.bt_verifica)
+        layout.add_widget(self.bt_verify)
 
         self.set_layout(layout)
 
     def show(self):
-        self.reset_inp_pwd()
-        self.reset_inp_ci()
+        # self.reset_inp_pwd()
+        # self.reset_inp_ci()
         super().show()
 
     def verify_user(self):

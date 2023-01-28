@@ -1,5 +1,6 @@
 import time
-from typing import List, Union
+from typing import List
+from datetime import datetime, timedelta
 
 # Services
 from ...shared.services.service import DBService
@@ -9,6 +10,7 @@ from ..customers.service import CustomersService
 # Classes
 from ..products.classes.product import Product
 from ..customers.classes.customer import Customer
+from ..customers.classes.access_time_by_product import AccessTimeByProduct
 from .classes.sale_record import SaleRecord
 from .classes.cash_flow_item import CashFlowItem
 from .classes.movement_type import MovementType
@@ -54,7 +56,7 @@ class MovementsService(DBService):
 
         for item in products_data:
             product = item.product
-            total_days += item.price.valid_for_days
+            total_days += item.price.valid_for_days * item.quantity
 
             self._insert_product_sales(sales_id, item)
 
@@ -86,26 +88,36 @@ class MovementsService(DBService):
         access_time = customer.access_time_by_product_id(product.id)
         
         if access_time:
-            new_expire_date = access_time.unix_time + ( days * self.DAY_IN_SECONDS )
+            new_expire_date = access_time.expiration_as_date() + timedelta(days=days)
+            new_expire_date = datetime.strftime( new_expire_date, '%d/%m/%Y' )
+            customer.update_access_time_by_product_id(product.id, new_expire_date)
+
             query = f'''
                 UPDATE customers_products_access_time SET
-                    access_until_date = {new_expire_date}
+                    access_until_date = '{new_expire_date}'
                 WHERE  
                     id_customer = {customer.id} AND
                     id_product = {product.id};
             '''
         else:
-            new_expire_date = time.time() + ( days * self.DAY_IN_SECONDS )
+            new_expire_date = datetime.now() + timedelta(days=days)
+            new_expire_date = new_expire_date.strftime('%d/%m/%Y')
+
+            customer.add_access_time( AccessTimeByProduct({
+                "id_product": product.id, "access_until_date": new_expire_date
+            }) )
+
             query = f'''
                 INSERT INTO customers_products_access_time
                     (id_customer, id_product, access_until_date)
                 VALUES (
                     {customer.id},
                     {product.id},
-                    {new_expire_date}
+                    '{new_expire_date}'
                 );
             '''
         
+        print(query)
         self._changes_query(query)
     
     def get_purchases_by_customer_id(self, id_customer: int) -> List[SaleRecord]:

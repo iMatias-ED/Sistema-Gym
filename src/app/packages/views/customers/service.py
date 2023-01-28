@@ -23,16 +23,36 @@ class CustomersService(DBService):
     # Create
     def create(self, c:Customer) -> None:
         query = f'''  
-            INSERT INTO {self.TABLE} (ci, ruc, full_name, phone, email, genre, invoice_to, access_until_date)
+            INSERT INTO {self.TABLE} (ci, ruc, full_name, phone, email, genre, invoice_to)
                 VALUES (
                     '{c.ci}', '{c.ruc}', '{c.full_name}', '{c.phone}',
-                    '{c.email}', '{c.genre}', '{c.invoice_to}',
-                    {self._to_timestamp(c.access_until_date)}
+                    '{c.email}', '{c.genre}', '{c.invoice_to}'
                 )
                 RETURNING id;
         '''
-        self._changes_query(query)
+        print(query)
+        customer_id = self._changes_query(query)
+        self.update_customer_access_time( customer_id, c )
+
         self.data_changed.emit()
+
+    def update_customer_access_time( self, id: int, c: Customer ):
+        # Remove old access time data
+        self._changes_query("DELETE FROM customers_products_access_time;")
+
+        # Insert new values
+        query = f'''            
+            INSERT INTO customers_products_access_time 
+                ( id_customer, id_product, access_until_date )
+            VALUES 
+        '''
+        # Stringify values
+        for access_time in c.access_time:
+            query += f"( {id}, {access_time.id_product}, '{access_time.access_until_date}' )"
+            query += self.values_separator( c.access_time, access_time)
+
+
+        self._changes_query(query)
 
     # Read
     def get_all(self) -> List[Customer] : 
@@ -44,8 +64,7 @@ class CustomersService(DBService):
             phone,
             email,
             genre,
-            invoice_to,
-            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
+            invoice_to
         FROM {self.TABLE} '''
         return self._format_customers(self._read_query_fetchall(query))
 
@@ -58,8 +77,7 @@ class CustomersService(DBService):
             phone,
             email,
             genre,
-            invoice_to,
-            strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as access_until_date
+            invoice_to
         FROM {self.TABLE} WHERE id={id}; '''
         return self._format_customers(self._read_query_fetchone(query))
 
@@ -72,8 +90,7 @@ class CustomersService(DBService):
             phone,
             email,
             genre,
-            invoice_to,
-            STRFTIME('%d/%m/%Y', access_until_date) as access_until_date
+            invoice_to
         FROM {self.TABLE} WHERE ci={ci}; '''
 
         return self._format_customers(self._read_query_fetchone(query))
@@ -82,8 +99,7 @@ class CustomersService(DBService):
         query = f'''
             SELECT 
                 id_product,
-                access_until_date as unix_time,
-                strftime('%d/%m/%Y', datetime(access_until_date, 'unixepoch', 'localtime')) as time
+                access_until_date
             FROM customers_products_access_time
             WHERE id_customer = {id};
         '''
@@ -99,8 +115,7 @@ class CustomersService(DBService):
                 email               = '{c.email}',
                 genre               = '{c.genre}',
                 full_name           = '{c.full_name}',
-                invoice_to          = '{c.invoice_to}',
-                access_until_date   =  {self._to_timestamp(c.access_until_date)}
+                invoice_to          = '{c.invoice_to}'
             WHERE id = {c.id}
             RETURNING id
             ;

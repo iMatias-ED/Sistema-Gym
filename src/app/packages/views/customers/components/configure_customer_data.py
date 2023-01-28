@@ -1,10 +1,12 @@
 from typing import Callable, Dict, List
-from PySide6.QtWidgets import QGridLayout, QLineEdit, QDialog, QLabel, QPushButton, QComboBox, QDateTimeEdit
+from PySide6.QtWidgets import QGridLayout, QLineEdit, QDialog, QLabel, QPushButton, QComboBox, QDateTimeEdit, QHBoxLayout
 from PySide6.QtCore import Slot, Qt, QLocale, QDate
 from PySide6.QtGui import QColor
 
 from __feature__ import snake_case, true_property
 import sqlite3
+
+from .customer_access_time_data import AccessTimeData
 
 from ..service import CustomersService
 from ..classes.customer import Customer
@@ -24,18 +26,26 @@ class ConfigureCustomerDialog(QDialog):
 
     def setup_ui(self) -> None:
         self.minimum_width = 500
+        self.minimum_height= 600
+        self.root_layout.set_horizontal_spacing(15)
+        self.root_layout.set_vertical_spacing(5)
 
         # Products data
-        self.title          = self._create_title("Datos del cliente", self.last_row(), "config-dialog-title")
-        self.inp_name       = self._create_input("Nombre y Apellido", "Nombre completo", self.last_row(), "full_name")
-        self.inp_invoice_to = self._create_input("Razón social", "Razón social", self.last_row(), "invoice_to")
-        self.inp_ruc        = self._create_input("RUC", "RUC", self.last_row(), "ruc")
-        self.inp_ci         = self._create_input("Cédula de identidad", "Número de Cédula", self.last_row(), "ci")
-        self.inp_phone      = self._create_input("Teléfono", "Número de contacto", self.last_row(), "phone")
-        self.inp_email      = self._create_input("Correo Electrónico", "ejemplo@gmail.com", self.last_row(), "email")
+        self.title          = self._create_title("Datos del cliente", 1, "config-dialog-title")
+
+        self.inp_name       = self._create_input("Nombre y Apellido", "Nombre completo", 2, 1, "full_name")
+        self.inp_ci         = self._create_input("Cédula de identidad", "Número de Cédula", 2, 2, "ci")
         
-        self.inp_genre      = self._create_combo_box("Género", ["Masculino", "Femenino"], self.last_row(), "genre")
-        self.inp_date       = self._create_date_picker("Cuenta con acceso hasta", self.last_row(), "access_until_date")
+        self.inp_invoice_to = self._create_input("Razón social", "Razón social", 3, 1, "invoice_to")
+        self.inp_ruc        = self._create_input("RUC", "RUC", 3, 2, "ruc")
+        
+        self.inp_phone      = self._create_input("Teléfono", "Número de contacto", 4, 1, "phone")
+        self.inp_email      = self._create_input("Correo Electrónico", "ejemplo@gmail.com", 4, 2, "email")
+        
+        self.inp_genre      = self._create_combo_box("Género", ["Masculino", "Femenino"], 5, 1, "genre")
+
+        self.access_time    = AccessTimeData()
+        self.root_layout.add_widget(self.access_time, self.last_row(), 1, self.last_row(), 2)
 
         # Button
         self.submit = QPushButton("Guardar", object_name="save_button")
@@ -71,6 +81,7 @@ class ConfigureCustomerDialog(QDialog):
     @Slot()
     def on_create_submit(self) -> None:
         try:
+            # Customer(self._collect_data())
             self.customers_service.create( Customer(self._collect_data()) )
         except sqlite3.IntegrityError as e:
             self.manage_error(e.args[0])
@@ -103,27 +114,36 @@ class ConfigureCustomerDialog(QDialog):
         self.root_layout.add_widget(title, row, 1, row, 2)
         return title
 
-    def _create_input(self, title:str, placeholder:str, row:int, obj_name:str = "") -> QLineEdit:
-        label = QLabel(title, object_name="input-label")
-        line_edit = QLineEdit(placeholder_text=placeholder, object_name=obj_name)
+    def _create_input(self, title:str, placeholder:str, row:int, column:int, obj_name:str = "") -> QLineEdit:
+        label = QLabel(title, object_name="input-label", minimum_width=150)
+        line_edit = QLineEdit(placeholder_text=placeholder, object_name=obj_name, minimum_width=200)
+
+        input_layout = QHBoxLayout()
+        input_layout.add_widget(label)
+        input_layout.add_spacing(5)
+        input_layout.add_widget(line_edit)
 
         self.inputs_collection.append(line_edit)
-        self.root_layout.add_widget(label, row, 1)
-        self.root_layout.add_widget(line_edit, row, 2)
+        self.root_layout.add_layout(input_layout, row, column)
 
         return line_edit
 
-    def _create_combo_box(self, title:str, values: List[str], row:int, obj_name:str = "") -> QComboBox:
+    def _create_combo_box(self, title:str, values: List[str], row:int, column:int, obj_name:str = "") -> QComboBox:
         label = QLabel(title, object_name="input-label")
-        combo_box = QComboBox(object_name = obj_name)
+        combo_box = QComboBox(object_name = obj_name, minimum_width=200)
 
+        input_layout = QHBoxLayout()
+        input_layout.add_widget(label)
+        input_layout.add_spacing(5)
+        input_layout.add_widget(combo_box)
+
+        # Set white background to values.
         model = combo_box.model()
         for index, genre in enumerate(values):
             combo_box.add_item(genre)
             model.set_data(model.index(index, 0), QColor("white"), Qt.BackgroundRole)
         
-        self.root_layout.add_widget(label, row, 1)
-        self.root_layout.add_widget(combo_box, row, 2)
+        self.root_layout.add_layout(input_layout, row, column)
 
         return combo_box
 
@@ -148,6 +168,9 @@ class ConfigureCustomerDialog(QDialog):
         for inp in self.inputs_collection:
             data[inp.object_name] = inp.text;
 
+        # Add products access time to data
+        data["access_time_from_ui"] = self.access_time.products
+            
         # Bug when comboBox is added to a list. Loses its value
         # So we can't add it to self.inputs_collection
         data[self.inp_genre.object_name] = self.inp_genre.current_text;

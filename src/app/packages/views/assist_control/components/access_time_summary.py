@@ -64,11 +64,11 @@ class AccessTimeSummaryDialog(SummaryDialog):
 
         for info in data.access_time:
             # Check access time
-            expired = datetime.now() > datetime.fromtimestamp(info.unix_time)
+            expired = datetime.now() > info.expiration_as_date()
             if not expired: self.has_at_least_one_access = True
 
             # Prepare the table data
             product = self.service.get_product_by_id(info.id_product)
-            table_items.append(TableItem(product.name, info.time, not expired))
+            table_items.append(TableItem(product.name, info.access_until_date, not expired))
         
         self.table.insert_values(table_items)

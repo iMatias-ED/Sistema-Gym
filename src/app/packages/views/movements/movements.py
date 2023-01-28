@@ -57,7 +57,7 @@ class Movements(ContentView):
 
         self.code_input.product_selected.connect( self.table.on_product_select )
 
-        self.search_product.product_selected.connect( self.table.on_product_select )
+        self.search_product.selection_finished.connect( self.table.on_product_select )
         self.search_customer.customer_changed.connect( self.sidebar.on_customer_changed )
 
         # Inflows and outflows

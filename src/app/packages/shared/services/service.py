@@ -1,6 +1,6 @@
 import sqlite3
 from PySide6.QtCore import QObject, Signal
-from typing import Union
+from typing import Union, List
 from ..classes.table_header_label import TableHeaderLabel
 
 # Inherits from QObject to use Signals
@@ -48,3 +48,7 @@ class DBService(QObject):
 
         self.connection.close()
         return dict(result)
+
+    def values_separator(self, arr: List, element):
+            if arr.index(element) == len(arr)-1: return ";" 
+            else: return ",\n" 
