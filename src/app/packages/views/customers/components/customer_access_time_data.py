@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Callable, Dict, List
 from PySide6.QtWidgets import QGridLayout, QWidgetItem, QLineEdit, QVBoxLayout, QFrame, QWidget, QLabel, QPushButton, QComboBox, QDateTimeEdit, QHBoxLayout
 from PySide6.QtCore import Slot, Qt, QLocale, QDate, QSize
@@ -9,6 +10,7 @@ from ...movements.service import MovementsService
 from ...movements.components.search_product import SearchProductDialog
 
 from ..service import CustomersService
+from ...products.service import ProductsService
 from ..classes.customer import Customer
 from ...products.classes.product import Product
 from ....shared.components.error_message import ErrorDialog, ErrorMessage
@@ -19,6 +21,7 @@ class AccessTimeData(QFrame):
     def __init__(self):
         super(AccessTimeData, self).__init__()
 
+        self.products_service = ProductsService()
         self.products: Dict[int, QDateTimeEdit] = {}
         self.setup_ui()
 
@@ -44,8 +47,31 @@ class AccessTimeData(QFrame):
         self.root_layout.add_spacing(15)
         self.set_layout(self.root_layout)
 
+    def reset_content(self):
+        self.products.clear()
+        self.clearvbox()
+        self.setup_ui()
+
+    def load_customers_data(self, customer: Customer):
+        data = customer.access_time
+        for access_time in data:
+            product = self.products_service.get_by_id(access_time.id_product)
+            self.generate_new_input( product, access_time.expiration_as_date() )
+
+    def clearvbox(self, L = False):
+        if not L: L = self.root_layout
+        if L is not None:
+            while L.count():
+                item = L.take_at(0)
+                widget = item.widget()
+                
+                if widget is not None:
+                    widget.delete_later()
+                else:
+                    self.clearvbox(item.layout())
+
     @Slot(Product)
-    def generate_new_input(self, product: Product):
+    def generate_new_input(self, product: Product, d:datetime = None):
         # Product already selected before?
         if product.id in self.products:
             self.products[product.id].set_focus()
@@ -55,6 +81,10 @@ class AccessTimeData(QFrame):
         label = QLabel(product.name, minimum_width=200, alignment=Qt.AlignCenter, object_name="input-label")
         date_input = self._create_date_picker()
         bt_remove = QPushButton(icon=QPixmap("src/assets/remove.png"), icon_size = QSize(25, 25), maximum_width=30 )
+
+        # Default date
+        if d:
+            date_input.set_date( QDate(d.year, d.month, d.day) )
 
         # Save new input to read values later
         self.products[product.id] = date_input

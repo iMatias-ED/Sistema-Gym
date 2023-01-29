@@ -30,15 +30,16 @@ class CustomersService(DBService):
                 )
                 RETURNING id;
         '''
-        print(query)
         customer_id = self._changes_query(query)
         self.update_customer_access_time( customer_id, c )
 
         self.data_changed.emit()
 
-    def update_customer_access_time( self, id: int, c: Customer ):
+    def update_customer_access_time( self, customer_id: int, c: Customer ):
         # Remove old access time data
-        self._changes_query("DELETE FROM customers_products_access_time;")
+        self._changes_query(f"DELETE FROM customers_products_access_time WHERE id_customer={customer_id};")
+
+        if not len(c.access_time): return;
 
         # Insert new values
         query = f'''            
@@ -48,7 +49,7 @@ class CustomersService(DBService):
         '''
         # Stringify values
         for access_time in c.access_time:
-            query += f"( {id}, {access_time.id_product}, '{access_time.access_until_date}' )"
+            query += f"( {customer_id}, {access_time.id_product}, '{access_time.access_until_date}' )"
             query += self.values_separator( c.access_time, access_time)
 
 
@@ -117,10 +118,10 @@ class CustomersService(DBService):
                 full_name           = '{c.full_name}',
                 invoice_to          = '{c.invoice_to}'
             WHERE id = {c.id}
-            RETURNING id
             ;
         '''
         self._changes_query(query)
+        self.update_customer_access_time( c.id, c )
         self.data_changed.emit()
 
     # Delete
@@ -155,7 +156,3 @@ class CustomersService(DBService):
 
             formatted.append( new_customer ) 
         return formatted
-
-    def _to_timestamp(self, date:str):
-        # Access until 11:59 p.m
-        return datetime.strptime(date, "%d/%m/%Y").timestamp() + 86400 - 1

@@ -64,6 +64,7 @@ class ConfigureCustomerDialog(QDialog):
 
     @Slot(int)
     def edit(self, customer_id:int) -> None:
+        self.clear()
         customer = self.customers_service.get_by_id(customer_id)
 
         for inp in self.inputs_collection:
@@ -73,6 +74,7 @@ class ConfigureCustomerDialog(QDialog):
             else:  inp.text = value
 
         self.inp_genre.current_index = self.inp_genre.find_text( customer.genre )
+        self.access_time.load_customers_data(customer)
 
         self._reconnect_submit(self.on_edit_submit, customer.id)
         self.show()
@@ -81,7 +83,6 @@ class ConfigureCustomerDialog(QDialog):
     @Slot()
     def on_create_submit(self) -> None:
         try:
-            # Customer(self._collect_data())
             self.customers_service.create( Customer(self._collect_data()) )
         except sqlite3.IntegrityError as e:
             self.manage_error(e.args[0])
@@ -161,6 +162,7 @@ class ConfigureCustomerDialog(QDialog):
     
     # Utils
     def clear(self) -> None:
+        self.access_time.reset_content()
         for inp in self.inputs_collection: inp.clear()
 
     def _collect_data(self, id: int=None) -> Dict:

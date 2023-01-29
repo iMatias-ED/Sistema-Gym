@@ -9,5 +9,4 @@ class AccessTimeByProduct:
         self.id_product = data["id_product"]
 
     def expiration_as_date(self) -> datetime:
-        print("aud", self.access_until_date)
         return datetime.strptime(self.access_until_date, "%d/%m/%Y")
